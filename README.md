@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Reflex Chat App
 A user-friendly, highly customizable Python web app designed to demonstrate LLMs in a ChatGPT format.
 <div align="center">
@@ -49,3 +50,8 @@ If you'd like to contribute, please do the following:
 
 # License
 The following repo is licensed under the MIT License.
+=======
+1. `cd nevschat`
+2. `docker build -t reflex-project:latest .`
+3. `docker run --rm -p 3000:3000 -p 8000:8000 reflex-project:latest
+>>>>>>> 6b6dd64 (first commit)
