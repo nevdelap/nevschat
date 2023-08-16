@@ -119,7 +119,7 @@ class State(rx.State):
 
         # Stream the results, yielding after every word.
         for item in session:
-            if hasattr(item.choices[0].delta, "content"):        
+            if hasattr(item.choices[0].delta, "content"):
                 answer_text = item.choices[0].delta.content
                 self.chats[self.current_chat][-1].answer += answer_text
                 self.chats = self.chats

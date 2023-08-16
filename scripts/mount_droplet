@@ -1,0 +1,2 @@
+#!/bin/bash
+mkdir -p ~/droplet && sshfs -o allow_other root@droplet:/ ~/droplet
