@@ -14,7 +14,7 @@ docker system prune --force
 echo -e "\n${BOLD}Stopping nevschat.$RESET"
 monit stop nevschat
 while true; do
-    docker top nevschat > /dev/null || break
+    docker top nevschat 1>&2 2> /dev/null || break
     sleep 1
 done
 
