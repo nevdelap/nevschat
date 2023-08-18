@@ -26,7 +26,7 @@ def message(qa: QA) -> rx.Component:
             margin_top="1em",
         ),
         rx.box(
-            rx.text(
+            rx.markdown(
                 qa.answer,
                 bg=styles.accent_color,
                 shadow=styles.shadow_light,
@@ -83,12 +83,6 @@ def action_bar() -> rx.Component:
                 ),
                 on_submit=[State.process_question, rx.set_value("question", "")],
                 width="100%",
-            ),
-            rx.text(
-                "ReflexGPT may return factually incorrect or misleading responses. Use discretion.",
-                font_size="xs",
-                color="#fff6",
-                text_align="center",
             ),
             width="100%",
             max_w="3xl",
