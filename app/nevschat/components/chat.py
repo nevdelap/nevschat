@@ -52,13 +52,16 @@ def chat() -> rx.Component:
             width="100%",
         ),
         rx.hstack(
-            rx.text_area(
-                is_disabled=State.processing,
-                placeholder = "Ask something.",
+            rx.debounce_input(
+                rx.text_area(
+                    is_disabled=State.processing,
+                    placeholder = "Ask something.",
+                    on_change=State.set_next_prompt,
+                    on_key_down=State.handle_key_down,
+                    on_key_up=State.handle_key_up,
+                ),
                 value=State.next_prompt,
-                on_change=State.set_next_prompt,
-                on_key_down=State.handle_key_down,
-                on_key_up=State.handle_key_up,
+                debounce_timeout=150,
             ),
             rx.button(
                 "Send",
