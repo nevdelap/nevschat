@@ -1,0 +1,10 @@
+[MESSAGES CONTROL]
+disable=missing-class-docstring,missing-function-docstring,missing-module-docstring
+
+[FORMAT]
+max-line-length=88
+
+[BASIC]
+# e for exception, f for file, i for index, io for I/O, s for meaningless
+# string.
+good-names=e,f,i,io,s
