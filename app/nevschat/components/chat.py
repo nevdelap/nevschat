@@ -1,88 +1,75 @@
 import reflex as rx
 
-from nevschat.components import loading_icon
-from nevschat.state import QA, State
+from nevschat.state import PromptResponse, State
 
 
-def message(qa: QA) -> rx.Component:
-    """A single question/answer message.
-
-    Args:
-        qa: The question/answer pair.
-
-    Returns:
-        A component displaying the question/answer pair.
-    """
+def prompt_response_box(prompt_response: PromptResponse) -> rx.Component:
     return rx.box(
-        rx.box(
-            rx.text(
-                qa.question,
+        rx.hstack(
+            rx.box(
+                rx.text(prompt_response.prompt),
+                background_color="#fafafa",
+                border_radius="10px",
+                display="",
+                padding="1em",
+                padding_right="5em",
+                width="100%",
             ),
-            text_align="right",
-            margin_top="1em",
+            rx.input(
+                display="none",
+            ),
+            rx.button(
+                "Edit",
+                bg="green",
+                color="white",
+                display="none",
+            ),
+            rx.button(
+                "Cancel",
+                bg="red",
+                color="white",
+                display="none",
+            ),
         ),
         rx.box(
             rx.markdown(
-                qa.answer,
+                prompt_response.response,
             ),
-            text_align="left",
-            padding_top="1em",
+            padding="1em",
+            padding_left="5em",
         ),
-        width="100%",
     )
 
 
 def chat() -> rx.Component:
     """List all the messages in a single conversation."""
     return rx.vstack(
-        rx.box(rx.foreach(State.chats[State.current_chat], message)),
-        py="8",
-        flex="1",
-        width="100%",
-        max_w="3xl",
-        padding_x="4",
-        align_self="center",
-        overflow="hidden",
-        padding_bottom="5em",
-    )
-
-
-def action_bar() -> rx.Component:
-    """The action bar to send a new message."""
-    return rx.box(
-        rx.vstack(
-            rx.form(
-                rx.form_control(
-                    rx.hstack(
-                        rx.input(
-                            placeholder="Type something...",
-                            id="question",
-                            _placeholder={"color": "#fffa"},
-                        ),
-                        rx.button(
-                            rx.cond(
-                                State.processing,
-                                loading_icon(height="1em"),
-                                rx.text("Send"),
-                            ),
-                            type_="submit",
-                        ),
-                    ),
-                    is_disabled=State.processing,
-                ),
-                on_submit=[State.process_question, rx.set_value("question", "")],
-                width="100%",
+        rx.box(
+            rx.foreach(
+                State.prompts_responses,
+                prompt_response_box,
             ),
             width="100%",
-            max_w="3xl",
-            mx="auto",
         ),
-        position="sticky",
-        bottom="0",
-        left="0",
-        py="4",
-        backdrop_filter="auto",
-        backdrop_blur="lg",
-        align_items="stretch",
+        rx.hstack(
+            rx.text_area(
+                is_disabled=State.processing,
+                placeholder = "Ask something.",
+                value=State.next_prompt,
+                on_change=State.set_next_prompt,
+                on_key_down=State.handle_key_down,
+                on_key_up=State.handle_key_up,
+            ),
+            rx.button(
+                "Send",
+                bg="green",
+                color="white",
+                is_disabled=State.invalid_next_prompt,
+                is_loading=State.processing,
+                on_click=State.process_next_prompt,
+            ),
+            width="100%",
+        ),
+        flex="1",
         width="100%",
     )

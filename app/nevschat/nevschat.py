@@ -1,26 +1,28 @@
-"""The main Chat app."""
-
 import reflex as rx
 
-from nevschat.components import chat, modal, navbar, sidebar
+from nevschat.components import chat
 from nevschat.state import State
 
 
 def index() -> rx.Component:
-    """The main app."""
     return rx.vstack(
-        navbar(),
-        chat.chat(),
-        chat.action_bar(),
-        sidebar(),
-        modal(),
-        min_h="100vh",
-        align_items="stretch",
-        spacing="0",
+        rx.heading(
+            "Nev's ChatGPT",
+            text_align="left",
+            size="lg",
+            width="100%",
+        ),
+        chat(),
+        rx.button(
+            "Clear",
+            on_click=State.clear_chat
+        ),
+        min_height="100vh",
+        padding="3em",
+        width="100%",
     )
 
 
-# Add state and page to the app.
 app = rx.App(state=State)
 app.add_page(index)
 app.compile()
