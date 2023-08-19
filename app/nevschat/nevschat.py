@@ -2,7 +2,6 @@
 
 import reflex as rx
 
-from nevschat import styles
 from nevschat.components import chat, modal, navbar, sidebar
 from nevschat.state import State
 
@@ -15,8 +14,6 @@ def index() -> rx.Component:
         chat.action_bar(),
         sidebar(),
         modal(),
-        bg=styles.bg_dark_color,
-        color=styles.text_light_color,
         min_h="100vh",
         align_items="stretch",
         spacing="0",
@@ -24,6 +21,6 @@ def index() -> rx.Component:
 
 
 # Add state and page to the app.
-app = rx.App(state=State, style=styles.base_style)
+app = rx.App(state=State)
 app.add_page(index)
 app.compile()

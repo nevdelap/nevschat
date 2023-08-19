@@ -1,4 +1,5 @@
 import os
+from collections.abc import AsyncGenerator
 
 import openai
 import reflex as rx
@@ -40,7 +41,7 @@ class State(rx.State):
     # Whether the modal is open.
     modal_open: bool = False
 
-    def create_chat(self):
+    def create_chat(self) -> None:
         """Create a new chat."""
         # Insert a default question.
         self.chats[self.new_chat_name] = [
@@ -48,15 +49,15 @@ class State(rx.State):
         ]
         self.current_chat = self.new_chat_name
 
-    def toggle_modal(self):
+    def toggle_modal(self) -> None:
         """Toggle the new chat modal."""
         self.modal_open = not self.modal_open
 
-    def toggle_drawer(self):
+    def toggle_drawer(self) -> None:
         """Toggle the drawer."""
         self.drawer_open = not self.drawer_open
 
-    def delete_chat(self):
+    def delete_chat(self) -> None:
         """Delete the current chat."""
         del self.chats[self.current_chat]
         if len(self.chats) == 0:
@@ -66,7 +67,7 @@ class State(rx.State):
         self.current_chat = list(self.chats.keys())[0]
         self.toggle_drawer()
 
-    def set_chat(self, chat_name: str):
+    def set_chat(self, chat_name: str) -> None:
         """Set the name of the current chat.
 
         Args:
@@ -75,7 +76,7 @@ class State(rx.State):
         self.current_chat = chat_name
         self.toggle_drawer()
 
-    @rx.var
+    @rx.var  # type: ignore
     def chat_titles(self) -> list[str]:
         """Get the list of chat titles.
 
@@ -84,7 +85,7 @@ class State(rx.State):
         """
         return list(self.chats.keys())
 
-    async def process_question(self, form_data: dict[str, str]):
+    async def process_question(self, form_data: dict[str, str]) -> AsyncGenerator[None, None]:
         """Get the response from the API.
 
         Args:

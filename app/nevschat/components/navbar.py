@@ -1,6 +1,5 @@
 import reflex as rx
 
-from nevschat import styles
 from nevschat.state import State
 
 
@@ -26,7 +25,6 @@ def navbar():
             rx.hstack(
                 rx.button(
                     "+ New chat",
-                    bg=styles.accent_color,
                     px="4",
                     py="2",
                     h="auto",
@@ -35,11 +33,9 @@ def navbar():
             ),
             justify="space-between",
         ),
-        bg=styles.bg_dark_color,
         backdrop_filter="auto",
         backdrop_blur="lg",
         p="4",
-        border_bottom=f"1px solid {styles.border_color}",
         position="sticky",
         top="0",
         z_index="100",

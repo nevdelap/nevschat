@@ -1,6 +1,5 @@
 import reflex as rx
 
-from nevschat import styles
 from nevschat.components import loading_icon
 from nevschat.state import QA, State
 
@@ -18,9 +17,6 @@ def message(qa: QA) -> rx.Component:
         rx.box(
             rx.text(
                 qa.question,
-                bg=styles.border_color,
-                shadow=styles.shadow_light,
-                **styles.message_style,
             ),
             text_align="right",
             margin_top="1em",
@@ -28,9 +24,6 @@ def message(qa: QA) -> rx.Component:
         rx.box(
             rx.markdown(
                 qa.answer,
-                bg=styles.accent_color,
-                shadow=styles.shadow_light,
-                **styles.message_style,
             ),
             text_align="left",
             padding_top="1em",
@@ -65,8 +58,6 @@ def action_bar() -> rx.Component:
                             placeholder="Type something...",
                             id="question",
                             _placeholder={"color": "#fffa"},
-                            _hover={"border_color": styles.accent_color},
-                            style=styles.input_style,
                         ),
                         rx.button(
                             rx.cond(
@@ -75,8 +66,6 @@ def action_bar() -> rx.Component:
                                 rx.text("Send"),
                             ),
                             type_="submit",
-                            _hover={"bg": styles.accent_color},
-                            style=styles.input_style,
                         ),
                     ),
                     is_disabled=State.processing,
@@ -94,7 +83,6 @@ def action_bar() -> rx.Component:
         py="4",
         backdrop_filter="auto",
         backdrop_blur="lg",
-        border_top=f"1px solid {styles.border_color}",
         align_items="stretch",
         width="100%",
     )

@@ -1,6 +1,5 @@
 import reflex as rx
 
-from nevschat import styles
 from nevschat.state import State
 
 
@@ -14,19 +13,14 @@ def sidebar_chat(chat: str) -> rx.Component:
         rx.box(
             chat,
             on_click=lambda: State.set_chat(chat),
-            style=styles.sidebar_style,
-            color=styles.icon_color,
             flex="1",
         ),
         rx.box(
             rx.icon(
                 tag="delete",
-                style=styles.icon_style,
                 on_click=State.delete_chat,
             ),
-            style=styles.sidebar_style,
         ),
-        color=styles.text_light_color,
         cursor="pointer",
     )
 
@@ -42,7 +36,6 @@ def sidebar() -> rx.Component:
                         rx.icon(
                             tag="close",
                             on_click=State.toggle_drawer,
-                            style=styles.icon_style,
                         ),
                     )
                 ),
