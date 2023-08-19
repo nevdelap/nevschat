@@ -27,19 +27,17 @@ class State(rx.State):
     def clear_chat(self) -> None:
         self.prompts_responses = []
 
-    async def handle_key_down(self, key) -> AsyncGenerator[None, None]:
+    def handle_key_down(self, key) -> AsyncGenerator[None, None]:
         if key == "Control":
             self.control_down = True
         if key == "Enter" and self.control_down:
-            return self.process_next_prompt()
-        return None
+            yield from self.process_next_prompt()
 
-    async def handle_key_up(self, key) -> AsyncGenerator[None, None]:
+    def handle_key_up(self, key) -> AsyncGenerator[None, None]:
         if key == "Control":
             self.control_down = False
-        yield
 
-    async def process_next_prompt(self) -> AsyncGenerator[None, None]:
+    def process_next_prompt(self) -> AsyncGenerator[None, None]:
         assert self.next_prompt != ""
 
         self.processing = True

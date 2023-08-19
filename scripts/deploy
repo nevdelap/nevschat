@@ -16,5 +16,7 @@ while true; do
     sleep 1
 done
 
+sleep 5
+
 echo -e "\n${BOLD}Starting nevschat.$RESET"
 monit start nevschat
