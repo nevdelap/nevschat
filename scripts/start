@@ -1,0 +1,8 @@
+#!/bin/bash
+docker run \
+    --rm \
+    -v "$PWD":/app \
+    --publish 3000:3000 \
+    --publish 8000:8000 \
+    --name nevschat \
+    nevschat:latest

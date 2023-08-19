@@ -1,0 +1,7 @@
+#!/bin/bash
+set -eufo pipefail
+PROJECT_DIR="$(cd -- "$(dirname -- "$0")/.." && pwd)"
+cd "$PROJECT_DIR"
+
+mkdir -p .git/hooks
+ln -sf "$PWD/scripts/pre-push" .git/hooks/pre-push

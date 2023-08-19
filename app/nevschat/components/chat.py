@@ -1,8 +1,8 @@
 import reflex as rx
 
-from webui import styles
-from webui.components import loading_icon
-from webui.state import QA, State
+from nevschat import styles
+from nevschat.components import loading_icon
+from nevschat.state import QA, State
 
 
 def message(qa: QA) -> rx.Component:

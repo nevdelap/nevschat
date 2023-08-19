@@ -1,0 +1,15 @@
+#!/bin/bash
+set -euo pipefail
+shopt -s globstar
+PROJECT_DIR="$(cd -- "$(dirname -- "$0")/.." && pwd)"
+cd "$PROJECT_DIR"
+
+mypy --strict app
+pylint --recursive=y app
+bandit --skip B101 --quiet app && echo 'Bandit is happy.'
+
+PYVERSION=py310
+pyupgrade --$PYVERSION-plus -- app/**/*.py
+isort --force-single-line-imports --profile black -- app**/*.py
+black --target-version=$PYVERSION -- app**/*.py
+git diff

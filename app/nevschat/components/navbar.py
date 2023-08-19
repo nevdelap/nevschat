@@ -1,7 +1,7 @@
 import reflex as rx
 
-from webui import styles
-from webui.state import State
+from nevschat import styles
+from nevschat.state import State
 
 
 def navbar():

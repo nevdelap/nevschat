@@ -7,9 +7,7 @@ readonly ESC=$'\033'"["
 readonly BOLD="${ESC}1m"
 readonly RESET="${ESC}0m"
 
-echo -e "\n${BOLD}Building nevschat docker image.$RESET"
-docker build -t nevschat:latest .
-docker system prune --force
+scripts/build
 
 echo -e "\n${BOLD}Stopping nevschat.$RESET"
 monit stop nevschat

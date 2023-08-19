@@ -2,9 +2,9 @@
 
 import reflex as rx
 
-from webui import styles
-from webui.components import chat, modal, navbar, sidebar
-from webui.state import State
+from nevschat import styles
+from nevschat.components import chat, modal, navbar, sidebar
+from nevschat.state import State
 
 
 def index() -> rx.Component:

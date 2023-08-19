@@ -1,0 +1,12 @@
+#!/bin/bash
+set -eufo pipefail
+PROJECT_DIR="$(cd -- "$(dirname -- "$0")/.." && pwd)"
+cd "$PROJECT_DIR"
+
+readonly ESC=$'\033'"["
+readonly BOLD="${ESC}1m"
+readonly RESET="${ESC}0m"
+
+echo -e "\n${BOLD}Building nevschat docker image.$RESET"
+docker build -f docker/Dockerfile -t nevschat:latest .
+docker system prune --force

@@ -1,0 +1,30 @@
+#!/bin/bash
+set -eufo pipefail
+PROJECT_DIR="$(cd -- "$(dirname -- "$0")/.." && pwd)"
+cd "$PROJECT_DIR"
+
+# shellcheck source=/dev/null
+. ~/miniconda3/etc/profile.d/conda.sh
+conda deactivate
+conda env remove -n nevschat
+conda create -yqn nevschat python=3.11
+conda activate nevschat
+conda install -yq \
+	--channel conda-forge \
+	--channel defaults \
+	--quiet \
+	--yes \
+	`# prod` \
+	`# dev` \
+	bandit \
+	black \
+	coverage \
+	isort \
+	mypy \
+	pylint \
+	pytest \
+	pyupgrade
+pip install \
+	openai \
+	reflex
+echo Done.
