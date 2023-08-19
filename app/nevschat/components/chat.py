@@ -11,8 +11,7 @@ def prompt_response_box(prompt_response: PromptResponse) -> rx.Component:
                 background_color="#fafafa",
                 border_radius="10px",
                 display="",
-                padding="1em",
-                padding_right="5em",
+                padding="0.5em 1em 0.5em 1em",
                 width="100%",
             ),
             rx.input(
@@ -36,7 +35,7 @@ def prompt_response_box(prompt_response: PromptResponse) -> rx.Component:
                 prompt_response.response,
             ),
             padding="1em",
-            padding_left="5em",
+            padding_left="3em",
         ),
     )
 
