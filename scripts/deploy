@@ -12,7 +12,7 @@ scripts/build
 echo -e "\n${BOLD}Stopping nevschat.$RESET"
 monit stop nevschat
 while true; do
-    docker top nevschat 1>&2 2> /dev/null || break
+    docker top nevschat > /dev/null 2>&1 || break
     sleep 1
 done
 
