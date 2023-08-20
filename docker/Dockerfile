@@ -25,7 +25,8 @@ RUN pip install --upgrade pip --root-user-action=ignore && \
 WORKDIR /app
 COPY app/ .
 ENV BUN_INSTALL="/app/.bun"
-RUN reflex init
+RUN reflex init && \
+    cp web_overrides/* .web/  # << This.
 ENV OPENAI_API_KEY="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"
 ENTRYPOINT ["reflex", "run"]
 CMD ["--env", "prod"]
