@@ -13,4 +13,5 @@ config = rx.Config(  # type: ignore
     frontend_packages=[
         "react-loading-icons",
     ],
+    frontend_path="/chat",
 )
