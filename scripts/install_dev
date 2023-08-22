@@ -15,6 +15,12 @@ conda install -yq \
 	--quiet \
 	--yes \
 	`# prod` \
+	`# reflex submodule` \
+	pandas \
+	poetry \
+	pyright \
+	pytest-asyncio \
+	urllib3 \
 	`# dev` \
 	bandit \
 	black \
