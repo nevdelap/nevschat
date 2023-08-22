@@ -31,6 +31,6 @@ conda install -yq \
 	pytest \
 	pyupgrade
 pip install \
-	openai \
-	reflex
+	openai
+pip install -e ./reflex
 echo Done.
