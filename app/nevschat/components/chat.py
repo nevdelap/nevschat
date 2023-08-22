@@ -7,7 +7,9 @@ def prompt_response_box(prompt_response: PromptResponse) -> rx.Component:
     return rx.box(
         rx.hstack(
             rx.box(
-                rx.text(prompt_response.prompt),
+                rx.markdown(
+                    prompt_response.prompt,
+                ),
                 background_color="#fafafa",
                 border_radius="10px",
                 display="",
@@ -35,7 +37,7 @@ def prompt_response_box(prompt_response: PromptResponse) -> rx.Component:
                 prompt_response.response,
             ),
             padding="1em",
-            padding_left="3em",
+            padding_left="2em",
         ),
     )
 
@@ -72,6 +74,8 @@ def chat() -> rx.Component:
             ),
             width="100%",
         ),
-        flex="1",
+        rx.spacer(
+            min_height="2em",
+        ),
         width="100%",
     )

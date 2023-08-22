@@ -15,10 +15,9 @@ def index() -> rx.Component:
         chat(),
         rx.button(
             "Clear",
-            on_click=State.clear_chat
+            on_click=State.clear_chat,
         ),
-        min_height="100vh",
-        padding="3em",
+        padding="1em",
         width="100%",
     )
 

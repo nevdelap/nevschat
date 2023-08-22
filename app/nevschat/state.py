@@ -27,6 +27,7 @@ class State(rx.State):
     def clear_chat(self) -> None:
         self.prompts_responses = []
 
+
     def handle_key_down(self, key) -> AsyncGenerator[None, None]:
         if key == "Control":
             self.control_down = True
