@@ -11,7 +11,6 @@ RUN pip install --upgrade pip --root-user-action=ignore && \
     pip install --root-user-action=ignore \
     `# prod` \
 	openai \
-	reflex \
     `# dev` \
 	bandit \
 	black \
@@ -24,6 +23,8 @@ RUN pip install --upgrade pip --root-user-action=ignore && \
     wheel
 WORKDIR /app
 COPY app/ .
+COPY reflex/ reflex/
+RUN pip install ./reflex
 ENV BUN_INSTALL="/app/.bun"
 RUN reflex init
 ENV OPENAI_API_KEY="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"
