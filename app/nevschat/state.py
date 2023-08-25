@@ -40,6 +40,7 @@ class State(rx.State):
         ),
     ]
     next_prompt: str = ""
+    new_prompt: str | None = None
     is_editing: bool = False
     is_processing: bool = False
     control_down: bool = False
@@ -59,18 +60,30 @@ class State(rx.State):
         return self.is_editing or len(self.next_prompt.strip()) == 0
 
     def edit_prompt(self, index: int) -> None:
+        self.new_prompt = self.prompts_responses[index].prompt
         self.prompts_responses[index].is_editing = True
         self.is_editing = True
+        self.issue1675()
+
+    def update_new_prompt(self, prompt: str) -> None:
+        self.new_prompt = prompt
 
     def send_edited_prompt(self, index: int) -> AsyncGenerator[None, None]:  # type: ignore
-        self.next_prompt = self.prompts_responses[index].prompt
+        self.next_prompt = self.new_prompt
         self.prompts_responses = self.prompts_responses[:index]
         self.is_editing = False
+        self.issue1675()
         yield from self.send()  # type: ignore
 
     def cancel_edit_prompt(self, index: int) -> None:
+        self.new_prompt = None
         self.prompts_responses[index].is_editing = False
         self.is_editing = False
+        self.issue1675()
+
+    def issue1675(self) -> None:
+        for i in range(len(self.prompts_responses)):
+            self.prompts_responses[i] = self.prompts_responses[i]
 
     def send_new_prompt(self) -> AsyncGenerator[None, None]:  # type: ignore
         yield from self.send()  # type: ignore

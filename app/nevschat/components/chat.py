@@ -5,11 +5,12 @@ from nevschat.state import PromptResponse, State
 
 def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Component:
     return rx.box(
-        rx.cond(
+        rx.cond(  # type: ignore
             prompt_response.is_editing,
             rx.hstack(
                 rx.debounce_input(
                     rx.input(
+                        on_change=lambda value: State.update_new_prompt(value),
                         width="100%",
                     ),
                     debounce_timeout=250,
