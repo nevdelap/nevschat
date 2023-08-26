@@ -16,38 +16,21 @@ class PromptResponse(rx.Base):
 
 class State(rx.State):
 
-    prompts_responses: list[PromptResponse] = [
-        PromptResponse(
-            prompt="Describe dogs in 20 words.",
-            response="""Dogs are domesticated mammals known for their loyalty,
-                     intelligence, and playful nature, often kept as pets or
-                     working animals.""",
-            is_editing=False,
-        ),
-        PromptResponse(
-            prompt="Do they like cats?",
-            response="""Some dogs may get along well with cats, while others may
-                     not. It depends on the individual dog's temperament and
-                     socialization.""",
-            is_editing=False
-        ),
-        PromptResponse(
-            prompt="What do cats like?",
-            response="""Cats are known to enjoy activities such as hunting,
-                     playing with toys, scratching on surfaces, climbing,
-                     sunbathing, and receiving affection.""",
-            is_editing=False
-        ),
-    ]
+    prompts_responses: list[PromptResponse] = []
     next_prompt: str = ""
     new_prompt: str | None = None
-    is_editing: bool = False
     is_processing: bool = False
     control_down: bool = False
 
     def __init__(self) -> None:
         super().__init__()
         # self.invariant()
+
+    @rx.var
+    def is_editing(self) -> bool:
+        return any(
+            prompt_response.is_editing for prompt_response in self.prompts_responses
+        )
 
     @rx.var
     def cannot_enter_new_prompt(self) -> bool:
@@ -68,8 +51,11 @@ class State(rx.State):
     def update_new_prompt(self, prompt: str) -> None:
         self.new_prompt = prompt
 
-    def send_edited_prompt(self, index: int) -> AsyncGenerator[None, None]:  # type: ignore
-        self.next_prompt = self.new_prompt
+    def send_edited_prompt(  # type: ignore
+        self, index: int
+    ) -> AsyncGenerator[None, None]:
+        assert self.new_prompt is not None
+        self.next_prompt = str(self.new_prompt)
         self.prompts_responses = self.prompts_responses[:index]
         self.is_editing = False
         self.issue1675()
@@ -82,7 +68,7 @@ class State(rx.State):
         self.issue1675()
 
     def issue1675(self) -> None:
-        for i in range(len(self.prompts_responses)):
+        for i, _ in enumerate(self.prompts_responses):
             self.prompts_responses[i] = self.prompts_responses[i]
 
     def send_new_prompt(self) -> AsyncGenerator[None, None]:  # type: ignore
