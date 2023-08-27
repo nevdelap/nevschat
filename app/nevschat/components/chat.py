@@ -58,7 +58,8 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     _hover={"color": "white", "background_color": "green"},
                     background_color="green",
                     color="white",
-                    is_disabled=State.is_editing,
+                    is_disabled=State.cannot_enter_new_prompt_or_edit,
+                    is_loading=State.is_processing,
                     on_click=lambda: State.edit_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
                 rx.button(
@@ -104,7 +105,7 @@ def chat() -> rx.Component:
         rx.hstack(
             rx.debounce_input(
                 rx.text_area(
-                    is_disabled=State.cannot_enter_new_prompt,
+                    is_disabled=State.cannot_enter_new_prompt_or_edit,
                     on_blur=State.cancel_control,
                     on_change=State.set_new_prompt,  # type: ignore  # pylint: disable=no-value-for-parameter
                     on_key_down=State.handle_key_down,

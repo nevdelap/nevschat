@@ -35,7 +35,7 @@ class State(rx.State):
         return self.edited_prompt is None or len(self.edited_prompt.strip()) == 0
 
     @rx.var
-    def cannot_enter_new_prompt(self) -> bool:
+    def cannot_enter_new_prompt_or_edit(self) -> bool:
         return self.is_editing or self.is_processing
 
     @rx.var
@@ -158,7 +158,7 @@ class State(rx.State):
         )
         assert number_of_prompts_being_edited in [0, 1]
         assert self.is_editing == (number_of_prompts_being_edited == 1)
-        assert not (self.cannot_send_new_prompt and self.cannot_enter_new_prompt)
+        assert not (self.cannot_send_new_prompt and self.cannot_enter_new_prompt_or_edit)
         assert not (
             self.cannot_clear_or_send_edited_prompt
             and self.is_editing
