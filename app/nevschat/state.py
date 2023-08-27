@@ -27,6 +27,18 @@ class State(rx.State):
         self.invariant()
 
     @rx.var
+    def cannot_enter_new_prompt(self) -> bool:
+        return self.is_editing or self.is_processing
+
+    @rx.var
+    def cannot_send_edited_prompt(self) -> bool:
+        return self.edited_prompt is None or len(self.edited_prompt.strip()) == 0
+
+    @rx.var
+    def cannot_send_new_prompt(self) -> bool:
+        return self.is_editing or len(self.new_prompt.strip()) == 0
+
+    @rx.var
     def is_editing(self) -> bool:
         return any(
             prompt_response.is_editing for prompt_response in self.prompts_responses
@@ -37,18 +49,6 @@ class State(rx.State):
             if prompt_response.is_editing:
                 return index
         return None
-
-    @rx.var
-    def cannot_send_edited_prompt(self) -> bool:
-        return self.edited_prompt is None or len(self.edited_prompt.strip()) == 0
-
-    @rx.var
-    def cannot_enter_new_prompt(self) -> bool:
-        return self.is_editing or self.is_processing
-
-    @rx.var
-    def cannot_send_new_prompt(self) -> bool:
-        return self.is_editing or len(self.new_prompt.strip()) == 0
 
     def edit_prompt(self, index: int) -> None:
         self.edited_prompt = self.prompts_responses[index].prompt
