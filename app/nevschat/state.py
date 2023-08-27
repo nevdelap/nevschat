@@ -27,12 +27,16 @@ class State(rx.State):
         self.invariant()
 
     @rx.var
-    def cannot_enter_new_prompt(self) -> bool:
-        return self.is_editing or self.is_processing
+    def cannot_clear_chat(self) -> bool:
+        return len(self.prompts_responses) == 0
 
     @rx.var
-    def cannot_send_edited_prompt(self) -> bool:
+    def cannot_clear_or_send_edited_prompt(self) -> bool:
         return self.edited_prompt is None or len(self.edited_prompt.strip()) == 0
+
+    @rx.var
+    def cannot_enter_new_prompt(self) -> bool:
+        return self.is_editing or self.is_processing
 
     @rx.var
     def cannot_send_new_prompt(self) -> bool:
@@ -153,7 +157,7 @@ class State(rx.State):
         assert self.is_editing == (number_of_prompts_being_edited == 1)
         assert not (self.cannot_send_new_prompt and self.cannot_enter_new_prompt)
         assert not (
-            self.cannot_send_edited_prompt
+            self.cannot_clear_or_send_edited_prompt
             and self.is_editing
             and len(str(self.edited_prompt).strip()) > 0
         )

@@ -23,6 +23,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     rx.icon(tag="close"),
                     _hover={"background_color": "#f8f8f8"},
                     background_color="white",
+                    is_disabled=State.cannot_clear_or_send_edited_prompt,
                     on_click=lambda: State.clear_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
                 rx.button(
@@ -30,7 +31,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     _hover={"color": "white", "background_color": "green"},
                     background_color="green",
                     color="white",
-                    is_disabled = State.cannot_send_edited_prompt,
+                    is_disabled = State.cannot_clear_or_send_edited_prompt,
                     on_click=lambda: State.send_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
                 rx.button(
