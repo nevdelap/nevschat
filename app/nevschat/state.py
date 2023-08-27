@@ -39,11 +39,15 @@ class State(rx.State):
         return None
 
     @rx.var
+    def cannot_send_edited_prompt(self) -> bool:
+        return self.edited_prompt is None or len(self.edited_prompt.strip()) == 0
+
+    @rx.var
     def cannot_enter_new_prompt(self) -> bool:
         return self.is_editing or self.is_processing
 
     @rx.var
-    def cannot_send(self) -> bool:
+    def cannot_send_new_prompt(self) -> bool:
         return self.is_editing or len(self.new_prompt.strip()) == 0
 
     def edit_prompt(self, index: int) -> None:
@@ -54,6 +58,10 @@ class State(rx.State):
 
     def update_edited_prompt(self, prompt: str) -> None:
         self.edited_prompt = prompt
+
+    def clear_edited_prompt(self) -> None:
+        assert self.edited_prompt is not None
+        self.edited_prompt = ""
 
     def send_edited_prompt(  # type: ignore
         self, index: int
@@ -143,4 +151,9 @@ class State(rx.State):
         )
         assert number_of_prompts_being_edited in [0, 1]
         assert self.is_editing == (number_of_prompts_being_edited == 1)
-        assert not (self.cannot_send and self.cannot_enter_new_prompt)
+        assert not (self.cannot_send_new_prompt and self.cannot_enter_new_prompt)
+        assert not (
+            self.cannot_send_edited_prompt
+            and self.is_editing
+            and len(str(self.edited_prompt).strip()) > 0
+        )

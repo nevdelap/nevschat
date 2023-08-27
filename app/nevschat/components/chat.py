@@ -20,10 +20,17 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     value=State.edited_prompt,
                 ),
                 rx.button(
+                    rx.icon(tag="close"),
+                    _hover={"background_color": "#f8f8f8"},
+                    background_color="white",
+                    on_click=lambda: State.clear_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
+                ),
+                rx.button(
                     rx.icon(tag="arrow_right"),
                     _hover={"color": "white", "background_color": "green"},
                     background_color="green",
                     color="white",
+                    is_disabled = State.cannot_send_edited_prompt,
                     on_click=lambda: State.send_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
                 rx.button(
@@ -111,7 +118,7 @@ def chat() -> rx.Component:
                _hover={"color": "white", "background_color": "green"},
                 background_color="green",
                 color="white",
-                is_disabled=State.cannot_send,
+                is_disabled=State.cannot_send_new_prompt,
                 is_loading=State.is_processing,
                 on_click=State.send,
             ),
