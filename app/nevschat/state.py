@@ -67,6 +67,9 @@ class State(rx.State):
         assert self.edited_prompt is not None
         self.edited_prompt = ""
 
+    def clear_new_prompt(self) -> None:
+        self.new_prompt = ""
+
     def send_edited_prompt(  # type: ignore
         self, index: int
     ) -> AsyncGenerator[None, None]:

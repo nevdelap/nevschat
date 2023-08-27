@@ -115,6 +115,13 @@ def chat() -> rx.Component:
                 value=State.new_prompt,
             ),
             rx.button(
+                rx.icon(tag="close"),
+                _hover={"background_color": "#f8f8f8"},
+                background_color="white",
+                is_disabled=State.cannot_send_new_prompt,
+                on_click=lambda: State.clear_new_prompt,  # type: ignore  # pylint: disable=no-value-for-parameter
+            ),
+            rx.button(
                 rx.icon(tag="arrow_right"),
                _hover={"color": "white", "background_color": "green"},
                 background_color="green",
