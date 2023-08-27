@@ -77,7 +77,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     on_click=rx.set_clipboard(prompt_response.response),
                 ),
             ),
-            padding="1em",
+            padding="1em 0em 1em 1em",
             padding_left="1.5em",
         ),
     )
@@ -96,7 +96,7 @@ def chat() -> rx.Component:
         rx.hstack(
             rx.debounce_input(
                 rx.text_area(
-                    is_disabled=State.cannot_enter_edited_prompt,
+                    is_disabled=State.cannot_enter_new_prompt,
                     on_blur=State.cancel_control,
                     on_change=State.set_new_prompt,  # type: ignore  # pylint: disable=no-value-for-parameter
                     on_key_down=State.handle_key_down,

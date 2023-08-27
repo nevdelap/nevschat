@@ -24,7 +24,7 @@ class State(rx.State):
 
     def __init__(self) -> None:
         super().__init__()
-        # self.invariant()
+        self.invariant()
 
     @rx.var
     def is_editing(self) -> bool:
@@ -32,21 +32,18 @@ class State(rx.State):
             prompt_response.is_editing for prompt_response in self.prompts_responses
         )
 
-    def editing_index(self) -> int:
-        assert self.is_editing
+    def editing_index(self) -> int | None:
         for index, prompt_response in enumerate(self.prompts_responses):
             if prompt_response.is_editing:
                 return index
-        raise RuntimeError("If is_editing it should never get here.")
+        return None
 
     @rx.var
-    def cannot_enter_edited_prompt(self) -> bool:
-        # self.invariant()
+    def cannot_enter_new_prompt(self) -> bool:
         return self.is_editing or self.is_processing
 
     @rx.var
     def cannot_send(self) -> bool:
-        # self.invariant()
         return self.is_editing or len(self.new_prompt.strip()) == 0
 
     def edit_prompt(self, index: int) -> None:
@@ -83,7 +80,12 @@ class State(rx.State):
             self.control_down = True
         if key == "Enter" and self.control_down:
             if self.is_editing:
-                yield from self.send_edited_prompt(self.editing_index())  # type: ignore
+                index = self.editing_index()
+                if index is None:
+                    raise RuntimeError(
+                        "If is_editing, the editing_index cannot be None."
+                    )
+                yield from self.send_edited_prompt(index)  # type: ignore
             else:
                 yield from self.send()  # type: ignore
 
@@ -133,17 +135,12 @@ class State(rx.State):
         self.prompts_responses = []
         # self.invariant()
 
-    # def invariant(self):
-    #     number_of_prompts_being_edited = sum(
-    #         int(prompt_response.is_editing)
-    #         for prompt_response
-    #         in self.prompts_responses
-    #     )
-    #     all_good = (
-    #         number_of_prompts_being_edited in [0, 1]
-    #         and (not self.cannot_send and self.cannot_enter_edited_prompt)
-    #     )
-    #     if not all_good:
-    #         print("poop")
-    #     return True
-    #     # assert all_good
+    def invariant(self) -> None:
+        number_of_prompts_being_edited = sum(
+            int(prompt_response.is_editing)
+            for prompt_response
+            in self.prompts_responses
+        )
+        assert number_of_prompts_being_edited in [0, 1]
+        assert self.is_editing == (number_of_prompts_being_edited == 1)
+        assert not (self.cannot_send and self.cannot_enter_new_prompt)
