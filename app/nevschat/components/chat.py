@@ -10,13 +10,14 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
             rx.hstack(
                 rx.debounce_input(
                     rx.text_area(
-                        on_change=lambda value: State.update_new_prompt(value),
-                        on_key_down=State.handle_key_down,  # type: ignore
+                        on_blur=State.cancel_control,
+                        on_change=State.update_edited_prompt,  # type: ignore  # pylint: disable=no-value-for-parameter
+                        on_key_down=State.handle_key_down,
                         on_key_up=State.handle_key_up,
                         width="100%",
                     ),
                     debounce_timeout=250,
-                    value=State.new_prompt,
+                    value=State.edited_prompt,
                 ),
                 rx.button(
                     rx.icon(tag="arrow_right"),
@@ -75,14 +76,15 @@ def chat() -> rx.Component:
         rx.hstack(
             rx.debounce_input(
                 rx.text_area(
-                    is_disabled=State.cannot_enter_new_prompt,
-                    on_change=State.set_next_prompt,
-                    on_key_down=State.handle_key_down,  # type: ignore
+                    is_disabled=State.cannot_enter_edited_prompt,
+                    on_blur=State.cancel_control,
+                    on_change=State.set_new_prompt,  # type: ignore  # pylint: disable=no-value-for-parameter
+                    on_key_down=State.handle_key_down,
                     on_key_up=State.handle_key_up,
                     placeholder = "Ask something.",
                 ),
                 debounce_timeout=250,
-                value=State.next_prompt,
+                value=State.new_prompt,
             ),
             rx.button(
                 rx.icon(tag="arrow_right"),

@@ -17,8 +17,8 @@ class PromptResponse(rx.Base):
 class State(rx.State):
 
     prompts_responses: list[PromptResponse] = []
-    next_prompt: str = ""
-    new_prompt: str | None = None
+    new_prompt: str = ""
+    edited_prompt: str | None = None
     is_processing: bool = False
     control_down: bool = False
 
@@ -37,39 +37,39 @@ class State(rx.State):
         for index, prompt_response in enumerate(self.prompts_responses):
             if prompt_response.is_editing:
                 return index
-        return None
+        raise RuntimeError("If is_editing it should never get here.")
 
     @rx.var
-    def cannot_enter_new_prompt(self) -> bool:
+    def cannot_enter_edited_prompt(self) -> bool:
         # self.invariant()
         return self.is_editing or self.is_processing
 
     @rx.var
     def cannot_send(self) -> bool:
         # self.invariant()
-        return self.is_editing or len(self.next_prompt.strip()) == 0
+        return self.is_editing or len(self.new_prompt.strip()) == 0
 
     def edit_prompt(self, index: int) -> None:
-        self.new_prompt = self.prompts_responses[index].prompt
+        self.edited_prompt = self.prompts_responses[index].prompt
         self.prompts_responses[index].is_editing = True
         self.is_editing = True
         self.issue1675()
 
-    def update_new_prompt(self, prompt: str) -> None:
-        self.new_prompt = prompt
+    def update_edited_prompt(self, prompt: str) -> None:
+        self.edited_prompt = prompt
 
     def send_edited_prompt(  # type: ignore
         self, index: int
     ) -> AsyncGenerator[None, None]:
-        assert self.new_prompt is not None
-        self.next_prompt = str(self.new_prompt)
+        assert self.edited_prompt is not None
+        self.new_prompt = str(self.edited_prompt)
         self.prompts_responses = self.prompts_responses[:index]
         self.is_editing = False
         self.issue1675()
         yield from self.send()  # type: ignore
 
     def cancel_edit_prompt(self, index: int) -> None:
-        self.new_prompt = None
+        self.edited_prompt = None
         self.prompts_responses[index].is_editing = False
         self.is_editing = False
         self.issue1675()
@@ -78,15 +78,12 @@ class State(rx.State):
         for i, _ in enumerate(self.prompts_responses):
             self.prompts_responses[i] = self.prompts_responses[i]
 
-    def send_new_prompt(self) -> AsyncGenerator[None, None]:  # type: ignore
-        yield from self.send()  # type: ignore
-
     def handle_key_down(self, key) -> AsyncGenerator[None, None]:  # type: ignore
         if key == "Control":
             self.control_down = True
         if key == "Enter" and self.control_down:
             if self.is_editing:
-                yield from self.send_edited_prompt(self.editing_index())
+                yield from self.send_edited_prompt(self.editing_index())  # type: ignore
             else:
                 yield from self.send()  # type: ignore
 
@@ -94,10 +91,13 @@ class State(rx.State):
         if key == "Control":
             self.control_down = False
 
-    def send(self) -> AsyncGenerator[None, None]:  # type: ignore
-        assert self.next_prompt != ""
-
+    def cancel_control(self) -> None:
         self.control_down = False
+
+    def send(self) -> AsyncGenerator[None, None]:  # type: ignore
+        assert self.new_prompt != ""
+
+        self.cancel_control()
         self.is_processing = True
         yield
 
@@ -105,7 +105,7 @@ class State(rx.State):
         for prompt_response in self.prompts_responses:
             messages.append({"role": "user", "content": prompt_response.prompt})
             messages.append({"role": "assistant", "content": prompt_response.response})
-        messages.append({"role": "user", "content": self.next_prompt})
+        messages.append({"role": "user", "content": self.new_prompt})
 
         session = openai.ChatCompletion.create(
             model=os.getenv("OPENAI_MODEL","gpt-3.5-turbo"),
@@ -115,7 +115,7 @@ class State(rx.State):
             stream=True,  # Enable streaming
         )
         prompt_response = PromptResponse(
-            prompt=self.next_prompt, response="", is_editing=False
+            prompt=self.new_prompt, response="", is_editing=False
         )
         self.prompts_responses.append(prompt_response)
 
@@ -126,7 +126,7 @@ class State(rx.State):
                 self.prompts_responses = self.prompts_responses
                 yield
 
-        self.next_prompt = ""
+        self.new_prompt = ""
         self.is_processing = False
 
     def clear_chat(self) -> None:
@@ -141,7 +141,7 @@ class State(rx.State):
     #     )
     #     all_good = (
     #         number_of_prompts_being_edited in [0, 1]
-    #         and (not self.cannot_send and self.cannot_enter_new_prompt)
+    #         and (not self.cannot_send and self.cannot_enter_edited_prompt)
     #     )
     #     if not all_good:
     #         print("poop")
