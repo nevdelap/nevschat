@@ -9,12 +9,14 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
             prompt_response.is_editing,
             rx.hstack(
                 rx.debounce_input(
-                    rx.input(
+                    rx.text_area(
                         on_change=lambda value: State.update_new_prompt(value),
+                        on_key_down=State.handle_key_down,  # type: ignore
+                        on_key_up=State.handle_key_up,
                         width="100%",
                     ),
                     debounce_timeout=250,
-                    value=prompt_response.prompt,
+                    value=State.new_prompt,
                 ),
                 rx.button(
                     rx.icon(tag="arrow_right"),

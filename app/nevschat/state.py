@@ -32,6 +32,13 @@ class State(rx.State):
             prompt_response.is_editing for prompt_response in self.prompts_responses
         )
 
+    def editing_index(self) -> int:
+        assert self.is_editing
+        for index, prompt_response in enumerate(self.prompts_responses):
+            if prompt_response.is_editing:
+                return index
+        return None
+
     @rx.var
     def cannot_enter_new_prompt(self) -> bool:
         # self.invariant()
@@ -78,7 +85,10 @@ class State(rx.State):
         if key == "Control":
             self.control_down = True
         if key == "Enter" and self.control_down:
-            yield from self.send()  # type: ignore
+            if self.is_editing:
+                yield from self.send_edited_prompt(self.editing_index())
+            else:
+                yield from self.send()  # type: ignore
 
     def handle_key_up(self, key) -> AsyncGenerator[None, None]:  # type: ignore
         if key == "Control":
@@ -87,6 +97,7 @@ class State(rx.State):
     def send(self) -> AsyncGenerator[None, None]:  # type: ignore
         assert self.next_prompt != ""
 
+        self.control_down = False
         self.is_processing = True
         yield
 
