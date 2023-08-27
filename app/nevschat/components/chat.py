@@ -21,13 +21,15 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                 ),
                 rx.button(
                     rx.icon(tag="arrow_right"),
-                    bg="green",
+                    _hover={"color": "white", "background_color": "green"},
+                    background_color="green",
                     color="white",
                     on_click=lambda: State.send_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
                 rx.button(
                     rx.icon(tag="close"),
-                    bg="red",
+                    _hover={"color": "white", "background_color": "darkred"},
+                    background_color="darkred",
                     color="white",
                     on_click=lambda: State.cancel_edit_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
@@ -38,14 +40,15 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     rx.markdown(
                         prompt_response.prompt,
                     ),
-                    background_color="#fafafa",
+                    background_color="#f8f8f8",
                     border_radius="10px",
                     padding="0.5em 1em 0.5em 1em",
                     width="100%",
                 ),
                 rx.button(
                     rx.icon(tag="edit"),
-                    bg="green",
+                    _hover={"color": "white", "background_color": "green"},
+                    background_color="green",
                     color="white",
                     is_disabled=State.is_editing,
                     on_click=lambda: State.edit_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
@@ -54,8 +57,17 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
             ),
         ),
         rx.box(
-            rx.markdown(
-                prompt_response.response,
+            rx.hstack(
+                rx.markdown(
+                    prompt_response.response,
+                    width="100%",
+                ),
+                rx.button(
+                    rx.icon(tag="copy"),
+                    _hover={"background_color": "#f8f8f8"},
+                    background_color="white",
+                    on_click=rx.set_clipboard(prompt_response.response),
+                ),
             ),
             padding="1em",
             padding_left="1.5em",
@@ -88,7 +100,8 @@ def chat() -> rx.Component:
             ),
             rx.button(
                 rx.icon(tag="arrow_right"),
-                bg="green",
+               _hover={"color": "white", "background_color": "green"},
+                background_color="green",
                 color="white",
                 is_disabled=State.cannot_send,
                 is_loading=State.is_processing,

@@ -13,9 +13,14 @@ def index() -> rx.Component:
             width="100%",
         ),
         chat(),
-        rx.button(
-            rx.icon(tag="close"),
-            on_click=State.clear_chat,
+        rx.tooltip(
+            rx.button(
+                rx.icon(tag="close"),
+                _hover={"background_color": "#f8f8f8"},
+                background_color="white",
+                on_click=State.clear_chat,
+            ),
+            label="Clear",
         ),
         padding="1em",
         width="100%",
