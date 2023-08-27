@@ -53,13 +53,21 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     is_disabled=State.is_editing,
                     on_click=lambda: State.edit_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
+                rx.button(
+                    rx.icon(tag="copy"),
+                    _hover={"background_color": "#f8f8f8"},
+                    background_color="white",
+                    on_click=rx.set_clipboard(prompt_response.prompt),
+                ),
                 width="100%",
             ),
         ),
         rx.box(
             rx.hstack(
-                rx.markdown(
-                    prompt_response.response,
+                rx.box(
+                    rx.markdown(
+                        prompt_response.response,
+                    ),
                     width="100%",
                 ),
                 rx.button(
