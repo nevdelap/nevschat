@@ -125,7 +125,7 @@ class State(rx.State):
         messages.append({"role": "user", "content": self.new_prompt})
 
         session = openai.ChatCompletion.create(
-            model=os.getenv("OPENAI_MODEL","gpt-3.5-turbo"),
+            model=os.getenv("OPENAI_MODEL","gpt-4"),
             messages=messages,
             stop=None,
             temperature=0.7,
