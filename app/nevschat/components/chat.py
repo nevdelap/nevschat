@@ -108,19 +108,19 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
 def chat() -> rx.Component:
     """List all the messages in a single conversation."""
     return rx.vstack(
-        rx.box(
-            rx.foreach(
-                State.prompts_responses,
-                prompt_response_box,
-            ),
-            width="100%",
-        ),
         rx.checkbox(
             "GPT 4",
             color="#aaa",
             font_size="0.75em",
             on_change=State.set_gpt_4,  # type: ignore
             value=State.gpt_4,
+            width="100%",
+        ),
+        rx.box(
+            rx.foreach(
+                State.prompts_responses,
+                prompt_response_box,
+            ),
             width="100%",
         ),
         rx.hstack(
