@@ -26,8 +26,8 @@ COPY app/ .
 COPY reflex/ reflex/
 RUN pip install ./reflex
 ENV BUN_INSTALL="/app/.bun"
-RUN reflex init
 ENV OPENAI_API_KEY="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"
+RUN reflex init
 ENTRYPOINT ["reflex", "run"]
 CMD ["--env", "prod"]
 EXPOSE 3000

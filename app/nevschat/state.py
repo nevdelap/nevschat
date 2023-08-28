@@ -12,6 +12,7 @@ class PromptResponse(rx.Base):
     prompt: str
     response: str
     is_editing: bool
+    model: str
 
 
 class State(rx.State):
@@ -21,6 +22,7 @@ class State(rx.State):
     edited_prompt: str | None = None
     is_processing: bool = False
     control_down: bool = False
+    gpt_4: bool = False
 
     def __init__(self) -> None:
         super().__init__()
@@ -118,6 +120,7 @@ class State(rx.State):
         self.is_processing = True
         yield
 
+        model = "gpt-4" if self.gpt_4 else "gpt-3.5-turbo"
         messages = []
         for prompt_response in self.prompts_responses:
             messages.append({"role": "user", "content": prompt_response.prompt})
@@ -125,14 +128,14 @@ class State(rx.State):
         messages.append({"role": "user", "content": self.new_prompt})
 
         session = openai.ChatCompletion.create(
-            model=os.getenv("OPENAI_MODEL","gpt-4"),
+            model=os.getenv("OPENAI_MODEL", model),
             messages=messages,
             stop=None,
             temperature=0.7,
             stream=True,  # Enable streaming
         )
         prompt_response = PromptResponse(
-            prompt=self.new_prompt, response="", is_editing=False
+            prompt=self.new_prompt, response="", is_editing=False, model=model
         )
         self.prompts_responses.append(prompt_response)
 
@@ -158,7 +161,10 @@ class State(rx.State):
         )
         assert number_of_prompts_being_edited in [0, 1]
         assert self.is_editing == (number_of_prompts_being_edited == 1)
-        assert not (self.cannot_send_new_prompt and self.cannot_enter_new_prompt_or_edit)
+        assert not (
+            self.cannot_send_new_prompt
+            and self.cannot_enter_new_prompt_or_edit
+        )
         assert not (
             self.cannot_clear_or_send_edited_prompt
             and self.is_editing

@@ -71,23 +71,36 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                 width="100%",
             ),
         ),
-        rx.box(
-            rx.hstack(
-                rx.box(
-                    rx.markdown(
-                        prompt_response.response,
+        rx.vstack(
+            rx.box(
+                rx.hstack(
+                    rx.box(
+                        rx.markdown(
+                            prompt_response.response,
+                        ),
+                        width="100%",
+                    ),
+                    rx.button(
+                        rx.icon(tag="copy"),
+                        _hover={"background_color": "#f8f8f8"},
+                        background_color="white",
+                        on_click=rx.set_clipboard(prompt_response.response),
                     ),
                     width="100%",
                 ),
-                rx.button(
-                    rx.icon(tag="copy"),
-                    _hover={"background_color": "#f8f8f8"},
-                    background_color="white",
-                    on_click=rx.set_clipboard(prompt_response.response),
+                padding="0.5em 0em 0em 1.5em",
+                width="100%",
+            ),
+            rx.center(
+                rx.text(
+                    prompt_response.model,
+                    color="#aaa",
+                    font_size="0.75em",
+                    padding="0",
+                    width="100%",
                 ),
             ),
-            padding="1em 0em 1em 1em",
-            padding_left="1.5em",
+            width="100%",
         ),
     )
 
@@ -100,6 +113,14 @@ def chat() -> rx.Component:
                 State.prompts_responses,
                 prompt_response_box,
             ),
+            width="100%",
+        ),
+        rx.checkbox(
+            "GPT 4",
+            color="#aaa",
+            font_size="0.75em",
+            on_change=State.set_gpt_4,  # type: ignore
+            value=State.gpt_4,
             width="100%",
         ),
         rx.hstack(
