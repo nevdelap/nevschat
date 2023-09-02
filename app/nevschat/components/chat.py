@@ -99,6 +99,8 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     padding="0",
                     width="100%",
                 ),
+                margin="0 !important",
+                padding="0 0 0.5em 0",
             ),
             width="100%",
         ),

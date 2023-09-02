@@ -17,7 +17,14 @@ class PromptResponse(rx.Base):
 
 class State(rx.State):
 
-    prompts_responses: list[PromptResponse] = []
+    prompts_responses: list[PromptResponse] = [
+        # PromptResponse(
+        #     prompt="Canned",
+        #     response="Canned",
+        #     is_editing=False,
+        #     model="gpt-doop",
+        # ),
+    ]
     new_prompt: str = ""
     edited_prompt: str | None = None
     is_processing: bool = False
