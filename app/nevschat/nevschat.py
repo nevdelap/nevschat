@@ -26,5 +26,8 @@ def index() -> rx.Component:
 
 
 app = rx.App(state=State)
-app.add_page(index)
+app.add_page(
+    index,
+    title="Nev's ChatGPT",
+)
 app.compile()
