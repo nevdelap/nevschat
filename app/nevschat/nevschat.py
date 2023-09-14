@@ -9,7 +9,7 @@ from nevschat.state import State
 def index() -> rx.Component:
     return rx.vstack(
         rx.heading(
-            "Nev's ChatGPT",
+            "Nev's Awesome ChatGPT",
             text_align="left",
             size="lg",
             width="100%",

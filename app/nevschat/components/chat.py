@@ -115,7 +115,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
 def chat() -> rx.Component:
     """List all the messages in a single conversation."""
     return rx.vstack(
-        rx.hstack(
+        rx.wrap(
             rx.checkbox(
                 "GPT4",
                 color="#333",
@@ -128,25 +128,27 @@ def chat() -> rx.Component:
                 on_change=State.set_terse,  # type: ignore
                 value=State.terse,
             ),
-            rx.radio_group(
-                rx.hstack(
-                    rx.foreach(
-                        ["Normal", "Translate", "Other:"],
-                        rx.radio,
+            rx.hstack(
+                rx.radio_group(
+                    rx.hstack(
+                        rx.foreach(
+                            ["Normal", "Translate", "Other:"],
+                            rx.radio,
+                        ),
+                        spacing="0.5em",
                     ),
-                    spacing="0.5em",
+                    color="#333",
+                    default_value="Normal",
+                    default_checked=True,
+                    on_change=State.set_mode,
                 ),
-                color="#333",
-                default_value="Normal",
-                default_checked=True,
-                on_change=State.set_mode,
-            ),
-            rx.select(
-                sorted(OTHER.keys()),
-                default_value=DEFAULT_OTHER,
-                is_disabled=State.is_not_other,
-                on_change=State.set_other,
-                variant="unstyled",
+                rx.select(
+                    sorted(OTHER.keys()),
+                    default_value=DEFAULT_OTHER,
+                    is_disabled=State.is_not_other,
+                    on_change=State.set_other,
+                    variant="unstyled",
+                ),
             ),
         ),
         rx.box(
