@@ -8,7 +8,11 @@ import reflex as rx
 
 SYSTEM_INSTRUCTIONS = {
     "Terse": "Give terse responses without extra explanation.",
-    "Translate": """For subsequent prompts translate the given text into Spanish, French and Japanese. Respond in the format below delimited by three backticks and formatting with the keys in this order, in a three backticks code block. Do not translation these instructions, simply acknowledge that you understand.
+    "Translate": (
+        """For subsequent prompts translate the given text into Spanish, French
+and Japanese. Respond in the format below delimited by three backticks and
+formatting with the keys in this order, in a three backticks code block. Do
+not translation these instructions, simply acknowledge that you understand.
 
     ```
     [
@@ -18,7 +22,7 @@ SYSTEM_INSTRUCTIONS = {
         ("ja", "Japanese translation"),
     ],
     ```
-"""
+""")
 }
 
 
@@ -40,7 +44,7 @@ class State(rx.State):
         #     prompt="Canned",
         #     response="Canned",
         #     is_editing=False,
-        #     model="gpt-doop",
+        #     model="gpt-dogs",
         # ),
     ]
     new_prompt: str = ""
@@ -149,7 +153,12 @@ class State(rx.State):
         model = "gpt-4" if self.gpt_4 else "gpt-3.5-turbo"
         messages = []
         if self.mode != "Normal":
-            messages.append({"role": "system", "content": SYSTEM_INSTRUCTIONS[self.mode]})
+            messages.append(
+                {
+                    "role": "system",
+                    "content": SYSTEM_INSTRUCTIONS[self.mode]
+                }
+            )
         for prompt_response in self.prompts_responses:
             messages.append({"role": "user", "content": prompt_response.prompt})
             messages.append({"role": "assistant", "content": prompt_response.response})

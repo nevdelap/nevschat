@@ -124,7 +124,7 @@ def chat() -> rx.Component:
                 rx.hstack(
                     rx.foreach(
                         ["Normal", "Terse", "Translate"],
-                        lambda option: rx.radio(option),
+                        rx.radio,
                     ),
                     spacing="0.5em",
                 ),
