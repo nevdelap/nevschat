@@ -1,3 +1,5 @@
+# mypy: disable-error-code="attr-defined,name-defined"
+
 import reflex as rx
 
 from nevschat.state import PromptResponse, State

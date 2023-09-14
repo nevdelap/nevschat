@@ -1,3 +1,5 @@
+# mypy: disable-error-code="attr-defined,name-defined"
+
 import os
 from collections.abc import AsyncGenerator
 
