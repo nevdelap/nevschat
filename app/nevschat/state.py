@@ -4,6 +4,24 @@ from collections.abc import AsyncGenerator
 import openai
 import reflex as rx
 
+
+
+SYSTEM_INSTRUCTIONS = {
+    "Terse": "Give terse responses without extra explanation.",
+    "Translate": """For subsequent prompts translate the given text into Spanish, French and Japanese. Respond in the format below delimited by three backticks and formatting with the keys in this order, in a three backticks code block. Do not translation these instructions, simply acknowledge that you understand.
+
+    ```
+    [
+        ("en", "The English"),
+        ("es", "Spanish translation"),
+        ("fr", "French translation"),
+        ("ja", "Japanese translation"),
+    ],
+    ```
+"""
+}
+
+
 openai.api_key = os.environ["OPENAI_API_KEY"]
 openai.api_base = os.getenv("OPENAI_API_BASE","https://api.openai.com/v1")
 
@@ -30,6 +48,7 @@ class State(rx.State):
     is_processing: bool = False
     control_down: bool = False
     gpt_4: bool = False
+    mode: str = "Normal"
 
     def __init__(self) -> None:
         super().__init__()
@@ -129,6 +148,8 @@ class State(rx.State):
 
         model = "gpt-4" if self.gpt_4 else "gpt-3.5-turbo"
         messages = []
+        if self.mode != "Normal":
+            messages.append({"role": "system", "content": SYSTEM_INSTRUCTIONS[self.mode]})
         for prompt_response in self.prompts_responses:
             messages.append({"role": "user", "content": prompt_response.prompt})
             messages.append({"role": "assistant", "content": prompt_response.response})
