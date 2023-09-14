@@ -114,9 +114,8 @@ def chat() -> rx.Component:
     return rx.vstack(
         rx.hstack(
             rx.checkbox(
-                "GPT 4",
+                "GPT4",
                 color="#333",
-                font_size="0.75em",
                 on_change=State.set_gpt_4,  # type: ignore
                 value=State.gpt_4,
                 width="100%",
