@@ -2,7 +2,10 @@
 
 import reflex as rx
 
-from nevschat.state import PromptResponse, State
+from nevschat.state import DEFAULT_OTHER
+from nevschat.state import OTHER
+from nevschat.state import PromptResponse
+from nevschat.state import State
 
 
 def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Component:
@@ -118,13 +121,17 @@ def chat() -> rx.Component:
                 color="#333",
                 on_change=State.set_gpt_4,  # type: ignore
                 value=State.gpt_4,
-                width="100%",
             ),
-            rx.spacer(),
+            rx.checkbox(
+                "Terse",
+                color="#333",
+                on_change=State.set_terse,  # type: ignore
+                value=State.terse,
+            ),
             rx.radio_group(
                 rx.hstack(
                     rx.foreach(
-                        ["Normal", "Terse", "Translate"],
+                        ["Normal", "Translate", "Other:"],
                         rx.radio,
                     ),
                     spacing="0.5em",
@@ -133,6 +140,13 @@ def chat() -> rx.Component:
                 default_value="Normal",
                 default_checked=True,
                 on_change=State.set_mode,
+            ),
+            rx.select(
+                sorted(OTHER.keys()),
+                default_value=DEFAULT_OTHER,
+                is_disabled=State.is_not_other,
+                on_change=State.set_other,
+                variant="unstyled",
             ),
         ),
         rx.box(

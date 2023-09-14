@@ -6,12 +6,22 @@ from collections.abc import AsyncGenerator
 import openai
 import reflex as rx
 
-
+OTHER = {
+    "Bash": "Bash shell scripting",
+    "CSS": "Cascading Style Sheets",
+    "Git": "the Git version control tool",
+    "Linux": "Linux",
+    "Python": "the Python programming language",
+    "Snowflake": "Snowflake data warehousing",
+    "SQL": "SQL queries",
+}
+DEFAULT_OTHER = "Python"
 
 SYSTEM_INSTRUCTIONS = {
-    "Terse": "Give terse responses without extra explanation.",
+    "Other:": """The question is in the context of {other}. Any code
+examples must be in delimited by triple backticks.""",
     "Translate": (
-        """For subsequent prompts translate the given text into Spanish, French
+        """Translate the given text into Spanish, French
 and Japanese. Respond in the format below delimited by three backticks and
 formatting with the keys in this order, in a three backticks code block. Do
 not translation these instructions, simply acknowledge that you understand.
@@ -54,11 +64,17 @@ class State(rx.State):
     is_processing: bool = False
     control_down: bool = False
     gpt_4: bool = False
+    terse: bool = False
     mode: str = "Normal"
+    other: str = DEFAULT_OTHER
 
     def __init__(self) -> None:
         super().__init__()
         self.invariant()
+
+    @rx.var
+    def is_not_other(self) -> bool:
+        return self.mode != "Other:"
 
     @rx.var
     def cannot_clear_chat(self) -> bool:
@@ -154,13 +170,24 @@ class State(rx.State):
 
         model = "gpt-4" if self.gpt_4 else "gpt-3.5-turbo"
         messages = []
-        if self.mode != "Normal":
+        if self.terse:
             messages.append(
                 {
                     "role": "system",
-                    "content": SYSTEM_INSTRUCTIONS[self.mode]
+                    "content": "Give terse responses without extra explanation."
                 }
             )
+        if self.mode != "Normal":
+            system_instruction = SYSTEM_INSTRUCTIONS[self.mode]
+            if self.mode == "Other:":
+                system_instruction = system_instruction.format(other=OTHER[self.other])
+            messages.append(
+                {
+                    "role": "system",
+                    "content": system_instruction
+                }
+            )
+        print(messages)
         for prompt_response in self.prompts_responses:
             messages.append({"role": "user", "content": prompt_response.prompt})
             messages.append({"role": "assistant", "content": prompt_response.response})
