@@ -11,8 +11,8 @@ import reflex as rx
 SYSTEM_INSTRUCTIONS = OrderedDict()
 SYSTEM_INSTRUCTIONS["Bash"] = ("The question is in the context of Bash shell scripting.", True)
 SYSTEM_INSTRUCTIONS["CSS"] = ("The question is in the context of Cascading Style Sheets.", True)
-SYSTEM_INSTRUCTIONS["Explain Grammar"] = ("Explain in English the grammar of the given text.", False)
-SYSTEM_INSTRUCTIONS["Explain Usage"] = ("Explain in English the usage of the given text.", False)
+SYSTEM_INSTRUCTIONS["Explain Grammar"] = ("Don't translate, rather explain in English the grammar of the given text.", False)
+SYSTEM_INSTRUCTIONS["Explain Usage"] = ("Don't translate, rather explain in English the usage of the given text.", False)
 SYSTEM_INSTRUCTIONS["Git"] = ("The question is in the context of the Git version control tool.", True)
 SYSTEM_INSTRUCTIONS["Linux"] = ("The question is in the context of Linux.", True)
 SYSTEM_INSTRUCTIONS["Python"] = ("The question is in the context of the Python programming language.", True)
@@ -177,7 +177,9 @@ class State(rx.State):
                 }
             )
         if self.mode != "Normal":
-            system_instruction, code_related = SYSTEM_INSTRUCTIONS[self.system_instruction]
+            system_instruction, code_related = (
+                SYSTEM_INSTRUCTIONS[self.system_instruction]
+            )
             messages.append(
                 {
                     "role": "system",

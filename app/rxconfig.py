@@ -20,7 +20,5 @@ config = rx.Config(
     frontend_packages=[
         "react-loading-icons",
     ],
-    frontend_path=(
-        "/chat" if socket.gethostname() in PROD_HOSTNAMES else ""
-    ),
+    frontend_path=("/chat" if socket.gethostname() in PROD_HOSTNAMES else ""),
 )
