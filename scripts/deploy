@@ -7,7 +7,7 @@ readonly ESC=$'\033'"["
 readonly BOLD="${ESC}1m"
 readonly RESET="${ESC}0m"
 
-git fetch
+git fetch --force --tags
 git checkout latest
 git submodule update
 
