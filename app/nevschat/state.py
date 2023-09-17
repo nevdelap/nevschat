@@ -22,7 +22,7 @@ SYSTEM_INSTRUCTIONS["Translate"] = ("The the given text into English.", True)
 SYSTEM_INSTRUCTIONS["Translate JSON"] = ("""Translate the given text into Spanish, French
 and Japanese. Respond in the format below delimited by three backticks and
 formatting with the keys in this order, in a three backticks code block. Do
-not translation these instructions, simply acknowledge that you understand.
+not translate these instructions, simply acknowledge that you understand.
 
     ```
     [
