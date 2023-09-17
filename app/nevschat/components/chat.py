@@ -2,8 +2,8 @@
 
 import reflex as rx
 
-from nevschat.state import DEFAULT_OTHER
-from nevschat.state import OTHER
+from nevschat.state import DEFAULT_SYSTEM_INSTRUCTION
+from nevschat.state import SYSTEM_INSTRUCTIONS
 from nevschat.state import PromptResponse
 from nevschat.state import State
 
@@ -132,7 +132,7 @@ def chat() -> rx.Component:
                 rx.radio_group(
                     rx.hstack(
                         rx.foreach(
-                            ["Normal", "Translate", "Other:"],
+                            ["Normal", "Instruction:"],
                             rx.radio,
                         ),
                         spacing="0.5em",
@@ -143,10 +143,10 @@ def chat() -> rx.Component:
                     on_change=State.set_mode,
                 ),
                 rx.select(
-                    sorted(OTHER.keys()),
-                    default_value=DEFAULT_OTHER,
-                    is_disabled=State.is_not_other,
-                    on_change=State.set_other,
+                    list(SYSTEM_INSTRUCTIONS.keys()),
+                    default_value=DEFAULT_SYSTEM_INSTRUCTION,
+                    is_disabled=State.is_not_system_instruction,
+                    on_change=State.set_system_instruction,
                     variant="unstyled",
                 ),
             ),

@@ -1,27 +1,24 @@
 # mypy: disable-error-code="attr-defined,name-defined"
 
 import os
+from collections import OrderedDict
 from collections.abc import AsyncGenerator
 
 import openai
 import reflex as rx
 
-OTHER = {
-    "Bash": "Bash shell scripting",
-    "CSS": "Cascading Style Sheets",
-    "Git": "the Git version control tool",
-    "Linux": "Linux",
-    "Python": "the Python programming language",
-    "Snowflake": "Snowflake data warehousing",
-    "SQL": "SQL queries",
-}
-DEFAULT_OTHER = "Python"
-
-SYSTEM_INSTRUCTIONS = {
-    "Other:": """The question is in the context of {other}. Any code
-examples must be in delimited by triple backticks.""",
-    "Translate": (
-        """Translate the given text into Spanish, French
+# pylint: disable=line-too-long
+SYSTEM_INSTRUCTIONS = OrderedDict()
+SYSTEM_INSTRUCTIONS["Bash"] = ("The question is in the context of Bash shell scripting.", True)
+SYSTEM_INSTRUCTIONS["CSS"] = ("The question is in the context of Cascading Style Sheets.", True)
+SYSTEM_INSTRUCTIONS["Explain Grammar"] = ("Explain in English the grammar of the given text.", False)
+SYSTEM_INSTRUCTIONS["Explain Usage"] = ("Explain in English the usage of the given text.", False)
+SYSTEM_INSTRUCTIONS["Git"] = ("The question is in the context of the Git version control tool.", True)
+SYSTEM_INSTRUCTIONS["Linux"] = ("The question is in the context of Linux.", True)
+SYSTEM_INSTRUCTIONS["Python"] = ("The question is in the context of the Python programming language.", True)
+SYSTEM_INSTRUCTIONS["Snowflake"] = ("The question is in the context of Snowflake data warehousing.", True)
+SYSTEM_INSTRUCTIONS["SQL"] = ("The question is in the context of SQL queries.", True)
+SYSTEM_INSTRUCTIONS["Translate"] = ("""Translate the given text into Spanish, French
 and Japanese. Respond in the format below delimited by three backticks and
 formatting with the keys in this order, in a three backticks code block. Do
 not translation these instructions, simply acknowledge that you understand.
@@ -34,8 +31,10 @@ not translation these instructions, simply acknowledge that you understand.
         ("ja", "Japanese translation"),
     ],
     ```
-""")
-}
+""", False)
+# pylint: enable=line-too-long
+
+DEFAULT_SYSTEM_INSTRUCTION = "Python"
 
 
 openai.api_key = os.environ["OPENAI_API_KEY"]
@@ -66,15 +65,15 @@ class State(rx.State):
     gpt_4: bool = False
     terse: bool = False
     mode: str = "Normal"
-    other: str = DEFAULT_OTHER
+    system_instruction: str = DEFAULT_SYSTEM_INSTRUCTION
 
     def __init__(self) -> None:
         super().__init__()
         self.invariant()
 
     @rx.var
-    def is_not_other(self) -> bool:
-        return self.mode != "Other:"
+    def is_not_system_instruction(self) -> bool:
+        return self.mode != "Instruction:"
 
     @rx.var
     def cannot_clear_chat(self) -> bool:
@@ -178,15 +177,23 @@ class State(rx.State):
                 }
             )
         if self.mode != "Normal":
-            system_instruction = SYSTEM_INSTRUCTIONS[self.mode]
-            if self.mode == "Other:":
-                system_instruction = system_instruction.format(other=OTHER[self.other])
+            system_instruction, code_related = SYSTEM_INSTRUCTIONS[self.system_instruction]
             messages.append(
                 {
                     "role": "system",
                     "content": system_instruction
                 }
             )
+            if code_related:
+                messages.append(
+                    {
+                        "role": "system",
+                        "content": (
+                            "All responses with code examples must "
+                            + "wrap them in triple backticks."
+                        )
+                    }
+                )
         print(messages)
         for prompt_response in self.prompts_responses:
             messages.append({"role": "user", "content": prompt_response.prompt})
