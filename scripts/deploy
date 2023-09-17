@@ -8,7 +8,7 @@ readonly BOLD="${ESC}1m"
 readonly RESET="${ESC}0m"
 
 git fetch
-git checkout origin/master
+git checkout latest
 git submodule update
 
 scripts/build
