@@ -24,6 +24,9 @@ reflex init && reflex run # Test at http://localhost:3000/
 ```bash
 git add .
 git commit -m 'whatever'
+git push origin HEAD:master
+git tag -f latest
+git push -f origin latest
 ssh_droplet
 droplet> cd nevschat
 droplet> scripts/deploy && sleep 30 && scripts/logs
