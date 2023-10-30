@@ -18,7 +18,7 @@ SYSTEM_INSTRUCTIONS["Linux"] = ("The question is in the context of Linux.", True
 SYSTEM_INSTRUCTIONS["Python"] = ("The question is in the context of the Python programming language.", True)
 SYSTEM_INSTRUCTIONS["Snowflake"] = ("The question is in the context of Snowflake data warehousing.", True)
 SYSTEM_INSTRUCTIONS["SQL"] = ("The question is in the context of SQL queries.", True)
-SYSTEM_INSTRUCTIONS["Translate"] = ("The the given text into English.", True)
+SYSTEM_INSTRUCTIONS["Translate"] = ("Translate the given text into English.", True)
 SYSTEM_INSTRUCTIONS["Translate JSON"] = ("""Translate the given text into Spanish, French
 and Japanese. Respond in the format below delimited by three backticks and
 formatting with the keys in this order, in a three backticks code block. Do
