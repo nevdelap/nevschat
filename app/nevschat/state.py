@@ -168,62 +168,63 @@ class State(rx.State):
         self.is_processing = True
         yield
 
-        model = "gpt-4" if self.gpt_4 else "gpt-3.5-turbo"
-        messages = []
-        if self.terse:
-            messages.append(
-                {
-                    "role": "system",
-                    "content": "Give terse responses without extra explanation."
-                }
-            )
-        if self.mode != "Normal":
-            system_instruction, code_related = (
-                SYSTEM_INSTRUCTIONS[self.system_instruction]
-            )
-            messages.append(
-                {
-                    "role": "system",
-                    "content": system_instruction
-                }
-            )
-            if code_related:
+        try:
+            model = "gpt-4" if self.gpt_4 else "gpt-3.5-turbo"
+            messages = []
+            if self.terse:
                 messages.append(
                     {
                         "role": "system",
-                        "content": (
-                            "All responses with code examples must "
-                            + "wrap them in triple backticks."
-                        )
+                        "content": "Give terse responses without extra explanation."
                     }
                 )
-        print(messages)
-        for prompt_response in self.prompts_responses:
-            messages.append({"role": "user", "content": prompt_response.prompt})
-            messages.append({"role": "assistant", "content": prompt_response.response})
-        messages.append({"role": "user", "content": self.new_prompt})
+            if self.mode != "Normal":
+                system_instruction, code_related = (
+                    SYSTEM_INSTRUCTIONS[self.system_instruction]
+                )
+                messages.append(
+                    {
+                        "role": "system",
+                        "content": system_instruction
+                    }
+                )
+                if code_related:
+                    messages.append(
+                        {
+                            "role": "system",
+                            "content": (
+                                "All responses with code examples must "
+                                + "wrap them in triple backticks."
+                            )
+                        }
+                    )
+            print(messages)
+            for prompt_response in self.prompts_responses:
+                messages.append({"role": "user", "content": prompt_response.prompt})
+                messages.append({"role": "assistant", "content": prompt_response.response})
+            messages.append({"role": "user", "content": self.new_prompt})
 
-        session = openai.ChatCompletion.create(
-            model=os.getenv("OPENAI_MODEL", model),
-            messages=messages,
-            stop=None,
-            temperature=0.7,
-            stream=True,  # Enable streaming
-        )
-        prompt_response = PromptResponse(
-            prompt=self.new_prompt, response="", is_editing=False, model=model
-        )
-        self.prompts_responses.append(prompt_response)
+            session = openai.ChatCompletion.create(
+                model=os.getenv("OPENAI_MODEL", model),
+                messages=messages,
+                stop=None,
+                temperature=0.7,
+                stream=True,  # Enable streaming
+            )
+            prompt_response = PromptResponse(
+                prompt=self.new_prompt, response="", is_editing=False, model=model
+            )
+            self.prompts_responses.append(prompt_response)
 
-        for item in session:
-            if hasattr(item.choices[0].delta, "content"):
-                response = item.choices[0].delta.content
-                self.prompts_responses[-1].response += response
-                self.prompts_responses = self.prompts_responses
-                yield
-
-        self.new_prompt = ""
-        self.is_processing = False
+            for item in session:
+                if hasattr(item.choices[0].delta, "content"):
+                    response = item.choices[0].delta.content
+                    self.prompts_responses[-1].response += response
+                    self.prompts_responses = self.prompts_responses
+                    yield
+        finally:
+            self.new_prompt = ""
+            self.is_processing = False
 
     def clear_chat(self) -> None:
         self.prompts_responses = []
