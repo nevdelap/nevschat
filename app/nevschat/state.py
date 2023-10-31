@@ -60,7 +60,7 @@ class State(rx.State):
         # ),
     ]
     new_prompt: str = ""
-    edited_prompt: str | None = None
+    edited_prompt: str
     is_processing: bool = False
     control_down: bool = False
     gpt_4: bool = False
@@ -82,7 +82,7 @@ class State(rx.State):
 
     @rx.var
     def cannot_clear_or_send_edited_prompt(self) -> bool:
-        return self.edited_prompt is None or len(self.edited_prompt.strip()) == 0
+        return len(self.edited_prompt.strip()) == 0
 
     @rx.var
     def cannot_enter_new_prompt_or_edit(self) -> bool:
@@ -114,7 +114,6 @@ class State(rx.State):
         self.edited_prompt = prompt
 
     def clear_edited_prompt(self) -> None:
-        assert self.edited_prompt is not None
         self.edited_prompt = ""
 
     def clear_new_prompt(self) -> None:
@@ -123,15 +122,15 @@ class State(rx.State):
     def send_edited_prompt(  # type: ignore
         self, index: int
     ) -> AsyncGenerator[None, None]:
-        assert self.edited_prompt is not None
-        self.new_prompt = str(self.edited_prompt)
+        assert len(self.edited_prompt.strip()) > 0
+        self.new_prompt = self.edited_prompt
         self.prompts_responses = self.prompts_responses[:index]
         self.is_editing = False
         self.issue1675()
         yield from self.send()  # type: ignore
 
     def cancel_edit_prompt(self, index: int) -> None:
-        self.edited_prompt = None
+        self.edited_prompt = ""
         self.prompts_responses[index].is_editing = False
         self.is_editing = False
         self.issue1675()
@@ -158,7 +157,7 @@ class State(rx.State):
         if key == "Control":
             self.control_down = False
 
-    def cancel_control(self) -> None:
+    def cancel_control(self, _text: str = "") -> None:
         self.control_down = False
 
     def send(self) -> AsyncGenerator[None, None]:  # type: ignore
@@ -198,7 +197,6 @@ class State(rx.State):
                             )
                         }
                     )
-            print(messages)
             for prompt_response in self.prompts_responses:
                 messages.append({"role": "user", "content": prompt_response.prompt})
                 messages.append({"role": "assistant", "content": prompt_response.response})
