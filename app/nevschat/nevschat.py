@@ -22,6 +22,18 @@ def index() -> rx.Component:
             is_disabled=State.cannot_clear_chat,
             on_click=State.clear_chat,
         ),
+        rx.cond(
+            State.warning,
+            rx.alert(
+                rx.alert_icon(),
+                rx.alert_title(
+                    State.warning,
+                ),
+                border_radius="0.5em",
+                status="warning",
+            ),
+            None,
+        ),
         padding="1em",
         width="100%",
     )

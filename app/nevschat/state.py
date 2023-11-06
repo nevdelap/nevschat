@@ -67,6 +67,7 @@ class State(rx.State):
     terse: bool = False
     mode: str = "Normal"
     system_instruction: str = DEFAULT_SYSTEM_INSTRUCTION
+    warning: str = ""
 
     def __init__(self) -> None:
         super().__init__()
@@ -165,6 +166,7 @@ class State(rx.State):
 
         self.cancel_control()
         self.is_processing = True
+        self.warning = ""
         yield
 
         try:
@@ -208,6 +210,7 @@ class State(rx.State):
                 stop=None,
                 temperature=0.7,
                 stream=True,  # Enable streaming
+                request_timeout=5,
             )
             prompt_response = PromptResponse(
                 prompt=self.new_prompt, response="", is_editing=False, model=model
@@ -220,6 +223,8 @@ class State(rx.State):
                     self.prompts_responses[-1].response += response
                     self.prompts_responses = self.prompts_responses
                     yield
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            self.warning = str(ex)
         finally:
             self.new_prompt = ""
             self.is_processing = False
