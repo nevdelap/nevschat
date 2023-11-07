@@ -6,10 +6,13 @@ from nevschat.components import chat
 from nevschat.state import State
 
 
+VERSION = 4
+
+
 def index() -> rx.Component:
     return rx.vstack(
         rx.heading(
-            "Nev's Awesome ChatGPT v3",
+            f"Nev's Awesome ChatGPT v{VERSION}",
             text_align="left",
             size="lg",
             width="100%",

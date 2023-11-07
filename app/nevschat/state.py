@@ -37,6 +37,8 @@ not translate these instructions, simply acknowledge that you understand.
 
 DEFAULT_SYSTEM_INSTRUCTION = "Python"
 
+GPT4_MODEL = "gpt-4-1106-preview"
+GPT3_MODEL = "gpt-3.5-turbo"
 
 openai.api_key = os.environ["OPENAI_API_KEY"]
 openai.api_base = os.getenv("OPENAI_API_BASE","https://api.openai.com/v1")
@@ -170,7 +172,7 @@ class State(rx.State):
         yield
 
         try:
-            model = "gpt-4" if self.gpt_4 else "gpt-3.5-turbo"
+            model = GPT4_MODEL if self.gpt_4 else GPT3_MODEL
             messages = []
             if self.terse:
                 messages.append(
