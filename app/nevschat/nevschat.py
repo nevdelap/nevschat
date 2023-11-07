@@ -5,7 +5,7 @@ from nevschat.state import State
 
 import reflex as rx
 
-VERSION = 4
+VERSION = 5
 
 
 def index() -> rx.Component:

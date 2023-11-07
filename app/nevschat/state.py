@@ -40,7 +40,18 @@ SYSTEM_INSTRUCTIONS["Snowflake"] = (
     True,
 )
 SYSTEM_INSTRUCTIONS["SQL"] = ("The question is in the context of SQL queries.", True)
-SYSTEM_INSTRUCTIONS["Translate"] = ("Translate the given text into English.", True)
+SYSTEM_INSTRUCTIONS["Translate To English"] = (
+    "Translate the given text into English.",
+    True,
+)
+SYSTEM_INSTRUCTIONS["Translate To French"] = (
+    "Translate the given text into French.",
+    True,
+)
+SYSTEM_INSTRUCTIONS["Translate To Japanese"] = (
+    "Translate the given text into Japanese.",
+    True,
+)
 SYSTEM_INSTRUCTIONS["Translate JSON"] = (
     """Translate the given text into Spanish, French
 and Japanese. Respond in the format below delimited by three backticks and
