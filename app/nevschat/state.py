@@ -206,18 +206,19 @@ class State(rx.State):
                 messages.append({"role": "assistant", "content": prompt_response.response})
             messages.append({"role": "user", "content": self.new_prompt})
 
+            prompt_response = PromptResponse(
+                prompt=self.new_prompt, response="", is_editing=False, model=model
+            )
+            self.prompts_responses.append(prompt_response)
+
             session = openai.ChatCompletion.create(
                 model=os.getenv("OPENAI_MODEL", model),
                 messages=messages,
                 stop=None,
                 temperature=0.7,
                 stream=True,  # Enable streaming
-                request_timeout=5,
+                request_timeout=10,
             )
-            prompt_response = PromptResponse(
-                prompt=self.new_prompt, response="", is_editing=False, model=model
-            )
-            self.prompts_responses.append(prompt_response)
 
             for item in session:
                 if hasattr(item.choices[0].delta, "content"):
