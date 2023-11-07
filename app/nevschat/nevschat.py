@@ -1,10 +1,9 @@
 # mypy: disable-error-code="attr-defined,name-defined"
 
-import reflex as rx
-
 from nevschat.components import chat
 from nevschat.state import State
 
+import reflex as rx
 
 VERSION = 4
 

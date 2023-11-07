@@ -1,11 +1,11 @@
 # mypy: disable-error-code="attr-defined,name-defined"
 
-import reflex as rx
-
 from nevschat.state import DEFAULT_SYSTEM_INSTRUCTION
 from nevschat.state import SYSTEM_INSTRUCTIONS
 from nevschat.state import PromptResponse
 from nevschat.state import State
+
+import reflex as rx
 
 
 def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Component:
@@ -36,7 +36,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     _hover={"color": "white", "background_color": "green"},
                     background_color="green",
                     color="white",
-                    is_disabled = State.cannot_clear_or_send_edited_prompt,
+                    is_disabled=State.cannot_clear_or_send_edited_prompt,
                     on_click=lambda: State.send_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
                 rx.button(
@@ -166,7 +166,7 @@ def chat() -> rx.Component:
                     on_change=State.set_new_prompt,  # type: ignore  # pylint: disable=no-value-for-parameter
                     on_key_down=State.handle_key_down,
                     on_key_up=State.handle_key_up,
-                    placeholder = "Ask something.",
+                    placeholder="Ask something.",
                 ),
                 debounce_timeout=250,
                 value=State.new_prompt,
@@ -180,7 +180,7 @@ def chat() -> rx.Component:
             ),
             rx.button(
                 rx.icon(tag="arrow_right"),
-               _hover={"color": "white", "background_color": "green"},
+                _hover={"color": "white", "background_color": "green"},
                 background_color="green",
                 color="white",
                 is_disabled=State.cannot_send_new_prompt,

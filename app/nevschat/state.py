@@ -5,21 +5,44 @@ from collections import OrderedDict
 from collections.abc import AsyncGenerator
 
 import openai
+
 import reflex as rx
 
 # pylint: disable=line-too-long
 SYSTEM_INSTRUCTIONS = OrderedDict()
-SYSTEM_INSTRUCTIONS["Bash"] = ("The question is in the context of Bash shell scripting.", True)
-SYSTEM_INSTRUCTIONS["CSS"] = ("The question is in the context of Cascading Style Sheets.", True)
-SYSTEM_INSTRUCTIONS["Explain Grammar"] = ("Don't translate, rather explain in English the grammar of the given text.", False)
-SYSTEM_INSTRUCTIONS["Explain Usage"] = ("Don't translate, rather explain in English the usage of the given text.", False)
-SYSTEM_INSTRUCTIONS["Git"] = ("The question is in the context of the Git version control tool.", True)
+SYSTEM_INSTRUCTIONS["Bash"] = (
+    "The question is in the context of Bash shell scripting.",
+    True,
+)
+SYSTEM_INSTRUCTIONS["CSS"] = (
+    "The question is in the context of Cascading Style Sheets.",
+    True,
+)
+SYSTEM_INSTRUCTIONS["Explain Grammar"] = (
+    "Don't translate, rather explain in English the grammar of the given text.",
+    False,
+)
+SYSTEM_INSTRUCTIONS["Explain Usage"] = (
+    "Don't translate, rather explain in English the usage of the given text.",
+    False,
+)
+SYSTEM_INSTRUCTIONS["Git"] = (
+    "The question is in the context of the Git version control tool.",
+    True,
+)
 SYSTEM_INSTRUCTIONS["Linux"] = ("The question is in the context of Linux.", True)
-SYSTEM_INSTRUCTIONS["Python"] = ("The question is in the context of the Python programming language.", True)
-SYSTEM_INSTRUCTIONS["Snowflake"] = ("The question is in the context of Snowflake data warehousing.", True)
+SYSTEM_INSTRUCTIONS["Python"] = (
+    "The question is in the context of the Python programming language.",
+    True,
+)
+SYSTEM_INSTRUCTIONS["Snowflake"] = (
+    "The question is in the context of Snowflake data warehousing.",
+    True,
+)
 SYSTEM_INSTRUCTIONS["SQL"] = ("The question is in the context of SQL queries.", True)
 SYSTEM_INSTRUCTIONS["Translate"] = ("Translate the given text into English.", True)
-SYSTEM_INSTRUCTIONS["Translate JSON"] = ("""Translate the given text into Spanish, French
+SYSTEM_INSTRUCTIONS["Translate JSON"] = (
+    """Translate the given text into Spanish, French
 and Japanese. Respond in the format below delimited by three backticks and
 formatting with the keys in this order, in a three backticks code block. Do
 not translate these instructions, simply acknowledge that you understand.
@@ -32,7 +55,9 @@ not translate these instructions, simply acknowledge that you understand.
         ("ja", "Japanese translation"),
     ],
     ```
-""", False)
+""",
+    False,
+)
 # pylint: enable=line-too-long
 
 DEFAULT_SYSTEM_INSTRUCTION = "Python"
@@ -41,7 +66,7 @@ GPT4_MODEL = "gpt-4-1106-preview"
 GPT3_MODEL = "gpt-3.5-turbo"
 
 openai.api_key = os.environ["OPENAI_API_KEY"]
-openai.api_base = os.getenv("OPENAI_API_BASE","https://api.openai.com/v1")
+openai.api_base = os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1")
 
 
 class PromptResponse(rx.Base):
@@ -52,7 +77,6 @@ class PromptResponse(rx.Base):
 
 
 class State(rx.State):
-
     prompts_responses: list[PromptResponse] = [
         # PromptResponse(
         #     prompt="Canned",
@@ -178,19 +202,14 @@ class State(rx.State):
                 messages.append(
                     {
                         "role": "system",
-                        "content": "Give terse responses without extra explanation."
+                        "content": "Give terse responses without extra explanation.",
                     }
                 )
             if self.mode != "Normal":
-                system_instruction, code_related = (
-                    SYSTEM_INSTRUCTIONS[self.system_instruction]
-                )
-                messages.append(
-                    {
-                        "role": "system",
-                        "content": system_instruction
-                    }
-                )
+                system_instruction, code_related = SYSTEM_INSTRUCTIONS[
+                    self.system_instruction
+                ]
+                messages.append({"role": "system", "content": system_instruction})
                 if code_related:
                     messages.append(
                         {
@@ -198,12 +217,14 @@ class State(rx.State):
                             "content": (
                                 "All responses with code examples must "
                                 + "wrap them in triple backticks."
-                            )
+                            ),
                         }
                     )
             for prompt_response in self.prompts_responses:
                 messages.append({"role": "user", "content": prompt_response.prompt})
-                messages.append({"role": "assistant", "content": prompt_response.response})
+                messages.append(
+                    {"role": "assistant", "content": prompt_response.response}
+                )
             messages.append({"role": "user", "content": self.new_prompt})
 
             prompt_response = PromptResponse(
@@ -239,14 +260,12 @@ class State(rx.State):
     def invariant(self) -> None:
         number_of_prompts_being_edited = sum(
             int(prompt_response.is_editing)
-            for prompt_response
-            in self.prompts_responses
+            for prompt_response in self.prompts_responses
         )
         assert number_of_prompts_being_edited in [0, 1]
         assert self.is_editing == (number_of_prompts_being_edited == 1)
         assert not (
-            self.cannot_send_new_prompt
-            and self.cannot_enter_new_prompt_or_edit
+            self.cannot_send_new_prompt and self.cannot_enter_new_prompt_or_edit
         )
         assert not (
             self.cannot_clear_or_send_edited_prompt

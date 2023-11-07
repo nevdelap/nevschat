@@ -10,6 +10,6 @@ cd "$PROJECT_DIR"
 
 PYVERSION=py311
 pyupgrade --$PYVERSION-plus -- app/**/*.py
-isort --force-single-line-imports --profile black -- app**/*.py
-black --target-version=$PYVERSION -- app**/*.py
+isort --force-single-line-imports --profile black -- app/**/*.py
+black --target-version=$PYVERSION -- app/**/*.py
 git diff
