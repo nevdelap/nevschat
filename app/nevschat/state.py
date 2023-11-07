@@ -210,6 +210,7 @@ class State(rx.State):
                 prompt=self.new_prompt, response="", is_editing=False, model=model
             )
             self.prompts_responses.append(prompt_response)
+            self.new_prompt = ""
 
             session = openai.ChatCompletion.create(
                 model=os.getenv("OPENAI_MODEL", model),
@@ -229,7 +230,6 @@ class State(rx.State):
         except Exception as ex:  # pylint: disable=broad-exception-caught
             self.warning = str(ex)
         finally:
-            self.new_prompt = ""
             self.is_processing = False
 
     def clear_chat(self) -> None:
