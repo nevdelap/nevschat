@@ -26,6 +26,14 @@ SYSTEM_INSTRUCTIONS["Explain Usage"] = (
     "Don't translate, rather explain in English the usage of the given text.",
     False,
 )
+SYSTEM_INSTRUCTIONS["Give Example Sentences With Words"] = (
+    (
+        "Give a list of ten examples in Japanese using the given words. Do not give "
+        + " translations of the sentences. Do not give romaji. Give definitions of "
+        + " unusual or uncommon words."
+    ),
+    False,
+)
 SYSTEM_INSTRUCTIONS["Git"] = (
     "The question is in the context of the Git version control tool.",
     True,
