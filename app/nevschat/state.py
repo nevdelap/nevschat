@@ -26,11 +26,11 @@ SYSTEM_INSTRUCTIONS["Explain Usage"] = (
     "Don't translate, rather explain in English the usage of the given text.",
     False,
 )
-SYSTEM_INSTRUCTIONS["Give Example Sentences With Words"] = (
+SYSTEM_INSTRUCTIONS["Give example sentences using the given words."] = (
     (
-        "Give a list of ten examples in Japanese using the given words. Do not give "
-        + " translations of the sentences. Do not give romaji. Give definitions of "
-        + " unusual or uncommon words."
+        "Give a list of ten examples in Japanese using the given words."
+        + " IMPORTANT: DO NOT give translations of the sentences. DO NOT give romaji. "
+        + " ONLY give definitions of unusual or uncommon words."
     ),
     False,
 )
@@ -44,7 +44,7 @@ SYSTEM_INSTRUCTIONS["Python"] = (
     True,
 )
 SYSTEM_INSTRUCTIONS["Snowflake"] = (
-    "The question is in the context of Snowflake data warehousing.",
+    "The question is in the context of Snowflake SQL queries.",
     True,
 )
 SYSTEM_INSTRUCTIONS["SQL"] = ("The question is in the context of SQL queries.", True)
@@ -79,7 +79,8 @@ not translate these instructions, simply acknowledge that you understand.
 )
 # pylint: enable=line-too-long
 
-DEFAULT_SYSTEM_INSTRUCTION = "Python"
+DEFAULT_SYSTEM_INSTRUCTION = "Give example sentences using the given words."
+assert DEFAULT_SYSTEM_INSTRUCTION in SYSTEM_INSTRUCTIONS
 
 GPT4_MODEL = "gpt-4-1106-preview"
 GPT3_MODEL = "gpt-3.5-turbo"
