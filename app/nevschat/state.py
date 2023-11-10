@@ -29,7 +29,7 @@ SYSTEM_INSTRUCTIONS["Explain Usage"] = (
 SYSTEM_INSTRUCTIONS["Give example sentences using the given words."] = (
     (
         "Give a numbered list of ten varied example sentences in Japanese using the given words."
-        + " The response MUST NOT CONTAIN English or Romaji "
+        + " The response MUST NOT CONTAIN English or Romaji."
         + " ONLY give definitions of unusual or uncommon words."
     ),
     False,
