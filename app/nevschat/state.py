@@ -27,11 +27,7 @@ SYSTEM_INSTRUCTIONS["Explain Usage"] = (
     False,
 )
 SYSTEM_INSTRUCTIONS["Give example sentences using the given words."] = (
-    (
-        "Give a varied list of ten example sentences in Japanese using the given words."
-        + " IMPORTANT: DO NOT give translations of the sentences. DO NOT give romaji. "
-        + " ONLY give definitions of unusual or uncommon words."
-    ),
+    "与えられた単語を使った例文を10個、番号付きで挙げてください。",
     False,
 )
 SYSTEM_INSTRUCTIONS["Git"] = (
