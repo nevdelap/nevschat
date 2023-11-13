@@ -8,10 +8,14 @@ import reflex as rx
 VERSION = 7
 
 
+VERSION = 3
+TITLE = f"Nev's Awesome ChatGPT v{VERSION}"
+
+
 def index() -> rx.Component:
     return rx.vstack(
         rx.heading(
-            f"Nev's Awesome ChatGPT v{VERSION}",
+            TITLE,
             text_align="left",
             size="lg",
             width="100%",
@@ -44,6 +48,6 @@ def index() -> rx.Component:
 app = rx.App(state=State)
 app.add_page(
     index,
-    title="Nev's ChatGPT",
+    title=TITLE,
 )
 app.compile()

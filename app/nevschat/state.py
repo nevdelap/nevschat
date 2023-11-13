@@ -31,7 +31,7 @@ SYSTEM_INSTRUCTIONS["Give example sentences using the given words."] = (
         "Give a numbered list of ten varied example sentences in Japanese using the given words.\n"
         + " - The response MUST NOT CONTAIN romaji of the example sentences.\n"
         + " - The response MUST NOT CONTAIN translations of the example sentences.\n"
-        + " - ONLY give definitions of unusual or uncommon words."
+        + " - Give definitions ONLY of unusual or uncommon words."
     ),
     False,
 )
@@ -175,7 +175,7 @@ class State(rx.State):
         self.prompts_responses = self.prompts_responses[:index]
         self.is_editing = False
         self.issue1675()
-        yield from self.send()  # type: ignore
+        return self.send  # type: ignore
 
     def cancel_edit_prompt(self, index: int) -> None:
         self.edited_prompt = ""
@@ -197,9 +197,9 @@ class State(rx.State):
                     raise RuntimeError(
                         "If is_editing, the editing_index cannot be None."
                     )
-                yield from self.send_edited_prompt(index)  # type: ignore
+                return self.send_edited_prompt(index)  # type: ignore
             else:
-                yield from self.send()  # type: ignore
+                return self.send  # type: ignore
 
     def handle_key_up(self, key) -> AsyncGenerator[None, None]:  # type: ignore
         if key == "Control":
@@ -208,51 +208,54 @@ class State(rx.State):
     def cancel_control(self, _text: str = "") -> None:
         self.control_down = False
 
-    def send(self) -> AsyncGenerator[None, None]:  # type: ignore
+    @rx.background
+    async def send(self) -> AsyncGenerator[None, None]:  # type: ignore
         assert self.new_prompt != ""
 
-        self.cancel_control()
-        self.is_processing = True
-        self.warning = ""
-        yield
+        async with self:
+            self.cancel_control()
+            self.is_processing = True
+            self.warning = ""
+            yield
 
         try:
-            model = GPT4_MODEL if self.gpt_4 else GPT3_MODEL
-            messages = []
-            if self.terse:
-                messages.append(
-                    {
-                        "role": "system",
-                        "content": "Give terse responses without extra explanation.",
-                    }
-                )
-            if self.mode != "Normal":
-                system_instruction, code_related = SYSTEM_INSTRUCTIONS[
-                    self.system_instruction
-                ]
-                messages.append({"role": "system", "content": system_instruction})
-                if code_related:
+            async with self:
+                model = GPT4_MODEL if self.gpt_4 else GPT3_MODEL
+                messages = []
+                if self.terse:
                     messages.append(
                         {
                             "role": "system",
-                            "content": (
-                                "All responses with code examples must "
-                                + "wrap them in triple backticks."
-                            ),
+                            "content": "Give terse responses without extra explanation.",
                         }
                     )
-            for prompt_response in self.prompts_responses:
-                messages.append({"role": "user", "content": prompt_response.prompt})
-                messages.append(
-                    {"role": "assistant", "content": prompt_response.response}
-                )
-            messages.append({"role": "user", "content": self.new_prompt})
+                if self.mode != "Normal":
+                    system_instruction, code_related = SYSTEM_INSTRUCTIONS[
+                        self.system_instruction
+                    ]
+                    messages.append({"role": "system", "content": system_instruction})
+                    if code_related:
+                        messages.append(
+                            {
+                                "role": "system",
+                                "content": (
+                                    "All responses with code examples must "
+                                    + "wrap them in triple backticks."
+                                ),
+                            }
+                        )
+                for prompt_response in self.prompts_responses:
+                    messages.append({"role": "user", "content": prompt_response.prompt})
+                    messages.append(
+                        {"role": "assistant", "content": prompt_response.response}
+                    )
+                messages.append({"role": "user", "content": self.new_prompt})
 
-            prompt_response = PromptResponse(
-                prompt=self.new_prompt, response="", is_editing=False, model=model
-            )
-            self.prompts_responses.append(prompt_response)
-            self.new_prompt = ""
+                prompt_response = PromptResponse(
+                    prompt=self.new_prompt, response="", is_editing=False, model=model
+                )
+                self.prompts_responses.append(prompt_response)
+                self.new_prompt = ""
 
             session = openai.ChatCompletion.create(
                 model=os.getenv("OPENAI_MODEL", model),
@@ -264,15 +267,23 @@ class State(rx.State):
             )
 
             for item in session:
-                if hasattr(item.choices[0].delta, "content"):
-                    response = item.choices[0].delta.content
-                    self.prompts_responses[-1].response += response
-                    self.prompts_responses = self.prompts_responses
+                async with self:
+                    if not self.is_processing:
+                        # It's been cancelled.
+                        break
+                    if hasattr(item.choices[0].delta, "content"):
+                        response = item.choices[0].delta.content
+                        self.prompts_responses[-1].response += response
+                        self.prompts_responses = self.prompts_responses
                     yield
+
         except Exception as ex:  # pylint: disable=broad-exception-caught
             self.warning = str(ex)
         finally:
             self.is_processing = False
+
+    def cancel_send(self) -> None:
+        self.is_process = False
 
     def clear_chat(self) -> None:
         self.prompts_responses = []

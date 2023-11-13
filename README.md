@@ -35,3 +35,22 @@ scripts/deploy && sleep 30 && scripts/logs
 ^C
 exit
 ```
+
+### General Info
+
+#### Page structure
+
+* nevschat.py
+  * vstack
+    * title
+    * chat (in chat.py)
+    * Cancel X
+* chat.py
+  * chat
+    * vstack contains
+      * wrap with the checkboxes, radio buttons, and dropdowns.
+      * foreach has the previous prompts_responses each rendered by prompt_response_box.
+      * hstack has the next prompt with buttons.
+  * prompt_response_box
+    * has a conditional, rendering a prompt as being edited, or not edited with buttons.
+    * if not being edited and is being generated renders a cancel button next to the response.

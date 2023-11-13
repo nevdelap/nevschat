@@ -85,6 +85,17 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         ),
                         width="100%",
                     ),
+                    rx.cond(
+                        State.is_processing,
+                        rx.button(
+                            rx.icon(tag="close"),
+                            _hover={"color": "white", "background_color": "darkred"},
+                            background_color="darkred",
+                            color="white",
+                            on_click=State.cancel_send,  # type: ignore
+                        ),
+                        None,
+                    ),
                     rx.button(
                         rx.icon(tag="copy"),
                         _hover={"background_color": "#f8f8f8"},
