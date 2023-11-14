@@ -24,6 +24,7 @@ reflex init && reflex run # Test at http://localhost:3000/
 ```bash
 git add . &&
 git commit -m 'whatever' &&
+git merge latest &&
 git push origin HEAD:master &&
 git tag -f latest &&
 git push -f origin latest &&

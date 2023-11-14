@@ -86,6 +86,9 @@ assert DEFAULT_SYSTEM_INSTRUCTION in SYSTEM_INSTRUCTIONS
 GPT4_MODEL = "gpt-4-1106-preview"
 GPT3_MODEL = "gpt-3.5-turbo"
 
+TEST_PROMPT = "Give 10 example sentences about nice jugs."
+TESTING = False
+
 openai.api_key = os.environ["OPENAI_API_KEY"]
 openai.api_base = os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1")
 
@@ -106,7 +109,7 @@ class State(rx.State):
         #     model="gpt-dogs",
         # ),
     ]
-    new_prompt: str = ""
+    new_prompt: str = "" if not TESTING else TEST_PROMPT
     edited_prompt: str
     is_processing: bool = False
     control_down: bool = False
@@ -169,13 +172,13 @@ class State(rx.State):
 
     def send_edited_prompt(  # type: ignore
         self, index: int
-    ) -> AsyncGenerator[None, None]:
+    ):
         assert len(self.edited_prompt.strip()) > 0
         self.new_prompt = self.edited_prompt
         self.prompts_responses = self.prompts_responses[:index]
         self.is_editing = False
         self.issue1675()
-        return self.send  # type: ignore
+        return State.send
 
     def cancel_edit_prompt(self, index: int) -> None:
         self.edited_prompt = ""
@@ -187,7 +190,7 @@ class State(rx.State):
         for i, _ in enumerate(self.prompts_responses):
             self.prompts_responses[i] = self.prompts_responses[i]
 
-    def handle_key_down(self, key) -> AsyncGenerator[None, None]:  # type: ignore
+    def handle_key_down(self, key):  # type: ignore
         if key == "Control":
             self.control_down = True
         if key == "Enter" and self.control_down:
@@ -199,7 +202,7 @@ class State(rx.State):
                     )
                 return self.send_edited_prompt(index)  # type: ignore
             else:
-                return self.send  # type: ignore
+                return State.send  # type: ignore
 
     def handle_key_up(self, key) -> AsyncGenerator[None, None]:  # type: ignore
         if key == "Control":
@@ -209,17 +212,16 @@ class State(rx.State):
         self.control_down = False
 
     @rx.background
-    async def send(self) -> AsyncGenerator[None, None]:  # type: ignore
-        assert self.new_prompt != ""
-
-        async with self:
-            self.cancel_control()
-            self.is_processing = True
-            self.warning = ""
-            yield
-
+    async def send(self):
         try:
             async with self:
+
+                assert self.new_prompt != ""
+
+                self.cancel_control()
+                self.is_processing = True
+                self.warning = ""
+
                 model = GPT4_MODEL if self.gpt_4 else GPT3_MODEL
                 messages = []
                 if self.terse:
@@ -229,6 +231,7 @@ class State(rx.State):
                             "content": "Give terse responses without extra explanation.",
                         }
                     )
+
                 if self.mode != "Normal":
                     system_instruction, code_related = SYSTEM_INSTRUCTIONS[
                         self.system_instruction
@@ -239,11 +242,12 @@ class State(rx.State):
                             {
                                 "role": "system",
                                 "content": (
-                                    "All responses with code examples must "
-                                    + "wrap them in triple backticks."
+                                    "All responses with code examples MUST "
+                                    + "wrap the code examples in triple backticks."
                                 ),
                             }
                         )
+
                 for prompt_response in self.prompts_responses:
                     messages.append({"role": "user", "content": prompt_response.prompt})
                     messages.append(
@@ -256,6 +260,13 @@ class State(rx.State):
                 )
                 self.prompts_responses.append(prompt_response)
                 self.new_prompt = ""
+
+                print(
+                    f"GPT4? {self.gpt_4}\n"
+                    f"Terse? {self.terse}\n"
+                    f"Mode? {self.mode}\n"
+                    f"Messages: {messages}"
+                )
 
             session = openai.ChatCompletion.create(
                 model=os.getenv("OPENAI_MODEL", model),
@@ -275,15 +286,16 @@ class State(rx.State):
                         response = item.choices[0].delta.content
                         self.prompts_responses[-1].response += response
                         self.prompts_responses = self.prompts_responses
-                    yield
 
         except Exception as ex:  # pylint: disable=broad-exception-caught
-            self.warning = str(ex)
+            async with self:
+                self.warning = str(ex)
         finally:
-            self.is_processing = False
+            async with self:
+                self.is_processing = False
 
     def cancel_send(self) -> None:
-        self.is_process = False
+        self.is_processing = False
 
     def clear_chat(self) -> None:
         self.prompts_responses = []

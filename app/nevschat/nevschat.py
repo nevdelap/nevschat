@@ -5,10 +5,7 @@ from nevschat.state import State
 
 import reflex as rx
 
-VERSION = 7
-
-
-VERSION = 3
+VERSION = 8
 TITLE = f"Nev's Awesome ChatGPT v{VERSION}"
 
 
