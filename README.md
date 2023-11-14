@@ -5,7 +5,7 @@
 ```bash
 cd reflex &&
 git fetch &&
-git checkout origin/main && # Or a tag.
+git checkout v0.3.2 &&
 cd .. &&
 git add reflex &&
 git commit -m 'Update reflex.' &&
