@@ -19,11 +19,14 @@ SYSTEM_INSTRUCTIONS["CSS"] = (
     True,
 )
 SYSTEM_INSTRUCTIONS["Explain Grammar"] = (
-    "Don't translate, rather explain in English the grammar of the given text.",
+    "Don't translate, rather explain in English the grammar of the given text.\n"
+    + "DON'T explain the simple or basic vocabulary or grammatical points.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Explain Usage"] = (
-    "Don't translate, rather explain in English the usage of the given text.",
+    "Don't translate, rather explain in English the usage of the given text.\n"
+    + "Give examples, especially where words have different meanings in different "
+    + "contexts.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Give example sentences using the given words."] = (
