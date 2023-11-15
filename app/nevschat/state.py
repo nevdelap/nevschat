@@ -227,6 +227,7 @@ class State(rx.State):
 
                 model = GPT4_MODEL if self.gpt_4 else GPT3_MODEL
                 messages = []
+
                 if self.terse:
                     messages.append(
                         {
@@ -250,6 +251,16 @@ class State(rx.State):
                                 ),
                             }
                         )
+
+                messages.append(
+                    {
+                        "role": "system",
+                        "content": (
+                            "If prompts contain kanji assume it is Japanese, "
+                            + "NEVER Chinese."
+                        ),
+                    }
+                )
 
                 for prompt_response in self.prompts_responses:
                     messages.append({"role": "user", "content": prompt_response.prompt})
