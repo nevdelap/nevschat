@@ -18,6 +18,10 @@ SYSTEM_INSTRUCTIONS["CSS"] = (
     "The question is in the context of Cascading Style Sheets.",
     True,
 )
+SYSTEM_INSTRUCTIONS["Define"] = (
+    "Explain in English the meaning of the given text.",
+    False,
+)
 SYSTEM_INSTRUCTIONS["Explain Grammar"] = (
     "Don't translate, rather explain in English the grammar of the given text.\n"
     + "DON'T explain the simple or basic vocabulary or grammatical points.",
@@ -295,6 +299,8 @@ class State(rx.State):
                 async with self:
                     if not self.is_processing:
                         # It's been cancelled.
+                        self.prompts_responses[-1].response += " (cancelled)"
+                        self.prompts_responses = self.prompts_responses
                         break
                     if hasattr(item.choices[0].delta, "content"):
                         response = item.choices[0].delta.content
