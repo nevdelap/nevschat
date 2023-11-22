@@ -8,7 +8,7 @@ cd "$PROJECT_DIR"
 # pylint --recursive=y app
 # bandit --skip B101 --quiet app && echo 'Bandit is happy.'
 
-PYVERSION=py311
+PYVERSION=py312
 pyupgrade --$PYVERSION-plus -- app/**/*.py
 isort --force-single-line-imports --profile black -- app/**/*.py
 black --target-version=$PYVERSION -- app/**/*.py

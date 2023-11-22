@@ -4,7 +4,7 @@ import os
 from collections import OrderedDict
 from collections.abc import AsyncGenerator
 
-import openai
+from openai import OpenAI
 
 import reflex as rx
 
@@ -96,9 +96,6 @@ GPT3_MODEL = "gpt-3.5-turbo"
 TEST_PROMPT = "Give 10 example sentences about nice jugs."
 TESTING = False
 
-openai.api_key = os.environ["OPENAI_API_KEY"]
-openai.api_base = os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1")
-
 
 class PromptResponse(rx.Base):
     prompt: str
@@ -177,9 +174,7 @@ class State(rx.State):
     def clear_new_prompt(self) -> None:
         self.new_prompt = ""
 
-    def send_edited_prompt(  # type: ignore
-        self, index: int
-    ):
+    def send_edited_prompt(self, index: int):  # type: ignore
         assert len(self.edited_prompt.strip()) > 0
         self.new_prompt = self.edited_prompt
         self.prompts_responses = self.prompts_responses[:index]
@@ -222,7 +217,6 @@ class State(rx.State):
     async def send(self):
         try:
             async with self:
-
                 assert self.new_prompt != ""
 
                 self.cancel_control()
@@ -286,26 +280,25 @@ class State(rx.State):
                     f"Messages: {messages}"
                 )
 
-            session = openai.ChatCompletion.create(
+            session = OpenAI(
+                timeout=10.0,
+            ).chat.completions.create(
                 model=os.getenv("OPENAI_MODEL", model),
                 messages=messages,
-                stop=None,
-                temperature=0.7,
                 stream=True,  # Enable streaming
-                request_timeout=10,
             )
 
             for item in session:
                 async with self:
+                    response = item.choices[0].delta.content
+                    if response:
+                        self.prompts_responses[-1].response += response
+                        self.prompts_responses = self.prompts_responses
                     if not self.is_processing:
                         # It's been cancelled.
                         self.prompts_responses[-1].response += " (cancelled)"
                         self.prompts_responses = self.prompts_responses
                         break
-                    if hasattr(item.choices[0].delta, "content"):
-                        response = item.choices[0].delta.content
-                        self.prompts_responses[-1].response += response
-                        self.prompts_responses = self.prompts_responses
 
         except Exception as ex:  # pylint: disable=broad-exception-caught
             async with self:
