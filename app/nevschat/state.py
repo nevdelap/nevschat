@@ -38,7 +38,7 @@ SYSTEM_INSTRUCTIONS["Give example sentences using the given words."] = (
         "Give a numbered list of ten varied example sentences in Japanese using the given words.\n"
         + " - The response MUST NOT CONTAIN romaji of the example sentences.\n"
         + " - The response MUST NOT CONTAIN translations of the example sentences.\n"
-        + " - ONLY Give definitions of unusual or uncommon words."
+        + " - ONLY give definitions of unusual or uncommon words."
     ),
     False,
 )
@@ -58,15 +58,15 @@ SYSTEM_INSTRUCTIONS["Snowflake"] = (
 SYSTEM_INSTRUCTIONS["SQL"] = ("The question is in the context of SQL queries.", True)
 SYSTEM_INSTRUCTIONS["Translate To English"] = (
     "Translate the given text into English.",
-    True,
+    False,
 )
 SYSTEM_INSTRUCTIONS["Translate To French"] = (
     "Translate the given text into French.",
-    True,
+    False,
 )
 SYSTEM_INSTRUCTIONS["Translate To Japanese"] = (
     "Translate the given text into Japanese.",
-    True,
+    False,
 )
 SYSTEM_INSTRUCTIONS["Translate JSON"] = (
     """Translate the given text into Spanish, French
