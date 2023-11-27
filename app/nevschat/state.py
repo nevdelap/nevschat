@@ -22,6 +22,12 @@ SYSTEM_INSTRUCTIONS["Define"] = (
     "Explain in English the meaning of the given text.",
     False,
 )
+SYSTEM_INSTRUCTIONS["Check Grammar"] = (
+    "Don't translate, check the grammar of the given text and explain any\n"
+    + "problems in English.\n"
+    + "DON'T explain the simple or basic vocabulary or grammatical points.",
+    False,
+)
 SYSTEM_INSTRUCTIONS["Explain Grammar"] = (
     "Don't translate, rather explain in English the grammar of the given text.\n"
     + "DON'T explain the simple or basic vocabulary or grammatical points.",
@@ -35,7 +41,8 @@ SYSTEM_INSTRUCTIONS["Explain Usage"] = (
 )
 SYSTEM_INSTRUCTIONS["Give example sentences using the given words."] = (
     (
-        "Give a numbered list of ten varied example sentences in Japanese using the given words.\n"
+        "Give a numbered list of ten varied example sentences in Japanese using the\n"
+        + "given words and otherwise simple vocabulary.\n"
         + " - The response MUST NOT CONTAIN romaji of the example sentences.\n"
         + " - The response MUST NOT CONTAIN translations of the example sentences.\n"
         + " - ONLY give definitions of unusual or uncommon words."
