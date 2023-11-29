@@ -19,7 +19,12 @@ SYSTEM_INSTRUCTIONS["CSS"] = (
     True,
 )
 SYSTEM_INSTRUCTIONS["Define"] = (
-    "Explain in English the meaning of the given text.",
+    "Define in English the meaning of the given text.",
+    False,
+)
+SYSTEM_INSTRUCTIONS["Explain"] = (
+    "Explain in English the given text.\n"
+    + "DON'T explain the simple or basic vocabulary or grammatical points.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Check Grammar"] = (
