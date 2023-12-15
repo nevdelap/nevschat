@@ -130,14 +130,14 @@ def chat() -> rx.Component:
             rx.checkbox(
                 "GPT4",
                 color="#333",
+                is_checked=State.gpt_4,
                 on_change=State.set_gpt_4,  # type: ignore
-                value=State.gpt_4,
             ),
             rx.checkbox(
                 "Terse",
                 color="#333",
+                is_checked=State.terse,
                 on_change=State.set_terse,  # type: ignore
-                value=State.terse,
             ),
             rx.hstack(
                 rx.radio_group(
@@ -149,15 +149,15 @@ def chat() -> rx.Component:
                         spacing="0.5em",
                     ),
                     color="#333",
-                    default_value="Normal",
-                    default_checked=True,
                     on_change=State.set_mode,
+                    value=State.mode,
                 ),
                 rx.select(
                     list(SYSTEM_INSTRUCTIONS.keys()),
                     default_value=DEFAULT_SYSTEM_INSTRUCTION,
                     is_disabled=State.is_not_system_instruction,
                     on_change=State.set_system_instruction,
+                    value=State.system_instruction,
                     variant="unstyled",
                 ),
             ),
