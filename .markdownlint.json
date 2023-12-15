@@ -1,0 +1,36 @@
+{
+    "MD003": {
+        "style": "atx"
+    },
+    "MD004": {
+        "style": "asterisk"
+    },
+    "MD013": {
+        "line_length": 80,
+        "strict": true
+    },
+    "MD029": {
+        "style": "ordered"
+    },
+    "MD035": {
+        "style": "---"
+    },
+    "MD044": {
+        "names": [
+            "Reflex",
+            "reflex"
+        ]
+    },
+    "MD046": {
+        "style": "fenced"
+    },
+    "MD048": {
+        "style": "backtick"
+    },
+    "MD049": {
+        "style": "asterisk"
+    },
+    "MD050": {
+        "style": "asterisk"
+    }
+}
