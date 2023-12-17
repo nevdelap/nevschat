@@ -14,6 +14,10 @@ SYSTEM_INSTRUCTIONS["Define"] = (
     "Define the meaning of the given text in English.",
     False,
 )
+SYSTEM_INSTRUCTIONS["Definar"] = (
+    "Defina el significado del texto dado en español.",
+    False,
+)
 SYSTEM_INSTRUCTIONS["Définir"] = (
     "Définir le sens du texte donné en français.",
     False,
