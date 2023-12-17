@@ -65,24 +65,6 @@ SYSTEM_INSTRUCTIONS["Give example sentences using the given words."] = (
     ),
     False,
 )
-SYSTEM_INSTRUCTIONS["Bash"] = (
-    "The question is in the context of Bash shell scripting.",
-    True,
-)
-SYSTEM_INSTRUCTIONS["Git"] = (
-    "The question is in the context of the Git version control tool.",
-    True,
-)
-SYSTEM_INSTRUCTIONS["Linux"] = ("The question is in the context of Linux.", True)
-SYSTEM_INSTRUCTIONS["Python"] = (
-    "The question is in the context of the Python programming language.",
-    True,
-)
-SYSTEM_INSTRUCTIONS["Snowflake"] = (
-    "The question is in the context of Snowflake SQL queries.",
-    True,
-)
-SYSTEM_INSTRUCTIONS["SQL"] = ("The question is in the context of SQL queries.", True)
 SYSTEM_INSTRUCTIONS["Translate To English"] = (
     "Translate the given text into English.",
     False,
@@ -116,6 +98,24 @@ SYSTEM_INSTRUCTIONS["Translate To Spanish"] = (
 # """,
 #     False,
 # )
+SYSTEM_INSTRUCTIONS["Bash"] = (
+    "The question is in the context of Bash shell scripting.",
+    True,
+)
+SYSTEM_INSTRUCTIONS["Git"] = (
+    "The question is in the context of the Git version control tool.",
+    True,
+)
+SYSTEM_INSTRUCTIONS["Linux"] = ("The question is in the context of Linux.", True)
+SYSTEM_INSTRUCTIONS["Python"] = (
+    "The question is in the context of the Python programming language.",
+    True,
+)
+SYSTEM_INSTRUCTIONS["Snowflake"] = (
+    "The question is in the context of Snowflake SQL queries.",
+    True,
+)
+SYSTEM_INSTRUCTIONS["SQL"] = ("The question is in the context of SQL queries.", True)
 # pylint: enable=line-too-long
 
 DEFAULT_SYSTEM_INSTRUCTION = "Give example sentences using the given words."
