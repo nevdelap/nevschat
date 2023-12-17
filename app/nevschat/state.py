@@ -10,21 +10,28 @@ import reflex as rx
 
 # pylint: disable=line-too-long
 SYSTEM_INSTRUCTIONS = OrderedDict()
-SYSTEM_INSTRUCTIONS["Bash"] = (
-    "The question is in the context of Bash shell scripting.",
-    True,
-)
-SYSTEM_INSTRUCTIONS["CSS"] = (
-    "The question is in the context of Cascading Style Sheets.",
-    True,
-)
 SYSTEM_INSTRUCTIONS["Define"] = (
-    "Define in English the meaning of the given text.",
+    "Define the meaning of the given text in English.",
+    False,
+)
+SYSTEM_INSTRUCTIONS["Définir"] = (
+    "Définir le sens du texte donné en français.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Explain"] = (
-    "Explain in English the given text.\n"
+    "Explain the given text in English.\n"
     + "DON'T explain the simple or basic vocabulary or grammatical points.",
+    False,
+)
+SYSTEM_INSTRUCTIONS["Expliquer"] = (
+    "Expliquer le texte donné en français.\n"
+    + "N'expliquez PAS les points de vocabulaire ou de grammaire simples ou basiques.",
+    False,
+)
+SYSTEM_INSTRUCTIONS["Explicar"] = (
+    "Explica el texto dado en español.\n"
+    + "NO expliques el vocabulario sencillo o básico ni los puntos gramaticales "
+    + "sencillos o básicos.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Check Grammar"] = (
@@ -54,6 +61,10 @@ SYSTEM_INSTRUCTIONS["Give example sentences using the given words."] = (
     ),
     False,
 )
+SYSTEM_INSTRUCTIONS["Bash"] = (
+    "The question is in the context of Bash shell scripting.",
+    True,
+)
 SYSTEM_INSTRUCTIONS["Git"] = (
     "The question is in the context of the Git version control tool.",
     True,
@@ -80,23 +91,27 @@ SYSTEM_INSTRUCTIONS["Translate To Japanese"] = (
     "Translate the given text into Japanese.",
     False,
 )
-SYSTEM_INSTRUCTIONS["Translate JSON"] = (
-    """Translate the given text into Spanish, French
-and Japanese. Respond in the format below delimited by three backticks and
-formatting with the keys in this order, in a three backticks code block. Do
-not translate these instructions, simply acknowledge that you understand.
-
-    ```
-    [
-        ("en", "The English"),
-        ("es", "Spanish translation"),
-        ("fr", "French translation"),
-        ("ja", "Japanese translation"),
-    ],
-    ```
-""",
+SYSTEM_INSTRUCTIONS["Translate To Spanish"] = (
+    "Translate the given text into Spanish.",
     False,
 )
+# SYSTEM_INSTRUCTIONS["Translate JSON"] = (
+#     """Translate the given text into Spanish, French
+# and Japanese. Respond in the format below delimited by three backticks and
+# formatting with the keys in this order, in a three backticks code block. Do
+# not translate these instructions, simply acknowledge that you understand.
+
+#     ```
+#     [
+#         ("en", "The English"),
+#         ("es", "Spanish translation"),
+#         ("fr", "French translation"),
+#         ("ja", "Japanese translation"),
+#     ],
+#     ```
+# """,
+#     False,
+# )
 # pylint: enable=line-too-long
 
 DEFAULT_SYSTEM_INSTRUCTION = "Give example sentences using the given words."
