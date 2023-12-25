@@ -36,38 +36,38 @@ SYSTEM_INSTRUCTIONS["Explain"] = (
 )
 SYSTEM_INSTRUCTIONS["Expliquer"] = (
     "NE PAS traduire, expliquer en français le texte donné.\n"
+    + "N'expliquez PAS les points de vocabulaire ou de grammaire simples ou basiques.\n"
     + "NE donnez JAMAIS de prononciation pour n'importe quelle langue.\n"
-    + "NE donnez JAMAIS de romaji pour le japonais.\n"
-    + "N'expliquez PAS les points de vocabulaire ou de grammaire simples ou basiques.",
+    + "NE donnez JAMAIS de romaji pour le japonais.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Explicar"] = (
     "NO traduzca, explica en español el texto dado.\n"
-    + "NO den NUNCA la pronunciación para cualquier idioma.\n"
-    + "NO den NUNCA los romaji para el japonés.\n"
     + "NO expliques el vocabulario sencillo o básico ni los puntos gramaticales "
-    + "sencillos o básicos.",
+    + "sencillos o básicos.\n"
+    + "NO den NUNCA la pronunciación para cualquier idioma.\n"
+    + "NO den NUNCA los romaji para el japonés.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Check Grammar"] = (
     "DO NOT translate, check the grammar of the given text and explain any\n"
+    + "DO NOT explain the simple or basic vocabulary or grammatical points.\n"
     + "problems in English. NEVER give pronunciation for any language. NEVER give "
-    + "romaji for Japanese.\n"
-    + "DO NOT explain the simple or basic vocabulary or grammatical points.",
+    + "romaji for Japanese.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Explain Grammar"] = (
     "DO NOT translate, rather explain in English the grammar of the given text.\n"
-    + "NEVER give pronunciation for any language. NEVER give romaji for Japanese.\n"
-    + "DO NOT explain the simple or basic vocabulary or grammatical points.",
+    + "DO NOT explain the simple or basic vocabulary or grammatical points.\n"
+    + "NEVER give pronunciation for any language. NEVER give romaji for Japanese.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Explain Usage"] = (
     "DO NOT translate, rather explain in English the usage of the given text.\n"
-    + "NEVER give pronunciation for any language.\n"
-    + "NEVER give romaji for Japanese.\n"
     + "Give examples, especially where words have different meanings in different "
-    + "contexts.",
+    + "contexts.\n"
+    + "NEVER give pronunciation for any language.\n"
+    + "NEVER give romaji for Japanese.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Give example sentences using the given words."] = (
