@@ -31,7 +31,7 @@ git push -f origin latest &&
 ssh_droplet
 
 # On the droplet.
-cd nevschat &&
+cd ~/nevschat &&
 scripts/deploy && sleep 30 && scripts/logs
 ^C
 exit
