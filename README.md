@@ -45,7 +45,7 @@ exit
   * vstack
     * title
     * chat (in chat.py)
-    * Cancel X
+    * cancel X
 * chat.py
   * chat
     * vstack contains

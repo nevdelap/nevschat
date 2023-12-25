@@ -51,7 +51,8 @@ SYSTEM_INSTRUCTIONS["Explicar"] = (
 )
 SYSTEM_INSTRUCTIONS["Check Grammar"] = (
     "DO NOT translate, check the grammar of the given text and explain any\n"
-    + "problems in English. NEVER give pronunciation for any language. NEVER give romaji for Japanese.\n"
+    + "problems in English. NEVER give pronunciation for any language. NEVER give "
+    + "romaji for Japanese.\n"
     + "DO NOT explain the simple or basic vocabulary or grammatical points.",
     False,
 )
@@ -74,7 +75,8 @@ SYSTEM_INSTRUCTIONS["Give example sentences using the given words."] = (
         "Give a dot point list of ten varied example sentences in Japanese using the\n"
         + "given word. Use simple vocabulary.\n"
         + " - The response MUST NOT CONTAIN pronunciation of the example sentences.\n"
-        + " - The response MUST NOT CONTAIN romaji for the Japanese of the example sentences.\n"
+        + " - The response MUST NOT CONTAIN romaji for the Japanese of the example "
+        + "sentences.\n"
         + " - The response MUST NOT CONTAIN translations of the example sentences.\n"
         + " - ONLY give definitions of unusual or uncommon words."
     ),
