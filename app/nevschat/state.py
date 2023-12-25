@@ -28,10 +28,10 @@ SYSTEM_INSTRUCTIONS["Definir"] = (
     False,
 )
 SYSTEM_INSTRUCTIONS["Explain"] = (
-    "DO NOT translate, Explain in English the given text.\n"
+    "DO NOT translate, explain in English the given text.\n"
+    + "DO NOT explain the simple or basic vocabulary or grammatical points.\n"
     + "NEVER give pronunciation for any language.\n"
-    + "NEVER give romaji for Japanese.\n"
-    + "DO NOT explain the simple or basic vocabulary or grammatical points.",
+    + "NEVER give romaji for Japanese.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Expliquer"] = (
