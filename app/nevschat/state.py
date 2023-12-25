@@ -50,9 +50,10 @@ SYSTEM_INSTRUCTIONS["Explicar"] = (
     False,
 )
 SYSTEM_INSTRUCTIONS["Check Grammar"] = (
-    "DO NOT translate, check the grammar of the given text and explain any\n"
+    "DO NOT translate, check the grammar of the given text and explain any "
+    + "problems in English.\n"
     + "DO NOT explain the simple or basic vocabulary or grammatical points.\n"
-    + "problems in English. NEVER give pronunciation for any language. NEVER give "
+    + "NEVER give pronunciation for any language. NEVER give "
     + "romaji for Japanese.",
     False,
 )
