@@ -8,7 +8,6 @@ from openai import OpenAI
 
 import reflex as rx
 
-# pylint: disable=line-too-long
 SYSTEM_INSTRUCTIONS = OrderedDict()
 SYSTEM_INSTRUCTIONS["Define"] = (
     "DON'T translate, define in English the meaning of the given text.\n"
@@ -136,7 +135,6 @@ SYSTEM_INSTRUCTIONS["SQL"] = (
     + "or PostgreSQL,",
     True,
 )
-# pylint: enable=line-too-long
 
 DEFAULT_SYSTEM_INSTRUCTION = "Give example sentences using the given words."
 assert DEFAULT_SYSTEM_INSTRUCTION in SYSTEM_INSTRUCTIONS
