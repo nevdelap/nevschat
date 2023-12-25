@@ -11,32 +11,35 @@ import reflex as rx
 # pylint: disable=line-too-long
 SYSTEM_INSTRUCTIONS = OrderedDict()
 SYSTEM_INSTRUCTIONS["Define"] = (
-    "Don't translate, define in English the meaning of the given text. "
+    "Don't translate, define in English the meaning of the given text.\n"
     + "Do not provide pronunciations.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Définir"] = (
-    "Ne pas traduire, définissez en français le sens du texte donné. "
+    "Ne pas traduire, définissez en français le sens du texte donné.\n"
     + "De donnez pas de prononciation.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Definar"] = (
-    "No traduzca, defina en español el significado del texto dado. "
+    "No traduzca, defina en español el significado del texto dado.\n"
     + "No den pas la pronunciación.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Explain"] = (
-    "Don't translate, Explain in English the given text. Do not provide pronunciations.\n"
+    "Don't translate, Explain in English the given text.\n"
+    + "Do not provide pronunciations.\n"
     + "DON'T explain the simple or basic vocabulary or grammatical points.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Expliquer"] = (
     "Ne pas traduire, expliquer en français le texte donné.\n"
+    + "De donnez pas de prononciation.\n"
     + "N'expliquez PAS les points de vocabulaire ou de grammaire simples ou basiques.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Explicar"] = (
     "No traduzca, explica en español el texto dado.\n"
+    + "No den pas la pronunciación.\n"
     + "NO expliques el vocabulario sencillo o básico ni los puntos gramaticales "
     + "sencillos o básicos.",
     False,
@@ -49,11 +52,13 @@ SYSTEM_INSTRUCTIONS["Check Grammar"] = (
 )
 SYSTEM_INSTRUCTIONS["Explain Grammar"] = (
     "Don't translate, rather explain in English the grammar of the given text.\n"
+    + "Do not provide pronunciations.\n",
     + "DON'T explain the simple or basic vocabulary or grammatical points.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Explain Usage"] = (
     "Don't translate, rather explain in English the usage of the given text.\n"
+    + "Do not provide pronunciations.\n",
     + "Give examples, especially where words have different meanings in different "
     + "contexts.",
     False,
