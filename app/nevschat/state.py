@@ -11,36 +11,39 @@ import reflex as rx
 # pylint: disable=line-too-long
 SYSTEM_INSTRUCTIONS = OrderedDict()
 SYSTEM_INSTRUCTIONS["Define"] = (
-    "Define the meaning of the given text in English.",
+    "Don't translate, define in English the meaning of the given text. "
+    + "Do not provide pronunciations.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Définir"] = (
-    "Définir le sens du texte donné en français.",
+    "Ne pas traduire, définissez en français le sens du texte donné. "
+    + "De donnez pas de prononciation.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Definar"] = (
-    "Defina el significado del texto dado en español.",
+    "No traduzca, defina en español el significado del texto dado. "
+    + "No den pas la pronunciación.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Explain"] = (
-    "Explain the given text in English.\n"
+    "Don't translate, Explain in English the given text. Do not provide pronunciations.\n"
     + "DON'T explain the simple or basic vocabulary or grammatical points.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Expliquer"] = (
-    "Expliquer le texte donné en français.\n"
+    "Ne pas traduire, expliquer en français le texte donné.\n"
     + "N'expliquez PAS les points de vocabulaire ou de grammaire simples ou basiques.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Explicar"] = (
-    "Explica el texto dado en español.\n"
+    "No traduzca, explica en español el texto dado.\n"
     + "NO expliques el vocabulario sencillo o básico ni los puntos gramaticales "
     + "sencillos o básicos.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Check Grammar"] = (
     "Don't translate, check the grammar of the given text and explain any\n"
-    + "problems in English.\n"
+    + "problems in English. Do not provide pronunciations.\n"
     + "DON'T explain the simple or basic vocabulary or grammatical points.",
     False,
 )
@@ -57,9 +60,10 @@ SYSTEM_INSTRUCTIONS["Explain Usage"] = (
 )
 SYSTEM_INSTRUCTIONS["Give example sentences using the given words."] = (
     (
-        "Give a numbered list of ten varied example sentences in Japanese using the\n"
-        + "given words and otherwise simple vocabulary.\n"
+        "Give a dot point list of ten varied example sentences in Japanese using the\n"
+        + "given word. Use simple vocabulary.\n"
         + " - The response MUST NOT CONTAIN romaji of the example sentences.\n"
+        + " - The response MUST NOT CONTAIN pronunciation of the example sentences.\n"
         + " - The response MUST NOT CONTAIN translations of the example sentences.\n"
         + " - ONLY give definitions of unusual or uncommon words."
     ),
@@ -70,7 +74,7 @@ SYSTEM_INSTRUCTIONS["Translate To English"] = (
     False,
 )
 SYSTEM_INSTRUCTIONS["Translate To French"] = (
-    "Translate the given text into French.",
+    "Traduisez le texte donné en français.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Translate To Japanese"] = (
@@ -78,7 +82,7 @@ SYSTEM_INSTRUCTIONS["Translate To Japanese"] = (
     False,
 )
 SYSTEM_INSTRUCTIONS["Translate To Spanish"] = (
-    "Translate the given text into Spanish.",
+    "Traduce el texto dado al español.",
     False,
 )
 # SYSTEM_INSTRUCTIONS["Translate JSON"] = (
@@ -115,7 +119,11 @@ SYSTEM_INSTRUCTIONS["Snowflake"] = (
     "The question is in the context of Snowflake SQL queries.",
     True,
 )
-SYSTEM_INSTRUCTIONS["SQL"] = ("The question is in the context of SQL queries.", True)
+SYSTEM_INSTRUCTIONS["SQL"] = (
+    "The question is in the context of SQL queries. Prefer Snowflake SQL, "
+    + "or PostgreSQL,",
+    True,
+)
 # pylint: enable=line-too-long
 
 DEFAULT_SYSTEM_INSTRUCTION = "Give example sentences using the given words."
