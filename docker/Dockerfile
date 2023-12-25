@@ -10,23 +10,22 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --upgrade pip --root-user-action=ignore && \
     pip install --root-user-action=ignore \
     `# prod` \
-	openai \
+    openai \
     `# dev` \
-	bandit \
-	black \
-	coverage \
-	isort \
-	mypy \
-	pylint \
-	pytest \
-	pyupgrade \
+    bandit \
+    black \
+    coverage \
+    isort \
+    mypy \
+    pylint \
+    pytest \
+    pyupgrade \
     wheel
 WORKDIR /app
 COPY app/ .
 COPY reflex/ reflex/
 RUN pip install ./reflex
 ENV BUN_INSTALL="/app/.bun"
-ENV OPENAI_API_KEY="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"
 RUN reflex init
 ENTRYPOINT ["reflex", "run"]
 CMD ["--env", "prod"]
