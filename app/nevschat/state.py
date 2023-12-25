@@ -73,7 +73,7 @@ SYSTEM_INSTRUCTIONS["Explain Usage"] = (
 )
 SYSTEM_INSTRUCTIONS["Give example sentences using the given words."] = (
     (
-        "Give a dot point list of ten varied example sentences in Japanese using the\n"
+        "Give a dot point list of ten varied example sentences in Japanese using the "
         + "given word. Use simple vocabulary.\n"
         + " - The response MUST NOT CONTAIN pronunciation of the example sentences.\n"
         + " - The response MUST NOT CONTAIN romaji for the Japanese of the example "
