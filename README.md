@@ -1,5 +1,9 @@
 # Nev's Chat
 
+This is my private thing that I use everyday, deployed at
+[www.nevdelap.com/chat](http://www.nevdelap.com/chat) (behind auth), because it
+does exactly what I want and nothing else.
+
 ## Update Reflex
 
 ```bash
@@ -12,14 +16,14 @@ git commit -m 'Update reflex.' &&
 pip install -e reflex
 ```
 
-## Run The App
+## Run The App In Dev
 
 ```bash
 cd app &&
 reflex init && reflex run # Test at http://localhost:3000/
 ```
 
-## Release
+## Release On DigitalOcean
 
 ```bash
 git add . &&
