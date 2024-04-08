@@ -115,7 +115,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
 def chat() -> rx.Component:
     """List all the messages in a single conversation."""
     return rx.vstack(
-        rx.hstack(
+        rx.center(
             rx.checkbox(
                 "GPT4",
                 checked=State.gpt_4,
@@ -128,7 +128,7 @@ def chat() -> rx.Component:
                 color="#333",
                 on_change=State.set_terse,  # type: ignore
             ),
-            rx.hstack(
+            rx.center(
                 rx.radio(
                     ["Normal", "Instruction:"],
                     color="#333",
@@ -145,8 +145,12 @@ def chat() -> rx.Component:
                     value=State.system_instruction,
                     variant="surface",
                 ),
+                justify="start",
+                spacing="2",
                 wrap="wrap",
             ),
+            justify="start",
+            spacing="2",
             wrap="wrap",
         ),
         rx.box(
