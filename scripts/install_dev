@@ -5,6 +5,7 @@ cd "$PROJECT_DIR"
 
 # shellcheck source=/dev/null
 . ~/miniconda3/etc/profile.d/conda.sh
+conda config --set auto_activate_base false
 conda deactivate
 conda env remove -n nevschat
 conda create -yqn nevschat python=3.12
