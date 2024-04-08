@@ -242,6 +242,7 @@ class State(rx.State):
         for i, _ in enumerate(self.prompts_responses):
             self.prompts_responses[i] = self.prompts_responses[i]
 
+    # TODO: Figure out why Ctrl+Enter is not working.
     def handle_key_down(self, key):  # type: ignore
         if key == "Control":
             self.control_down = True
