@@ -165,6 +165,7 @@ def chat() -> rx.Component:
                     on_key_down=State.handle_key_down,
                     on_key_up=State.handle_key_up,
                     placeholder="Ask something.",
+                    width="100%",
                 ),
                 debounce_timeout=250,
                 value=State.new_prompt,
