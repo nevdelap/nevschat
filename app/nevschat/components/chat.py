@@ -25,25 +25,23 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     value=State.edited_prompt,
                 ),
                 rx.button(
-                    rx.icon(tag="close"),
+                    rx.icon(tag="x", color="black"),
                     _hover={"background_color": "#f8f8f8"},
                     background_color="white",
                     is_disabled=State.cannot_clear_or_send_edited_prompt,
                     on_click=lambda: State.clear_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
                 rx.button(
-                    rx.icon(tag="arrow_right"),
+                    rx.icon(tag="send-horizontal", color="white"),
                     _hover={"color": "white", "background_color": "green"},
                     background_color="green",
-                    color="white",
                     is_disabled=State.cannot_clear_or_send_edited_prompt,
                     on_click=lambda: State.send_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
                 rx.button(
-                    rx.icon(tag="close"),
+                    rx.icon(tag="x", color="white"),
                     _hover={"color": "white", "background_color": "darkred"},
                     background_color="darkred",
-                    color="white",
                     on_click=lambda: State.cancel_edit_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
                 width="100%",
@@ -59,16 +57,15 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     width="100%",
                 ),
                 rx.button(
-                    rx.icon(tag="edit"),
+                    rx.icon(tag="square-pen", color="white"),
                     _hover={"color": "white", "background_color": "green"},
                     background_color="green",
-                    color="white",
                     is_disabled=State.cannot_enter_new_prompt_or_edit,
                     is_loading=State.is_processing,
                     on_click=lambda: State.edit_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
                 rx.button(
-                    rx.icon(tag="copy"),
+                    rx.icon(tag="copy", color="black"),
                     _hover={"background_color": "#f8f8f8"},
                     background_color="white",
                     on_click=rx.set_clipboard(prompt_response.prompt),
@@ -88,16 +85,15 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     rx.cond(
                         State.is_processing,
                         rx.button(
-                            rx.icon(tag="close"),
+                            rx.icon(tag="x", color="white"),
                             _hover={"color": "white", "background_color": "darkred"},
                             background_color="darkred",
-                            color="white",
                             on_click=State.cancel_send,  # type: ignore
                         ),
                         None,
                     ),
                     rx.button(
-                        rx.icon(tag="copy"),
+                        rx.icon(tag="copy", color="black"),
                         _hover={"background_color": "#f8f8f8"},
                         background_color="white",
                         on_click=rx.set_clipboard(prompt_response.response),
@@ -183,17 +179,16 @@ def chat() -> rx.Component:
                 value=State.new_prompt,
             ),
             rx.button(
-                rx.icon(tag="close"),
+                rx.icon(tag="x", color="black"),
                 _hover={"background_color": "#f8f8f8"},
                 background_color="white",
                 is_disabled=State.cannot_send_new_prompt,
                 on_click=lambda: State.clear_new_prompt,  # type: ignore  # pylint: disable=no-value-for-parameter
             ),
             rx.button(
-                rx.icon(tag="arrow_right"),
+                rx.icon(tag="send-horizontal", color="white"),
                 _hover={"color": "white", "background_color": "green"},
                 background_color="green",
-                color="white",
                 is_disabled=State.cannot_send_new_prompt,
                 is_loading=State.is_processing,
                 on_click=State.send,

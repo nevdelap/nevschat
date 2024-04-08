@@ -25,7 +25,7 @@ def index() -> rx.Component:
         ),
         chat(),
         rx.button(
-            rx.icon(tag="close"),
+            rx.icon(tag="x", color="black"),
             _hover={"background_color": "#f8f8f8"},
             background_color="white",
             is_disabled=State.cannot_clear_chat,
