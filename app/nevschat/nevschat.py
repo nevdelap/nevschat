@@ -51,4 +51,3 @@ app.add_page(
     index,
     title=TITLE,
 )
-app.compile()
