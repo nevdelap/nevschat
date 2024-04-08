@@ -23,9 +23,8 @@ def index() -> rx.Component:
         ),
         chat(),
         rx.button(
-            rx.icon(tag="x", color="black"),
-            _hover={"background_color": "#f8f8f8"},
-            background_color="white",
+            rx.icon(tag="x"),
+            color_scheme="tomato",
             disabled=State.cannot_clear_chat,
             on_click=State.clear_chat,
         ),
