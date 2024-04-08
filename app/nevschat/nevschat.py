@@ -32,7 +32,7 @@ def index() -> rx.Component:
             State.warning,
             rx.callout(
                 State.warning,
-                icon="alert_triangle",
+                icon="triangle_alert",
                 color_scheme="red",
                 role="alert",
             ),
