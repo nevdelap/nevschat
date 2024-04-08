@@ -292,6 +292,7 @@ class State(rx.State):
                     ]
                 else:
                     system_instruction, code_related = NORMAL_SYSTEM_INSTRUCTION, False
+
                 messages.append({"role": "system", "content": system_instruction})
                 if code_related:
                     messages.append(
@@ -342,8 +343,8 @@ class State(rx.State):
                 stream=True,  # Enable streaming
             )
 
-            # TODO: figure out incompatible OpenAI change?
-            for item in session:
+            # pylint error: https://github.com/openai/openai-python/issues/870
+            for item in session:  # pylint: disable=not-an-iterable
                 async with self:
                     response = item.choices[0].delta.content
                     if response:
@@ -358,6 +359,7 @@ class State(rx.State):
         except Exception as ex:  # pylint: disable=broad-exception-caught
             async with self:
                 self.warning = str(ex)
+                print(f"Error: {ex}")
         finally:
             async with self:
                 self.is_processing = False
