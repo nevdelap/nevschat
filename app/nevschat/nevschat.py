@@ -47,7 +47,14 @@ def index() -> rx.Component:
     )
 
 
-app = rx.App()
+app = rx.App(theme=rx.theme(
+        accent_color="teal",
+        appearance="light",
+        has_background=True,
+        radius="large",
+        scaling="110%",
+    )
+)
 app.add_page(
     index,
     title=TITLE,
