@@ -4,12 +4,36 @@ This is my private thing that I use everyday, deployed at
 [www.nevdelap.com/chat](http://www.nevdelap.com/chat) (behind auth), because it
 does exactly what I want and nothing else.
 
+## Prerequisites
+
+```bash
+paru -Sy unzip
+```
+
+## From Scratch
+
+```bash
+mkdir -p ~/miniconda3 &&
+cd ~/miniconda3 &&
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh &&
+bash miniconda.sh -b -u -p ~/miniconda3 &&
+rm miniconda.sh &&
+mkdir ~/nevschat &&
+cd ~/nevschat &&
+git clone git@github.com:nevdelap/droplet.git &&
+git clone git@github.com:nevdelap/nevschat.git &&
+cd nevschat &&
+git submodule init &&
+git submodule update &&
+scripts/install_dev
+```
+
 ## Update Reflex
 
 ```bash
 cd reflex &&
 git fetch &&
-git checkout v0.3.2 &&
+git checkout v0.4.6 &&
 cd .. &&
 git add reflex &&
 git commit -m 'Update reflex.' &&

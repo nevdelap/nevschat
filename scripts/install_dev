@@ -15,7 +15,6 @@ conda install -yq \
 	--quiet \
 	--yes \
 	`# prod` \
-	`# reflex submodule` \
 	pandas \
 	poetry \
 	pyright \
@@ -32,8 +31,4 @@ conda install -yq \
 	pyupgrade
 pip install -U \
 	openai==1.3.4
-pushd reflex > /dev/null
-git checkout v0.3.2
-popd > /dev/null
-pip install -e ./reflex
 echo Done.
