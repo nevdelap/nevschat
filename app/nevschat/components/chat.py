@@ -154,7 +154,7 @@ def chat() -> rx.Component:
                     is_disabled=State.is_not_system_instruction,
                     on_change=State.set_system_instruction,
                     value=State.system_instruction,
-                    variant="unstyled",
+                    variant="surface",
                 ),
             ),
         ),
