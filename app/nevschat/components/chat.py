@@ -25,8 +25,8 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     value=State.edited_prompt,
                 ),
                 rx.button(
-                    rx.icon(tag="x"),
-                    color_scheme="tomato",
+                    rx.icon(tag="eraser"),
+                    color_scheme="red",
                     disabled=State.cannot_clear_or_send_edited_prompt,
                     on_click=lambda: State.clear_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
@@ -171,8 +171,8 @@ def chat() -> rx.Component:
                 value=State.new_prompt,
             ),
             rx.button(
-                rx.icon(tag="x"),
-                color_scheme="tomato",
+                rx.icon(tag="eraser"),
+                color_scheme="red",
                 disabled=State.cannot_send_new_prompt,
                 on_click=lambda: State.clear_new_prompt,  # type: ignore  # pylint: disable=no-value-for-parameter
             ),
