@@ -136,15 +136,11 @@ def chat() -> rx.Component:
                 on_change=State.set_terse,  # type: ignore
             ),
             rx.hstack(
-                rx.radio_group(
-                    rx.hstack(
-                        rx.foreach(
-                            ["Normal", "Instruction:"],
-                            rx.radio,
-                        ),
-                        spacing="0.5em",
-                    ),
+                rx.radio(
+                    ["Normal", "Instruction:"],
                     color="#333",
+                    direction="row",
+                    spacing="2",
                     on_change=State.set_mode,
                     value=State.mode,
                 ),
