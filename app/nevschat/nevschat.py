@@ -46,7 +46,7 @@ def index() -> rx.Component:
     )
 
 
-app = rx.App(state=State)
+app = rx.App()
 app.add_page(
     index,
     title=TITLE,
