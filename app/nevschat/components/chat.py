@@ -28,14 +28,14 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     rx.icon(tag="x", color="black"),
                     _hover={"background_color": "#f8f8f8"},
                     background_color="white",
-                    is_disabled=State.cannot_clear_or_send_edited_prompt,
+                    disabled=State.cannot_clear_or_send_edited_prompt,
                     on_click=lambda: State.clear_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
                 rx.button(
                     rx.icon(tag="send-horizontal", color="white"),
                     _hover={"color": "white", "background_color": "green"},
                     background_color="green",
-                    is_disabled=State.cannot_clear_or_send_edited_prompt,
+                    disabled=State.cannot_clear_or_send_edited_prompt,
                     on_click=lambda: State.send_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
                 rx.button(
@@ -60,7 +60,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     rx.icon(tag="square-pen", color="white"),
                     _hover={"color": "white", "background_color": "green"},
                     background_color="green",
-                    is_disabled=State.cannot_enter_new_prompt_or_edit,
+                    disabled=State.cannot_enter_new_prompt_or_edit,
                     is_loading=State.is_processing,
                     on_click=lambda: State.edit_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
@@ -125,14 +125,14 @@ def chat() -> rx.Component:
         rx.hstack(
             rx.checkbox(
                 "GPT4",
+                checked=State.gpt_4,
                 color="#333",
-                is_checked=State.gpt_4,
                 on_change=State.set_gpt_4,  # type: ignore
             ),
             rx.checkbox(
                 "Terse",
+                checked=State.terse,
                 color="#333",
-                is_checked=State.terse,
                 on_change=State.set_terse,  # type: ignore
             ),
             rx.hstack(
@@ -147,7 +147,7 @@ def chat() -> rx.Component:
                 rx.select(
                     list(SYSTEM_INSTRUCTIONS.keys()),
                     default_value=DEFAULT_SYSTEM_INSTRUCTION,
-                    is_disabled=State.is_not_system_instruction,
+                    disabled=State.is_not_system_instruction,
                     on_change=State.set_system_instruction,
                     value=State.system_instruction,
                     variant="surface",
@@ -166,7 +166,7 @@ def chat() -> rx.Component:
         rx.hstack(
             rx.debounce_input(
                 rx.text_area(
-                    is_disabled=State.cannot_enter_new_prompt_or_edit,
+                    disabled=State.cannot_enter_new_prompt_or_edit,
                     on_blur=State.cancel_control,
                     on_change=State.set_new_prompt,  # type: ignore  # pylint: disable=no-value-for-parameter
                     on_key_down=State.handle_key_down,
@@ -180,14 +180,14 @@ def chat() -> rx.Component:
                 rx.icon(tag="x", color="black"),
                 _hover={"background_color": "#f8f8f8"},
                 background_color="white",
-                is_disabled=State.cannot_send_new_prompt,
+                disabled=State.cannot_send_new_prompt,
                 on_click=lambda: State.clear_new_prompt,  # type: ignore  # pylint: disable=no-value-for-parameter
             ),
             rx.button(
                 rx.icon(tag="send-horizontal", color="white"),
                 _hover={"color": "white", "background_color": "green"},
                 background_color="green",
-                is_disabled=State.cannot_send_new_prompt,
+                disabled=State.cannot_send_new_prompt,
                 is_loading=State.is_processing,
                 on_click=State.send,
             ),
