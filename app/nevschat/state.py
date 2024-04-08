@@ -342,6 +342,7 @@ class State(rx.State):
                 stream=True,  # Enable streaming
             )
 
+            # TODO: figure out incompatible OpenAI change?
             for item in session:
                 async with self:
                     response = item.choices[0].delta.content

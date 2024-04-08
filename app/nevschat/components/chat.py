@@ -122,7 +122,8 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
 def chat() -> rx.Component:
     """List all the messages in a single conversation."""
     return rx.vstack(
-        rx.wrap(
+        # TODO: how to wrap when components are wider than the page.
+        rx.hstack(  # Was rx.wrap.
             rx.checkbox(
                 "GPT4",
                 color="#333",

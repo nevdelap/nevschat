@@ -31,14 +31,16 @@ def index() -> rx.Component:
         ),
         rx.cond(
             State.warning,
-            rx.alert(
-                rx.alert_icon(),
-                rx.alert_title(
-                    State.warning,
-                ),
-                border_radius="0.5em",
-                status="warning",
-            ),
+            # TODO: How to do an alert.
+            rx.text("temp", width="100%"),
+            # rx.alert(
+            #     rx.alert_icon(),
+            #     rx.alert_title(
+            #         State.warning,
+            #     ),
+            #     border_radius="0.5em",
+            #     status="warning",
+            # ),
             None,
         ),
         padding="1em",
