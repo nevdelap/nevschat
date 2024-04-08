@@ -287,12 +287,12 @@ class State(rx.State):
                         }
                     )
 
-                if self.mode in SYSTEM_INSTRUCTIONS:
+                if self.mode == "Normal":
+                    system_instruction, code_related = NORMAL_SYSTEM_INSTRUCTION, False
+                else:
                     system_instruction, code_related = SYSTEM_INSTRUCTIONS[
                         self.system_instruction
                     ]
-                else:
-                    system_instruction, code_related = NORMAL_SYSTEM_INSTRUCTION, False
 
                 messages.append({"role": "system", "content": system_instruction})
                 if code_related:
