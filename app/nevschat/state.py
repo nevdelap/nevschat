@@ -139,6 +139,8 @@ SYSTEM_INSTRUCTIONS["SQL"] = (
     True,
 )
 
+NORMAL_SYSTEM_INSTRUCTION = "Respond in English."
+
 DEFAULT_SYSTEM_INSTRUCTION = "Give example sentences using the given words."
 assert DEFAULT_SYSTEM_INSTRUCTION in SYSTEM_INSTRUCTIONS
 
@@ -174,10 +176,6 @@ class State(rx.State):
     mode: str = "Normal"
     system_instruction: str = DEFAULT_SYSTEM_INSTRUCTION
     warning: str = ""
-
-    def __init__(self) -> None:
-        super().__init__()
-        self.invariant()
 
     @rx.var
     def is_not_system_instruction(self) -> bool:
@@ -282,25 +280,29 @@ class State(rx.State):
                     messages.append(
                         {
                             "role": "system",
-                            "content": "Give terse responses without extra explanation.",
+                            "content": (
+                                "Give terse responses without extra explanation."
+                            ),
                         }
                     )
 
-                if self.mode != "Normal":
+                if self.mode in SYSTEM_INSTRUCTIONS:
                     system_instruction, code_related = SYSTEM_INSTRUCTIONS[
                         self.system_instruction
                     ]
-                    messages.append({"role": "system", "content": system_instruction})
-                    if code_related:
-                        messages.append(
-                            {
-                                "role": "system",
-                                "content": (
-                                    "All responses with code examples MUST "
-                                    + "wrap the code examples in triple backticks."
-                                ),
-                            }
-                        )
+                else:
+                    system_instruction, code_related = NORMAL_SYSTEM_INSTRUCTION, False
+                messages.append({"role": "system", "content": system_instruction})
+                if code_related:
+                    messages.append(
+                        {
+                            "role": "system",
+                            "content": (
+                                "All responses with code examples MUST "
+                                + "wrap the code examples in triple backticks."
+                            ),
+                        }
+                    )
 
                 messages.append(
                     {
