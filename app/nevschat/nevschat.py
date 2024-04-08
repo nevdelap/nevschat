@@ -14,13 +14,11 @@ def index() -> rx.Component:
         rx.heading(
             TITLE,
             text_align="left",
-            size="lg",
             width="100%",
         ),
         rx.text(
             f"Reflex version {rx.constants.Reflex.VERSION}.",
             color="#aaa",
-            size="sm",
             width="100%",
         ),
         chat(),
