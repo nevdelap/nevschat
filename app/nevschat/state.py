@@ -242,11 +242,10 @@ class State(rx.State):
         for i, _ in enumerate(self.prompts_responses):
             self.prompts_responses[i] = self.prompts_responses[i]
 
-    # TODO: Figure out why Ctrl+Enter is not working.
-    def handle_key_down(self, key):  # type: ignore
-        if key == "Control":
+    def handle_key_down(self, event):  # type: ignore
+        if event.key == "Control":
             self.control_down = True
-        if key == "Enter" and self.control_down:
+        if event.key == "Enter" and self.control_down:
             if self.is_editing:
                 index = self.editing_index()
                 if index is None:
@@ -257,8 +256,8 @@ class State(rx.State):
             else:
                 return State.send  # type: ignore
 
-    def handle_key_up(self, key) -> AsyncGenerator[None, None]:  # type: ignore
-        if key == "Control":
+    def handle_key_up(self, event) -> AsyncGenerator[None, None]:  # type: ignore
+        if event.key == "Control":
             self.control_down = False
 
     def cancel_control(self, _text: str = "") -> None:

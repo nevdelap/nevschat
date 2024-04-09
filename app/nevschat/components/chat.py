@@ -10,7 +10,7 @@ import reflex as rx
 
 def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Component:
     return rx.box(
-        rx.cond(  # type: ignore
+        rx.cond(
             prompt_response.is_editing,
             rx.hstack(
                 rx.debounce_input(
@@ -45,12 +45,10 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
             ),
             rx.hstack(
                 rx.box(
-                    rx.markdown(
-                        prompt_response.prompt,
-                    ),
+                    rx.markdown(prompt_response.prompt),
                     background_color="#f8f8f8",
                     border_radius="10px",
-                    padding="0.5em 1em 0.5em 1em",
+                    padding="0 1em 0 1em",
                     width="100%",
                 ),
                 rx.button(
@@ -69,57 +67,48 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
             ),
         ),
         rx.vstack(
-            rx.box(
-                rx.hstack(
-                    rx.box(
-                        rx.markdown(
-                            prompt_response.response,
-                        ),
+            rx.hstack(
+                rx.box(
+                    rx.markdown(
+                        prompt_response.response,
                         width="100%",
-                    ),
-                    rx.cond(
-                        State.is_processing,
-                        rx.button(
-                            rx.icon(tag="x"),
-                            color_scheme="tomato",
-                            on_click=State.cancel_send,  # type: ignore
-                        ),
-                        None,
-                    ),
-                    rx.button(
-                        rx.icon(tag="copy"),
-                        color_scheme="gray",
-                        on_click=rx.set_clipboard(prompt_response.response),
                     ),
                     width="100%",
                 ),
-                padding="0.5em 0em 0em 1.5em",
-                width="100%",
-            ),
-            rx.center(
-                rx.text(
-                    prompt_response.model,
-                    color="#aaa",
-                    font_size="0.75em",
-                    margin="0",
-                    padding="0",
+                rx.cond(
+                    State.is_processing,
+                    rx.button(
+                        rx.icon(tag="x"),
+                        color_scheme="tomato",
+                        on_click=State.cancel_send,  # type: ignore
+                    ),
+                    None,
                 ),
-                align="center",
-                direction="row",
-                justify="start",
-                margin="0",
-                padding="0 0 0.5em 0",
+                rx.button(
+                    rx.icon(tag="copy"),
+                    color_scheme="gray",
+                    on_click=rx.set_clipboard(prompt_response.response),
+                ),
                 width="100%",
             ),
+            rx.text(
+                prompt_response.model,
+                color="#aaa",
+                font_size="0.5em",
+                margin_bottom="0.5em",
+                width="100%",
+            ),
+            text_align="center",
             width="100%",
         ),
+        width="100%",
     )
 
 
 def chat() -> rx.Component:
     """List all the messages in a single conversation."""
     return rx.vstack(
-        rx.center(
+        rx.hstack(
             rx.checkbox(
                 "GPT4",
                 checked=State.gpt_4,
@@ -132,7 +121,7 @@ def chat() -> rx.Component:
                 color="#333",
                 on_change=State.set_terse,  # type: ignore
             ),
-            rx.center(
+            rx.hstack(
                 rx.radio(
                     ["Normal", "Instruction:"],
                     color="#333",
@@ -149,15 +138,13 @@ def chat() -> rx.Component:
                     value=State.system_instruction,
                     variant="surface",
                 ),
-                align="start",
+                align="center",
                 direction="row",
-                justify="center",
                 spacing="2",
                 wrap="wrap",
             ),
-            align="start",
+            align="center",
             direction="row",
-            justify="center",
             spacing="2",
             wrap="wrap",
         ),

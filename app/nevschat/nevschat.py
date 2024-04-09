@@ -6,20 +6,15 @@ from nevschat.state import State
 import reflex as rx
 
 VERSION = 24
-TITLE = f"Nev's Awesome ChatGPT v{VERSION}"
+TITLE = "Nev's Awesome ChatGPT"
 
 
 def index() -> rx.Component:
     return rx.vstack(
-        rx.heading(
-            TITLE,
-            text_align="left",
-            width="100%",
-        ),
+        rx.heading(TITLE),
         rx.text(
-            f"Reflex version {rx.constants.Reflex.VERSION}.",
+            f"v{VERSION} Reflex version {rx.constants.Reflex.VERSION}.",
             color="#aaa",
-            width="100%",
         ),
         chat(),
         rx.button(
@@ -43,12 +38,13 @@ def index() -> rx.Component:
     )
 
 
-app = rx.App(theme=rx.theme(
+app = rx.App(
+    theme=rx.theme(
         accent_color="teal",
         appearance="light",
         has_background=True,
         radius="large",
-        scaling="110%",
+        scaling="100%",
     )
 )
 app.add_page(
