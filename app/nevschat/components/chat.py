@@ -13,7 +13,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
         rx.cond(
             prompt_response.is_editing,
             rx.hstack(
-                rx.debounce_input(
+                # rx.debounce_input(
                     rx.text_area(
                         on_blur=State.cancel_control,
                         on_change=State.update_edited_prompt,  # type: ignore  # pylint: disable=no-value-for-parameter
@@ -21,9 +21,9 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         on_key_up=State.handle_key_up,
                         width="100%",
                     ),
-                    debounce_timeout=250,
-                    value=State.edited_prompt,
-                ),
+                #     debounce_timeout=250,
+                #     value=State.edited_prompt,
+                # ),
                 rx.button(
                     rx.icon(tag="eraser"),
                     color_scheme="red",
@@ -156,7 +156,7 @@ def chat() -> rx.Component:
             width="100%",
         ),
         rx.hstack(
-            rx.debounce_input(
+            # rx.debounce_input(
                 rx.text_area(
                     disabled=State.cannot_enter_new_prompt_or_edit,
                     on_blur=State.cancel_control,
@@ -166,9 +166,9 @@ def chat() -> rx.Component:
                     placeholder="Ask something.",
                     width="100%",
                 ),
-                debounce_timeout=250,
-                value=State.new_prompt,
-            ),
+            #     debounce_timeout=250,
+            #     value=State.new_prompt,
+            # ),
             rx.button(
                 rx.icon(tag="eraser"),
                 color_scheme="red",
