@@ -79,9 +79,9 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                 rx.box(
                     rx.markdown(
                         prompt_response.response,
-                        margin_left="1em",
                         width="100%",
                     ),
+                    margin_left="1em",
                     width="100%",
                 ),
                 rx.cond(
