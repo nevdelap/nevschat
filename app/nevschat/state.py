@@ -147,7 +147,7 @@ assert DEFAULT_SYSTEM_INSTRUCTION in SYSTEM_INSTRUCTIONS
 GPT4_MODEL = "gpt-4-1106-preview"
 GPT3_MODEL = "gpt-3.5-turbo"
 
-TEST_PROMPT = "Give 10 example sentences about nice jugs."
+TEST_PROMPT = "Give 10 example sentences about かわいいウサギ."
 TESTING = False
 
 
@@ -224,7 +224,7 @@ class State(rx.State):
     def clear_new_prompt(self) -> None:
         self.new_prompt = ""
 
-    def send_edited_prompt(self, index: int):  # type: ignore
+    def send_edited_prompt(self, index: int):
         assert len(self.edited_prompt.strip()) > 0
         self.new_prompt = self.edited_prompt
         self.prompts_responses = self.prompts_responses[:index]
@@ -242,7 +242,7 @@ class State(rx.State):
     #     for i, _ in enumerate(self.prompts_responses):
     #         self.prompts_responses[i] = self.prompts_responses[i]
 
-    def handle_key_down(self, key):  # type: ignore
+    def handle_key_down(self, key):
         if key == "Control":
             self.control_down = True
         if key == "Enter" and self.control_down:
@@ -252,11 +252,11 @@ class State(rx.State):
                     raise RuntimeError(
                         "If is_editing, the editing_index cannot be None."
                     )
-                return self.send_edited_prompt(index)  # type: ignore
+                return self.send_edited_prompt(index)
             else:
-                return State.send  # type: ignore
+                return State.send
 
-    def handle_key_up(self, key) -> AsyncGenerator[None, None]:  # type: ignore
+    def handle_key_up(self, key) -> AsyncGenerator[None, None]:
         if key == "Control":
             self.control_down = False
 

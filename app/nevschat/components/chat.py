@@ -14,15 +14,15 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
             prompt_response.is_editing,
             rx.hstack(
                 # rx.debounce_input(
-                    rx.text_area(
-                        on_blur=State.cancel_control,
-                        on_change=State.update_edited_prompt,  # type: ignore  # pylint: disable=no-value-for-parameter
-                        on_key_down=State.handle_key_down,
-                        on_key_up=State.handle_key_up,
-                        width="100%",
+                rx.text_area(
+                    on_blur=State.cancel_control,
+                    on_change=State.update_edited_prompt,
+                    on_key_down=State.handle_key_down,
+                    on_key_up=State.handle_key_up,
+                    width="100%",
                     # ),
-                #     debounce_timeout=250,
-                    value=State.edited_prompt,
+                    # debounce_timeout=250,
+                    # value=State.edited_prompt,
                 ),
                 rx.button(
                     rx.icon(tag="eraser"),
@@ -80,7 +80,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     rx.button(
                         rx.icon(tag="x"),
                         color_scheme="tomato",
-                        on_click=State.cancel_send,  # type: ignore
+                        on_click=State.cancel_send,
                     ),
                     None,
                 ),
@@ -113,13 +113,13 @@ def chat() -> rx.Component:
                 "GPT4",
                 checked=State.gpt_4,
                 color="#333",
-                on_change=State.set_gpt_4,  # type: ignore
+                on_change=State.set_gpt_4,
             ),
             rx.checkbox(
                 "Terse",
                 checked=State.terse,
                 color="#333",
-                on_change=State.set_terse,  # type: ignore
+                on_change=State.set_terse,
             ),
             rx.hstack(
                 rx.radio(
@@ -157,23 +157,23 @@ def chat() -> rx.Component:
         ),
         rx.hstack(
             # rx.debounce_input(
-                rx.text_area(
-                    disabled=State.cannot_enter_new_prompt_or_edit,
-                    on_blur=State.cancel_control,
-                    on_change=State.set_new_prompt,  # type: ignore  # pylint: disable=no-value-for-parameter
-                    on_key_down=State.handle_key_down,
-                    on_key_up=State.handle_key_up,
-                    placeholder="Ask something.",
-                    width="100%",
-                # ),
-            #     debounce_timeout=250,
-                value=State.new_prompt,
+            rx.text_area(
+                disabled=State.cannot_enter_new_prompt_or_edit,
+                on_blur=State.cancel_control,
+                on_change=State.set_new_prompt,
+                on_key_down=State.handle_key_down,
+                on_key_up=State.handle_key_up,
+                placeholder="Ask something.",
+                width="100%",
             ),
+            # debounce_timeout=250,
+            # value=State.new_prompt,
+            # ),
             rx.button(
                 rx.icon(tag="eraser"),
                 color_scheme="red",
                 disabled=State.cannot_send_new_prompt,
-                on_click=lambda: State.clear_new_prompt,  # type: ignore  # pylint: disable=no-value-for-parameter
+                on_click=lambda: State.clear_new_prompt,
             ),
             rx.button(
                 rx.icon(tag="send-horizontal"),
