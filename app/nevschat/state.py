@@ -213,7 +213,7 @@ class State(rx.State):
         self.edited_prompt = self.prompts_responses[index].prompt
         self.prompts_responses[index].is_editing = True
         self.is_editing = True
-        self.issue1675()
+        # self.issue1675()
 
     def update_edited_prompt(self, prompt: str) -> None:
         self.edited_prompt = prompt
@@ -229,18 +229,18 @@ class State(rx.State):
         self.new_prompt = self.edited_prompt
         self.prompts_responses = self.prompts_responses[:index]
         self.is_editing = False
-        self.issue1675()
+        # self.issue1675()
         return State.send
 
     def cancel_edit_prompt(self, index: int) -> None:
         self.edited_prompt = ""
         self.prompts_responses[index].is_editing = False
         self.is_editing = False
-        self.issue1675()
+        # self.issue1675()
 
-    def issue1675(self) -> None:
-        for i, _ in enumerate(self.prompts_responses):
-            self.prompts_responses[i] = self.prompts_responses[i]
+    # def issue1675(self) -> None:
+    #     for i, _ in enumerate(self.prompts_responses):
+    #         self.prompts_responses[i] = self.prompts_responses[i]
 
     def handle_key_down(self, key):  # type: ignore
         if key == "Control":
