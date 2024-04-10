@@ -45,7 +45,7 @@ pip install -e reflex
 
 ```bash
 cd app &&
-reflex init && reflex run # Test at http://localhost:3000/
+reflex run # Test at http://localhost:3000/
 ```
 
 ## Release On DigitalOcean
@@ -67,6 +67,11 @@ exit
 ```
 
 ### General Info
+
+#### Documentation
+
+* [Reflex Component Library](https://reflex.dev/docs/library/)
+* [Lucid Icons](https://lucide.dev/icons)
 
 #### Page structure
 
