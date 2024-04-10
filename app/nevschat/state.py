@@ -170,7 +170,6 @@ class State(rx.State):
     new_prompt: str = "" if not TESTING else TEST_PROMPT
     edited_prompt: str
     is_processing: bool = False
-    control_down: bool = False
     gpt_4: bool = False
     terse: bool = False
     mode: str = "Normal"
@@ -242,34 +241,12 @@ class State(rx.State):
     #     for i, _ in enumerate(self.prompts_responses):
     #         self.prompts_responses[i] = self.prompts_responses[i]
 
-    def handle_key_down(self, key):
-        if key == "Control":
-            self.control_down = True
-        if key == "Enter" and self.control_down:
-            if self.is_editing:
-                index = self.editing_index()
-                if index is None:
-                    raise RuntimeError(
-                        "If is_editing, the editing_index cannot be None."
-                    )
-                return self.send_edited_prompt(index)
-            else:
-                return State.send
-
-    def handle_key_up(self, key) -> AsyncGenerator[None, None]:
-        if key == "Control":
-            self.control_down = False
-
-    def cancel_control(self, _text: str = "") -> None:
-        self.control_down = False
-
     @rx.background
     async def send(self):
         try:
             async with self:
                 assert self.new_prompt != ""
 
-                self.cancel_control()
                 self.is_processing = True
                 self.warning = ""
 
