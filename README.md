@@ -1,4 +1,4 @@
-# Nev's Chat
+# Nev's Awesome ChatGPT
 
 This is my private thing that I use everyday, deployed at
 [www.nevdelap.com/chat](http://www.nevdelap.com/chat) (behind auth), because it
