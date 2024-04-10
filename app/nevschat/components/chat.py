@@ -28,18 +28,21 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         color_scheme="red",
                         disabled=State.cannot_clear_or_send_edited_prompt,
                         on_click=lambda: State.clear_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
+                        margin_top="0.75em",
                     ),
                     rx.button(
                         rx.icon(tag="send-horizontal"),
                         color_scheme="grass",
                         disabled=State.cannot_clear_or_send_edited_prompt,
                         on_click=lambda: State.send_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
+                        margin_top="0.75em",
                         type="submit",
                     ),
                     rx.button(
                         rx.icon(tag="x"),
                         color_scheme="tomato",
                         on_click=lambda: State.cancel_edit_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
+                        margin_top="0.75em",
                     ),
                     width="100%",
                 ),
@@ -60,11 +63,13 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     disabled=State.cannot_enter_new_prompt_or_edit,
                     is_loading=State.is_processing,
                     on_click=lambda: State.edit_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
+                    margin_top="0.75em",
                 ),
                 rx.button(
                     rx.icon(tag="copy"),
                     color_scheme="gray",
                     on_click=rx.set_clipboard(prompt_response.prompt),
+                    margin_top="0.75em",
                 ),
                 width="100%",
             ),
@@ -74,6 +79,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                 rx.box(
                     rx.markdown(
                         prompt_response.response,
+                        margin_left="1em",
                         width="100%",
                     ),
                     width="100%",
@@ -84,6 +90,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         rx.icon(tag="x"),
                         color_scheme="tomato",
                         on_click=State.cancel_send,
+                        margin_top="0.75em",
                     ),
                     None,
                 ),
@@ -91,6 +98,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     rx.icon(tag="copy"),
                     color_scheme="gray",
                     on_click=rx.set_clipboard(prompt_response.response),
+                    margin_top="0.75em",
                 ),
                 width="100%",
             ),
@@ -176,6 +184,7 @@ def chat() -> rx.Component:
                     color_scheme="red",
                     disabled=State.cannot_send_new_prompt,
                     on_click=lambda: State.clear_new_prompt,
+                    margin_top="0.75em",
                 ),
                 rx.button(
                     rx.icon(tag="send-horizontal"),
@@ -183,6 +192,7 @@ def chat() -> rx.Component:
                     disabled=State.cannot_send_new_prompt,
                     is_loading=State.is_processing,
                     on_click=State.send,
+                    margin_top="0.75em",
                     type="submit",
                 ),
                 width="100%",
