@@ -12,6 +12,9 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
     return rx.box(
         rx.cond(
             prompt_response.is_editing,
+            # Form and debounce commented out until the issues described in
+            # https://github.com/reflex-dev/reflex/issues/3060 are sorted.
+            # Until then the send button must be manually clicked.
             # rx.form(
             rx.hstack(
                 # rx.debounce_input(
@@ -21,7 +24,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     width="100%",
                     # ),
                     # debounce_timeout=250,
-                    # value=State.edited_prompt,
+                    value=State.edited_prompt,
                 ),
                 rx.button(
                     rx.icon(tag="eraser"),
@@ -166,6 +169,9 @@ def chat() -> rx.Component:
             ),
             width="100%",
         ),
+        # Form and debounce commented out until the issues described in
+        # https://github.com/reflex-dev/reflex/issues/3060 are sorted.
+        # Until then the send button must be manually clicked.
         # rx.form(
         rx.hstack(
             # rx.debounce_input(
@@ -177,7 +183,7 @@ def chat() -> rx.Component:
                 width="100%",
                 # ),
                 # debounce_timeout=250,
-                # value=State.new_prompt,
+                value=State.new_prompt,
             ),
             rx.button(
                 rx.icon(tag="eraser"),
