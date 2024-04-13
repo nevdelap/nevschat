@@ -61,7 +61,9 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                 ),
                 width="100%",
             ),
-            # on_submit=lambda _form_data_unused: State.send_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
+            # on_submit=(
+            #     lambda _form_data_unused: State.send_edited_prompt(index)
+            # ),  # type: ignore  # pylint: disable=no-value-for-parameter
             #     width="100%",
             # ),
             rx.hstack(

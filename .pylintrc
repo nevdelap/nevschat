@@ -1,5 +1,5 @@
 [MESSAGES CONTROL]
-disable=missing-class-docstring,missing-function-docstring,missing-module-docstring
+disable=duplicate-code,missing-class-docstring,missing-function-docstring,missing-module-docstring
 
 [FORMAT]
 max-line-length=88

@@ -2,7 +2,8 @@
 
 import os
 from collections import OrderedDict
-from collections.abc import AsyncGenerator
+from dataclasses import dataclass
+from typing import Any
 
 from openai import OpenAI
 
@@ -151,14 +152,15 @@ TEST_PROMPT = "Give 10 example sentences about かわいいウサギ."
 TESTING = False
 
 
-class PromptResponse(rx.Base):
+@dataclass
+class PromptResponse(rx.Base):  # type: ignore
     prompt: str
     response: str
     is_editing: bool
     model: str
 
 
-class State(rx.State):
+class State(rx.State):  # type: ignore
     prompts_responses: list[PromptResponse] = [
         # PromptResponse(
         #     prompt="Canned",
@@ -176,27 +178,27 @@ class State(rx.State):
     system_instruction: str = DEFAULT_SYSTEM_INSTRUCTION
     warning: str = ""
 
-    @rx.var
+    @rx.var  # type: ignore
     def is_not_system_instruction(self) -> bool:
         return self.mode != "Instruction:"
 
-    @rx.var
+    @rx.var  # type: ignore
     def cannot_clear_chat(self) -> bool:
         return len(self.prompts_responses) == 0
 
-    @rx.var
+    @rx.var  # type: ignore
     def cannot_clear_or_send_edited_prompt(self) -> bool:
         return len(self.edited_prompt.strip()) == 0
 
-    @rx.var
+    @rx.var  # type: ignore
     def cannot_enter_new_prompt_or_edit(self) -> bool:
         return self.is_editing or self.is_processing
 
-    @rx.var
+    @rx.var  # type: ignore
     def cannot_send_new_prompt(self) -> bool:
         return self.is_editing or len(self.new_prompt.strip()) == 0
 
-    @rx.var
+    @rx.var  # type: ignore
     def is_editing(self) -> bool:
         return any(
             prompt_response.is_editing for prompt_response in self.prompts_responses
@@ -223,7 +225,7 @@ class State(rx.State):
     def clear_new_prompt(self) -> None:
         self.new_prompt = ""
 
-    def send_edited_prompt(self, index: int):
+    def send_edited_prompt(self, index: int) -> Any:
         assert len(self.edited_prompt.strip()) > 0
         self.new_prompt = self.edited_prompt
         self.prompts_responses = self.prompts_responses[:index]
@@ -235,8 +237,8 @@ class State(rx.State):
         self.prompts_responses[index].is_editing = False
         self.is_editing = False
 
-    @rx.background
-    async def send(self):
+    @rx.background  # type: ignore
+    async def send(self) -> None:
         try:
             async with self:
                 assert self.new_prompt != ""
@@ -310,14 +312,14 @@ class State(rx.State):
                 timeout=10.0,
             ).chat.completions.create(
                 model=os.getenv("OPENAI_MODEL", model),
-                messages=messages,
+                messages=messages,  # type: ignore
                 stream=True,  # Enable streaming
             )
 
             # pylint error: https://github.com/openai/openai-python/issues/870
             for item in session:  # pylint: disable=not-an-iterable
                 async with self:
-                    response = item.choices[0].delta.content
+                    response = item.choices[0].delta.content  # type: ignore
                     if response:
                         self.prompts_responses[-1].response += response
                         self.prompts_responses = self.prompts_responses
