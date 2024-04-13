@@ -228,18 +228,12 @@ class State(rx.State):
         self.new_prompt = self.edited_prompt
         self.prompts_responses = self.prompts_responses[:index]
         self.is_editing = False
-        # self.issue1675()
         return State.send
 
     def cancel_edit_prompt(self, index: int) -> None:
         self.edited_prompt = ""
         self.prompts_responses[index].is_editing = False
         self.is_editing = False
-        # self.issue1675()
-
-    # def issue1675(self) -> None:
-    #     for i, _ in enumerate(self.prompts_responses):
-    #         self.prompts_responses[i] = self.prompts_responses[i]
 
     @rx.background
     async def send(self):
