@@ -5,7 +5,7 @@ from nevschat.state import State
 
 import reflex as rx
 
-VERSION = 32
+VERSION = 33
 TITLE = "Nev's Awesome ChatGPT"
 
 
@@ -18,7 +18,11 @@ def index() -> rx.Component:
         ),
         chat(),
         rx.button(
-            rx.icon(tag="x"),
+            rx.icon(
+                tag="x",
+                size=20,
+                stroke_width=1.5,
+            ),
             color_scheme="tomato",
             disabled=State.cannot_clear_chat,
             on_click=State.clear_chat,
