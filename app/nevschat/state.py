@@ -2,7 +2,6 @@
 
 import os
 from collections import OrderedDict
-from dataclasses import dataclass
 from typing import Any
 
 from openai import OpenAI
@@ -152,7 +151,6 @@ TEST_PROMPT = "Give 10 example sentences about かわいいウサギ."
 TESTING = False
 
 
-@dataclass
 class PromptResponse(rx.Base):  # type: ignore
     prompt: str
     response: str
