@@ -12,19 +12,14 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
     return rx.box(
         rx.cond(
             prompt_response.is_editing,
-            # Form and debounce commented out until the issues described in
-            # https://github.com/reflex-dev/reflex/issues/3060 are sorted.
-            # Until then the send button must be manually clicked.
-            # rx.form(
             rx.hstack(
-                # rx.debounce_input(
                 rx.text_area(
-                    # enter_key_submit=True,
+                    on_blur=State.cancel_control,
                     on_change=State.update_edited_prompt,
-                    width="100%",
-                    # ),
-                    # debounce_timeout=250,
+                    on_key_down=State.handle_key_down,
+                    on_key_up=State.handle_key_up,
                     value=State.edited_prompt,
+                    width="100%",
                 ),
                 rx.button(
                     rx.icon(
@@ -47,7 +42,6 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     disabled=State.cannot_clear_or_send_edited_prompt,
                     on_click=lambda: State.send_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                     margin_top="0.75em",
-                    # type="submit",
                 ),
                 rx.button(
                     rx.icon(
@@ -61,11 +55,6 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                 ),
                 width="100%",
             ),
-            # on_submit=(
-            #     lambda _form_data_unused: State.send_edited_prompt(index)
-            # ),  # type: ignore  # pylint: disable=no-value-for-parameter
-            #     width="100%",
-            # ),
             rx.hstack(
                 rx.box(
                     rx.markdown(prompt_response.prompt),
@@ -199,21 +188,16 @@ def chat() -> rx.Component:
             ),
             width="100%",
         ),
-        # Form and debounce commented out until the issues described in
-        # https://github.com/reflex-dev/reflex/issues/3060 are sorted.
-        # Until then the send button must be manually clicked.
-        # rx.form(
         rx.hstack(
-            # rx.debounce_input(
             rx.text_area(
                 disabled=State.cannot_enter_new_prompt_or_edit,
-                # enter_key_submit=True,
+                on_blur=State.cancel_control,
                 on_change=State.set_new_prompt,
+                on_key_down=State.handle_key_down,
+                on_key_up=State.handle_key_up,
                 placeholder="Ask something.",
-                width="100%",
-                # ),
-                # debounce_timeout=250,
                 value=State.new_prompt,
+                width="100%",
             ),
             rx.button(
                 rx.icon(
@@ -237,12 +221,8 @@ def chat() -> rx.Component:
                 is_loading=State.is_processing,
                 on_click=State.send,
                 margin_top="0.75em",
-                # type="submit",
             ),
             width="100%",
         ),
-        # on_submit=lambda _form_data_unused: State.send(),  # type: ignore  # pylint: disable=no-value-for-parameter
-        #     width="100%",
-        # ),
         width="100%",
     )

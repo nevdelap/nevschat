@@ -5,41 +5,46 @@ from nevschat.state import State
 
 import reflex as rx
 
-VERSION = "0.0.35"
+VERSION = "0.0.37"
 TITLE = f"Nev's Awesome ChatGPT v{VERSION}"
 
 
 def index() -> rx.Component:
-    return rx.vstack(
-        rx.heading(TITLE),
-        rx.text(
-            f"Reflex v{rx.constants.Reflex.VERSION}.",
-            color="#aaa",
-        ),
-        chat(),
-        rx.button(
-            rx.icon(
-                tag="x",
-                size=20,
-                stroke_width=1.5,
+    return rx.center(
+        rx.vstack(
+            rx.heading(TITLE),
+            rx.text(
+                f"Reflex v{rx.constants.Reflex.VERSION}.",
+                color="#aaa",
             ),
-            color_scheme="tomato",
-            disabled=State.cannot_clear_chat,
-            on_click=State.clear_chat,
-        ),
-        rx.cond(
-            State.warning,
-            rx.callout(
+            chat(),
+            rx.button(
+                rx.icon(
+                    tag="x",
+                    size=20,
+                    stroke_width=1.5,
+                ),
+                color_scheme="tomato",
+                disabled=State.cannot_clear_chat,
+                on_click=State.clear_chat,
+            ),
+            rx.cond(
                 State.warning,
-                icon="triangle_alert",
-                color_scheme="red",
-                role="alert",
+                rx.callout(
+                    State.warning,
+                    icon="triangle_alert",
+                    color_scheme="red",
+                    role="alert",
+                ),
+                None,
             ),
-            None,
+            max_width="800px",
+            padding="1em",
+            width="100%",
         ),
-        max_width="800px",
-        padding="1em",
-        width="100%",
+        align="center",
+        direction="column",
+        justify="start",
     )
 
 
