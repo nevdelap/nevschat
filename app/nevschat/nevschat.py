@@ -5,7 +5,7 @@ from nevschat.state import State
 
 import reflex as rx
 
-VERSION = 33
+VERSION = 34
 TITLE = "Nev's Awesome ChatGPT"
 
 
@@ -37,6 +37,7 @@ def index() -> rx.Component:
             ),
             None,
         ),
+        max_width="800px",
         padding="1em",
         width="100%",
     )
