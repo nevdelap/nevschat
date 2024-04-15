@@ -5,15 +5,15 @@ from nevschat.state import State
 
 import reflex as rx
 
-VERSION = 34
-TITLE = "Nev's Awesome ChatGPT"
+VERSION = "0.0.35"
+TITLE = f"Nev's Awesome ChatGPT v{VERSION}"
 
 
 def index() -> rx.Component:
     return rx.vstack(
         rx.heading(TITLE),
         rx.text(
-            f"v{VERSION} Reflex version {rx.constants.Reflex.VERSION}.",
+            f"Reflex v{rx.constants.Reflex.VERSION}.",
             color="#aaa",
         ),
         chat(),
