@@ -50,11 +50,14 @@ reflex run # Test at http://localhost:3000/
 
 ## Release On DigitalOcean
 
+This shows `scripts/lint` being run manually though it can be run automatically with `scripts/install_hooks`.
+
 ```bash
 git add . &&
 git commit -m 'whatever' &&
 git merge latest &&
-git push origin HEAD:master &&
+scripts/lint &&
+git push origin HEAD:master --no-verify &&
 git tag -f latest &&
 git push -f origin latest &&
 ssh_droplet
