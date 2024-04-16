@@ -144,7 +144,7 @@ NORMAL_SYSTEM_INSTRUCTION = "Respond in English."
 DEFAULT_SYSTEM_INSTRUCTION = "Give example sentences using the given words."
 assert DEFAULT_SYSTEM_INSTRUCTION in SYSTEM_INSTRUCTIONS
 
-GPT4_MODEL = "gpt-4-1106-preview"
+GPT4_MODEL = "gpt-4-turbo"
 GPT3_MODEL = "gpt-3.5-turbo"
 
 TEST_PROMPT = "Give 10 example sentences about かわいいウサギ."
