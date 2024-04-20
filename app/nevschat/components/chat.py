@@ -112,15 +112,32 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     ),
                     None,
                 ),
-                rx.button(
-                    rx.icon(
-                        tag="copy",
-                        size=20,
-                        stroke_width=1.5,
+                rx.vstack(
+                    rx.button(
+                        rx.icon(
+                            tag="copy",
+                            size=20,
+                            stroke_width=1.5,
+                        ),
+                        color_scheme="gray",
+                        on_click=rx.set_clipboard(prompt_response.response),
+                        margin_top="0.75em",
                     ),
-                    color_scheme="gray",
-                    on_click=rx.set_clipboard(prompt_response.response),
-                    margin_top="0.75em",
+                    rx.cond(
+                        prompt_response.is_japanese,
+                        rx.vstack(
+                            rx.button(
+                                "スピーチ",
+                                color_scheme="green",
+                                on_click=lambda: State.speak(prompt_response.response),  # type: ignore  # pylint: disable=no-value-for-parameter
+                                width="6em",
+                            ),
+                            rx.audio(
+                                url="/tmp/tts.wav",
+                            )
+                        ),
+                        None,
+                    )
                 ),
                 width="100%",
             ),

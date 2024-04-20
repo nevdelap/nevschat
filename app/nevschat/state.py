@@ -1,12 +1,14 @@
 # mypy: disable-error-code="attr-defined,name-defined"
 
 import os
+import re
 from collections import OrderedDict
 from typing import Any
 
 from openai import OpenAI
 
 import reflex as rx
+from nevschat.helpers import text_to_wav
 
 SYSTEM_INSTRUCTIONS = OrderedDict()
 SYSTEM_INSTRUCTIONS["日本語チャットボット"] = (
@@ -169,6 +171,7 @@ assert DEFAULT_SYSTEM_INSTRUCTION in SYSTEM_INSTRUCTIONS
 GPT4_MODEL = "gpt-4-turbo"
 GPT3_MODEL = "gpt-3.5-turbo"
 
+CANNED = True  # False for deployment, True for local testing.
 TEST_PROMPT = "Give 10 example sentences about かわいいウサギ."
 TESTING = False
 
@@ -179,16 +182,28 @@ class PromptResponse(rx.Base):  # type: ignore
     is_editing: bool
     model: str
 
+    @property
+    def is_japanese(self) -> bool:
+        return True
+        return (
+            re.match(r"^[\u3040-\u309F\u30A0-\u30FF\uFF66-\uFF9F]+$", self.response)
+            is not None
+        )
+
 
 class State(rx.State):  # type: ignore
-    prompts_responses: list[PromptResponse] = [
-        # PromptResponse(
-        #     prompt="Canned",
-        #     response="Canned",
-        #     is_editing=False,
-        #     model="gpt-dogs",
-        # ),
-    ]
+    prompts_responses: list[PromptResponse] = (
+        [
+            PromptResponse(
+                prompt="そうですか？",
+                response="はい、そうです。",
+                is_editing=False,
+                model="gpt-canned",
+            ),
+        ]
+        if CANNED
+        else []
+    )
     new_prompt: str = "" if not TESTING else TEST_PROMPT
     edited_prompt: str
     is_processing: bool = False
@@ -376,6 +391,11 @@ class State(rx.State):  # type: ignore
     def clear_chat(self) -> None:
         self.prompts_responses = []
         # self.invariant()
+
+    def speak(self, japanese_text: str) -> None:
+        # filename = text_to_wav(japanese_text)
+        filename = "/tmp/tts.wav"
+        print(filename)
 
     def invariant(self) -> None:
         number_of_prompts_being_edited = sum(
