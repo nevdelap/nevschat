@@ -9,36 +9,53 @@ from openai import OpenAI
 import reflex as rx
 
 SYSTEM_INSTRUCTIONS = OrderedDict()
+SYSTEM_INSTRUCTIONS["日本語チャットボット"] = (
+    "私の友人であるかのように日本語で応答してください。\n"
+    + "日本語での言い方を尋ねられたり、"
+    + "日本語の単語をひとつひとつ訳したりする場合を除き、"
+    + "決して他の言語で答えないこと。\n"
+    + " プロンプトに漢字が含まれている場合、"
+    + "それは日本語であり、中国語ではありません。",
+    False,
+)
 SYSTEM_INSTRUCTIONS["Define"] = (
     "DO NOT translate, define in English the meaning of the given text.\n"
     + "NEVER give pronunciation for any language.\n"
-    + "NEVER give romaji for Japanese.",
+    + "NEVER give romaji for Japanese.\n"
+    + "If prompts contain kanji assume it is Japanese, NEVER Chinese.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Définir"] = (
     "NE JAMAIS traduire, définissez en français le sens du texte donné.\n"
     + "DE donnez JAMAIS de prononciation pour n'importe quelle langue.\n"
-    + "DE donnez JAMAIS de romaji pour le japonais.",
+    + "DE donnez JAMAIS de romaji pour le japonais.\n"
+    + "Si les messages contiennent des kanji, "
+    + "il faut supposer qu'il s'agit de japonais, JAMAIS de chinois.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Definir"] = (
     "NO traduzca, defina en español el significado del texto dado.\n"
     + "NO den NUNCA la pronunciación para cualquier idioma.\n"
-    + "NO den NUNCA los romaji para el japonés.",
+    + "NO den NUNCA los romaji para el japonés.\n"
+    + "Si las indicaciones contienen kanji, "
+    + "asume que es japonés, NUNCA chino.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Explain"] = (
     "DO NOT translate, explain in English the given text.\n"
     + "DO NOT explain the simple or basic vocabulary or grammatical points.\n"
     + "NEVER give pronunciation for any language.\n"
-    + "NEVER give romaji for Japanese.",
+    + "NEVER give romaji for Japanese.\n"
+    + "If prompts contain kanji assume it is Japanese, NEVER Chinese.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Expliquer"] = (
     "NE PAS traduire, expliquer en français le texte donné.\n"
     + "N'expliquez PAS les points de vocabulaire ou de grammaire simples ou basiques.\n"
     + "NE donnez JAMAIS de prononciation pour n'importe quelle langue.\n"
-    + "NE donnez JAMAIS de romaji pour le japonais.",
+    + "NE donnez JAMAIS de romaji pour le japonais.\n"
+    + "Si les messages contiennent des kanji, "
+    + "il faut supposer qu'il s'agit de japonais, JAMAIS de chinois.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Explicar"] = (
@@ -46,7 +63,9 @@ SYSTEM_INSTRUCTIONS["Explicar"] = (
     + "NO expliques el vocabulario sencillo o básico ni los puntos gramaticales "
     + "sencillos o básicos.\n"
     + "NO den NUNCA la pronunciación para cualquier idioma.\n"
-    + "NO den NUNCA los romaji para el japonés.",
+    + "NO den NUNCA los romaji para el japonés.\n"
+    + "Si las indicaciones contienen kanji, "
+    + "asume que es japonés, NUNCA chino.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Check Grammar"] = (
@@ -54,13 +73,15 @@ SYSTEM_INSTRUCTIONS["Check Grammar"] = (
     + "problems in English.\n"
     + "DO NOT explain the simple or basic vocabulary or grammatical points.\n"
     + "NEVER give pronunciation for any language. NEVER give "
-    + "romaji for Japanese.",
+    + "romaji for Japanese.\n"
+    + "If prompts contain kanji assume it is Japanese, NEVER Chinese.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Explain Grammar"] = (
     "DO NOT translate, rather explain in English the grammar of the given text.\n"
     + "DO NOT explain the simple or basic vocabulary or grammatical points.\n"
-    + "NEVER give pronunciation for any language. NEVER give romaji for Japanese.",
+    + "NEVER give pronunciation for any language. NEVER give romaji for Japanese.\n"
+    + "If prompts contain kanji assume it is Japanese, NEVER Chinese.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Explain Usage"] = (
@@ -68,7 +89,8 @@ SYSTEM_INSTRUCTIONS["Explain Usage"] = (
     + "Give examples, especially where words have different meanings in different "
     + "contexts.\n"
     + "NEVER give pronunciation for any language.\n"
-    + "NEVER give romaji for Japanese.",
+    + "NEVER give romaji for Japanese.\n"
+    + "If prompts contain kanji assume it is Japanese, NEVER Chinese.",
     False,
 )
 SYSTEM_INSTRUCTIONS["Give example sentences using the given words."] = (
@@ -141,7 +163,7 @@ SYSTEM_INSTRUCTIONS["SQL"] = (
 
 NORMAL_SYSTEM_INSTRUCTION = "Respond in English."
 
-DEFAULT_SYSTEM_INSTRUCTION = "Give example sentences using the given words."
+DEFAULT_SYSTEM_INSTRUCTION = "日本語チャットボット"
 assert DEFAULT_SYSTEM_INSTRUCTION in SYSTEM_INSTRUCTIONS
 
 GPT4_MODEL = "gpt-4-turbo"
@@ -298,16 +320,6 @@ class State(rx.State):  # type: ignore
                             ),
                         }
                     )
-
-                messages.append(
-                    {
-                        "role": "system",
-                        "content": (
-                            "If prompts contain kanji assume it is Japanese, "
-                            + "NEVER Chinese."
-                        ),
-                    }
-                )
 
                 for prompt_response in self.prompts_responses:
                     messages.append({"role": "user", "content": prompt_response.prompt})
