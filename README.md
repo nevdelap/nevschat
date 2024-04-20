@@ -50,7 +50,8 @@ reflex run # Test at http://localhost:3000/
 
 ## Release On DigitalOcean
 
-This shows `scripts/lint` being run manually though it can be run automatically with `scripts/install_hooks`.
+This shows `scripts/lint` being run manually though it can be run automatically
+with `scripts/install_hooks`.
 
 ```bash
 git add . &&
@@ -75,6 +76,19 @@ exit
 
 * [Reflex Component Library](https://reflex.dev/docs/library/)
 * [Lucid Icons](https://lucide.dev/icons)
+
+#### OpenAI
+
+The OpenAI key is supplied in the OPENAI_API_KEY environment variable. It should
+be [configured](https://platform.openai.com/settings/organization/limits) with a
+monthly budget and email notification when it is exceeded.
+
+### Google TTS
+
+The Google TTS API key is supplied the GOOGLE_TTS_KEY environment variable. It
+should be [restricted](https://console.cloud.google.com/apis/credentials) to be
+usable only from the Cloud Text-to-Speech API, only only from the production and
+development IP addresses.
 
 #### Page structure
 

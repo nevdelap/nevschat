@@ -21,8 +21,20 @@ VOICES = [
 ]
 
 
-def text_to_wav(text: str, voice: int = 0) -> str:
+def text_to_wav(text: str, voice: int = 0) -> None:
+    """
+    Write a wave file into /assets.wav, if it doesn't already exist.
+    """
     assert voice < len(VOICES)
+    try:
+        tts_wav_filename = f"assets/tts_{text}.wav"
+        if os.path.isfile(tts_wav_filename):
+            print("Skipping tts.")
+            return
+    except Exception as ex:  # pylint: disable=broad-exception-caught
+        print(ex)
+
+    print("Doing tts.")
     client = tts.TextToSpeechClient(
         client_options={
             "api_key": os.environ["GOOGLE_TTS_KEY"],
@@ -40,7 +52,6 @@ def text_to_wav(text: str, voice: int = 0) -> str:
         voice=voice_params,
         audio_config=audio_config,
     )
-    filename = "/tmp/tts.wav"  # nosec
-    with open(filename, "wb") as out:
-        out.write(response.audio_content)
-    return filename
+    with open(tts_wav_filename, "wb") as f:
+        f.write(response.audio_content)
+    print("Done tts.")

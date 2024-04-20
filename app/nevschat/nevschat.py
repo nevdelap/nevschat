@@ -11,6 +11,44 @@ TITLE = f"Nev's Awesome ChatGPT v{VERSION}"
 
 def index() -> rx.Component:
     return rx.center(
+        rx.script(
+            """
+                function check_url_and_play(url) {
+                    fetch(url)
+                        .then(response => {
+                            if (!response.ok) {
+                                console.log(
+                                    'Checking url ' + url +
+                                    ' got status ' + response.status +
+                                    '. Retrying after a moment...'
+                                );
+                                setTimeout(() => {
+                                    check_url_and_play(url);
+                                }, 250);
+                            } else {
+                                console.log('Playing url ' + url + '.');
+                                var audio = new Audio(tts_wav_url);
+                                audio.load();
+                                audio.play();
+                            }
+                        })
+                        .catch(error => {
+                            console.log(
+                                    'Checking url ' + url +
+                                    ' got error ' + error +
+                                    '. Retrying after a moment...'
+                                );
+                            setTimeout(() => {
+                                check_url_and_play(url);
+                            }, 250);
+                        });
+                }
+                function play(response) {
+                    tts_wav_url = '/tts_' + response + '.wav';
+                    check_url_and_play(tts_wav_url);
+                }
+            """
+        ),
         rx.vstack(
             rx.heading(TITLE),
             rx.text(

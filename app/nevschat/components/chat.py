@@ -28,7 +28,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         stroke_width=1.5,
                     ),
                     color_scheme="red",
-                    disabled=State.cannot_clear_or_send_edited_prompt,
+                    disabled=State.cannot_clear_or_chatgpt_with_edited_prompt,
                     on_click=lambda: State.clear_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                     margin_top="0.75em",
                 ),
@@ -39,8 +39,8 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         stroke_width=1.5,
                     ),
                     color_scheme="grass",
-                    disabled=State.cannot_clear_or_send_edited_prompt,
-                    on_click=lambda: State.send_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
+                    disabled=State.cannot_clear_or_chatgpt_with_edited_prompt,
+                    on_click=lambda: State.chatgpt_with_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                     margin_top="0.75em",
                 ),
                 rx.button(
@@ -107,12 +107,26 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                             stroke_width=1.5,
                         ),
                         color_scheme="tomato",
-                        on_click=State.cancel_send,
+                        on_click=State.cancel_chatgpt,
                         margin_top="0.75em",
                     ),
                     None,
                 ),
-                rx.vstack(
+                rx.hstack(
+                    rx.cond(
+                        prompt_response.is_japanese,
+                        rx.button(
+                            rx.icon(
+                                tag="play",
+                                size=20,
+                                stroke_width=1.5,
+                            ),
+                            color_scheme="green",
+                            margin_top="0.75em",
+                            on_click=lambda: State.speak(prompt_response.response),  # type: ignore  # pylint: disable=no-value-for-parameter
+                        ),
+                        None,
+                    ),
                     rx.button(
                         rx.icon(
                             tag="copy",
@@ -120,24 +134,9 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                             stroke_width=1.5,
                         ),
                         color_scheme="gray",
-                        on_click=rx.set_clipboard(prompt_response.response),
                         margin_top="0.75em",
+                        on_click=rx.set_clipboard(prompt_response.response),
                     ),
-                    rx.cond(
-                        prompt_response.is_japanese,
-                        rx.vstack(
-                            rx.button(
-                                "スピーチ",
-                                color_scheme="green",
-                                on_click=lambda: State.speak(prompt_response.response),  # type: ignore  # pylint: disable=no-value-for-parameter
-                                width="6em",
-                            ),
-                            rx.audio(
-                                url="/tmp/tts.wav",
-                            )
-                        ),
-                        None,
-                    )
                 ),
                 width="100%",
             ),
@@ -223,7 +222,7 @@ def chat() -> rx.Component:
                     stroke_width=1.5,
                 ),
                 color_scheme="red",
-                disabled=State.cannot_send_new_prompt,
+                disabled=State.cannot_chatgpt_with_new_prompt,
                 on_click=lambda: State.clear_new_prompt,
                 margin_top="0.75em",
             ),
@@ -234,9 +233,9 @@ def chat() -> rx.Component:
                     stroke_width=1.5,
                 ),
                 color_scheme="grass",
-                disabled=State.cannot_send_new_prompt,
+                disabled=State.cannot_chatgpt_with_new_prompt,
                 is_loading=State.is_processing,
-                on_click=State.send,
+                on_click=State.chatgpt,
                 margin_top="0.75em",
             ),
             width="100%",

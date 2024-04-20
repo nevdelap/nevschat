@@ -1,5 +1,5 @@
 [MESSAGES CONTROL]
-disable=duplicate-code,missing-class-docstring,missing-function-docstring,missing-module-docstring,redefined-outer-name,too-few-public-methods
+disable=duplicate-code,missing-class-docstring,missing-function-docstring,missing-module-docstring,redefined-outer-name,too-few-public-methods,too-many-public-methods,wrong-import-order
 
 [FORMAT]
 max-line-length=88

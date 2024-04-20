@@ -5,10 +5,11 @@ import re
 from collections import OrderedDict
 from typing import Any
 
+from nevschat.helpers import delete_old_wave_assets
+from nevschat.helpers import text_to_wav
 from openai import OpenAI
 
 import reflex as rx
-from nevschat.helpers import text_to_wav
 
 SYSTEM_INSTRUCTIONS = OrderedDict()
 SYSTEM_INSTRUCTIONS["日本語チャットボット"] = (
@@ -171,24 +172,30 @@ assert DEFAULT_SYSTEM_INSTRUCTION in SYSTEM_INSTRUCTIONS
 GPT4_MODEL = "gpt-4-turbo"
 GPT3_MODEL = "gpt-3.5-turbo"
 
-CANNED = True  # False for deployment, True for local testing.
-TEST_PROMPT = "Give 10 example sentences about かわいいウサギ."
-TESTING = False
+USE_QUICK_PROMPT = False  # True to add a first prompt, for testing.
+USE_CANNED_RESPONSE = False  # True to add a first response, for testing.
+
+
+def is_japanese(text: str) -> bool:
+    return (
+        len(text) > 0
+        and re.match(
+            (
+                r"^[\u3000-\u303F\u3040-\u309F\u30A0-\u30FF"
+                r"\uFF00-\uFFEF\u4E00-\u9FAF\u30FB\u30FC\uFF65\s1-9.]+$"
+            ),
+            text,
+        )
+        is not None
+    )
 
 
 class PromptResponse(rx.Base):  # type: ignore
     prompt: str
     response: str
     is_editing: bool
+    is_japanese: bool
     model: str
-
-    @property
-    def is_japanese(self) -> bool:
-        return True
-        return (
-            re.match(r"^[\u3040-\u309F\u30A0-\u30FF\uFF66-\uFF9F]+$", self.response)
-            is not None
-        )
 
 
 class State(rx.State):  # type: ignore
@@ -198,20 +205,21 @@ class State(rx.State):  # type: ignore
                 prompt="そうですか？",
                 response="はい、そうです。",
                 is_editing=False,
+                is_japanese=True,
                 model="gpt-canned",
             ),
         ]
-        if CANNED
+        if USE_CANNED_RESPONSE
         else []
     )
-    new_prompt: str = "" if not TESTING else TEST_PROMPT
-    edited_prompt: str
-    is_processing: bool = False
     control_down: bool = False
+    edited_prompt: str
     gpt_4: bool = False
-    terse: bool = False
+    is_processing: bool = False
     mode: str = "Normal"
+    new_prompt: str = "可愛いウサギがいる?" if USE_QUICK_PROMPT else ""
     system_instruction: str = DEFAULT_SYSTEM_INSTRUCTION
+    terse: bool = False
     warning: str = ""
 
     @rx.var  # type: ignore
@@ -223,7 +231,7 @@ class State(rx.State):  # type: ignore
         return len(self.prompts_responses) == 0
 
     @rx.var  # type: ignore
-    def cannot_clear_or_send_edited_prompt(self) -> bool:
+    def cannot_clear_or_chatgpt_with_edited_prompt(self) -> bool:
         return len(self.edited_prompt.strip()) == 0
 
     @rx.var  # type: ignore
@@ -231,7 +239,7 @@ class State(rx.State):  # type: ignore
         return self.is_editing or self.is_processing
 
     @rx.var  # type: ignore
-    def cannot_send_new_prompt(self) -> bool:
+    def cannot_chatgpt_with_new_prompt(self) -> bool:
         return self.is_editing or len(self.new_prompt.strip()) == 0
 
     @rx.var  # type: ignore
@@ -261,12 +269,12 @@ class State(rx.State):  # type: ignore
     def clear_new_prompt(self) -> None:
         self.new_prompt = ""
 
-    def send_edited_prompt(self, index: int) -> Any:
+    def chatgpt_with_edited_prompt(self, index: int) -> Any:
         assert len(self.edited_prompt.strip()) > 0
         self.new_prompt = self.edited_prompt
         self.prompts_responses = self.prompts_responses[:index]
         self.is_editing = False
-        return State.send
+        return State.chatgpt
 
     def cancel_edit_prompt(self, index: int) -> None:
         self.edited_prompt = ""
@@ -283,8 +291,8 @@ class State(rx.State):  # type: ignore
                     raise RuntimeError(
                         "If is_editing, the editing_index cannot be None."
                     )
-                return self.send_edited_prompt(index)
-            return State.send
+                return self.chatgpt_with_edited_prompt(index)
+            return State.chatgpt
         return None
 
     def handle_key_up(self, key: str) -> None:
@@ -295,7 +303,7 @@ class State(rx.State):  # type: ignore
         self.control_down = False
 
     @rx.background  # type: ignore
-    async def send(self) -> None:
+    async def chatgpt(self) -> None:
         try:
             async with self:
                 assert self.new_prompt != ""
@@ -344,7 +352,11 @@ class State(rx.State):  # type: ignore
                 messages.append({"role": "user", "content": self.new_prompt})
 
                 prompt_response = PromptResponse(
-                    prompt=self.new_prompt, response="", is_editing=False, model=model
+                    prompt=self.new_prompt,
+                    response="",
+                    is_editing=False,
+                    is_japanese=False,
+                    model=model,
                 )
                 self.prompts_responses.append(prompt_response)
                 self.new_prompt = ""
@@ -370,11 +382,12 @@ class State(rx.State):  # type: ignore
                     response = item.choices[0].delta.content  # type: ignore
                     if response:
                         self.prompts_responses[-1].response += response
-                        self.prompts_responses = self.prompts_responses
+                        self.prompts_responses[-1].is_japanese = is_japanese(
+                            self.prompts_responses[-1].response
+                        )
                     if not self.is_processing:
                         # It's been cancelled.
                         self.prompts_responses[-1].response += " (cancelled)"
-                        self.prompts_responses = self.prompts_responses
                         break
 
         except Exception as ex:  # pylint: disable=broad-exception-caught
@@ -385,17 +398,17 @@ class State(rx.State):  # type: ignore
             async with self:
                 self.is_processing = False
 
-    def cancel_send(self) -> None:
+    def cancel_chatgpt(self) -> None:
         self.is_processing = False
 
     def clear_chat(self) -> None:
         self.prompts_responses = []
         # self.invariant()
 
-    def speak(self, japanese_text: str) -> None:
-        # filename = text_to_wav(japanese_text)
-        filename = "/tmp/tts.wav"
-        print(filename)
+    def speak(self, response: str) -> Any:
+        text_to_wav(response)
+        delete_old_wave_assets()
+        return rx.call_script(f"play('{response}');")
 
     def invariant(self) -> None:
         number_of_prompts_being_edited = sum(
@@ -405,10 +418,10 @@ class State(rx.State):  # type: ignore
         assert number_of_prompts_being_edited in [0, 1]
         assert self.is_editing == (number_of_prompts_being_edited == 1)
         assert not (
-            self.cannot_send_new_prompt and self.cannot_enter_new_prompt_or_edit
+            self.cannot_chatgpt_with_new_prompt and self.cannot_enter_new_prompt_or_edit
         )
         assert not (
-            self.cannot_clear_or_send_edited_prompt
+            self.cannot_clear_or_chatgpt_with_edited_prompt
             and self.is_editing
             and len(str(self.edited_prompt).strip()) > 0
         )
