@@ -60,7 +60,7 @@ scripts/lint &&
 git merge latest &&
 git push origin HEAD:master --no-verify &&
 git tag -f latest &&
-git push -f origin latest &&
+git push -f origin latest --no-verify &&
 ssh_droplet
 
 # On the droplet.
