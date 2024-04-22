@@ -5,7 +5,7 @@ from nevschat.state import State
 
 import reflex as rx
 
-VERSION = "0.0.40"
+VERSION = "0.0.41"
 TITLE = f"Nev's Awesome ChatGPT v{VERSION}"
 
 
@@ -13,20 +13,20 @@ def index() -> rx.Component:
     return rx.center(
         rx.script(
             """
-                function check_url_and_play(url) {
-                    fetch(url)
+                function play(tts_wav_url) {
+                    fetch(tts_wav_url)
                         .then(response => {
                             if (!response.ok) {
                                 console.log(
-                                    'Checking url ' + url +
+                                    'Checking url ' + tts_wav_url +
                                     ' got status ' + response.status +
                                     '. Retrying after a moment...'
                                 );
                                 setTimeout(() => {
-                                    check_url_and_play(url);
+                                    play(tts_wav_url);
                                 }, 250);
                             } else {
-                                console.log('Playing url ' + url + '.');
+                                console.log('Playing url ' + tts_wav_url + '.');
                                 var audio = new Audio(tts_wav_url);
                                 audio.load();
                                 audio.play();
@@ -34,18 +34,14 @@ def index() -> rx.Component:
                         })
                         .catch(error => {
                             console.log(
-                                    'Checking url ' + url +
+                                    'Checking url ' + tts_wav_url +
                                     ' got error ' + error +
                                     '. Retrying after a moment...'
                                 );
                             setTimeout(() => {
-                                check_url_and_play(url);
+                                play(tts_wav_url);
                             }, 250);
                         });
-                }
-                function play(response) {
-                    tts_wav_url = '/tts_' + response + '.wav';
-                    check_url_and_play(tts_wav_url);
                 }
             """
         ),

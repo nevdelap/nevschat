@@ -8,6 +8,7 @@ from typing import Any
 from nevschat.helpers import delete_old_wave_assets
 from nevschat.helpers import text_to_wav
 from openai import OpenAI
+from rxconfig import config
 
 import reflex as rx
 
@@ -408,7 +409,9 @@ class State(rx.State):  # type: ignore
     def speak(self, response: str) -> Any:
         text_to_wav(response)
         delete_old_wave_assets()
-        return rx.call_script(f"play('{response}');")
+        tts_wave_url = os.path.join(config.frontend_path, f"/tts_{response}.wav")
+        print(f"Playing {tts_wave_url}.")
+        return rx.call_script(f"play('{tts_wave_url}');")
 
     def invariant(self) -> None:
         number_of_prompts_being_edited = sum(
