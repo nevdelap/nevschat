@@ -208,7 +208,7 @@ def is_japanese_char(ch: str) -> bool:
     assert len(ch) == 1
     try:
         block = unicodedata.name(ch).split()[0]
-        is_japanese= block in [
+        is_japanese = block in [
             "CJK",
             "COMMA",
             "DIGIT",
