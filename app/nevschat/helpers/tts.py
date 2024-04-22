@@ -27,7 +27,7 @@ def text_to_wav(text: str, voice: int = 1) -> None:
     """
     assert voice < len(VOICES)
     try:
-        tts_wav_filename = f"assets/tts_{text}.wav"
+        tts_wav_filename = f"assets/wav/tts_{text}.wav"
         if os.path.isfile(tts_wav_filename):
             print("Skipping tts.")
             return

@@ -409,7 +409,8 @@ class State(rx.State):  # type: ignore
     def speak(self, response: str) -> Any:
         text_to_wav(response)
         delete_old_wave_assets()
-        tts_wave_url = os.path.join(config.frontend_path, f"/tts_{response}.wav")
+        print(f"path {config}")
+        tts_wave_url = os.path.join(config.frontend_path, f"wav/tts_{response}.wav")
         print(f"Playing {tts_wave_url}.")
         return rx.call_script(f"play('{tts_wave_url}');")
 

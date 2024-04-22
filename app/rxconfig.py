@@ -9,16 +9,13 @@ PROD_HOSTNAMES = [
     "prod",  # Prod runtime docker container.
 ]
 
+is_prod = socket.gethostname() in PROD_HOSTNAMES
 config = rx.Config(
     app_name="nevschat",
-    api_url=(
-        "https://nevdelap.com:8000"
-        if socket.gethostname() in PROD_HOSTNAMES
-        else "http://localhost:8000"
-    ),
+    api_url="https://nevdelap.com:8000" if is_prod else "http://localhost:8000",
     db_url="sqlite:///reflex.db",
     frontend_packages=[
         "react-loading-icons",
     ],
-    frontend_path=("/chat" if socket.gethostname() in PROD_HOSTNAMES else ""),
+    frontend_path="/chat" if is_prod else "",
 )
