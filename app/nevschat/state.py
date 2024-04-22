@@ -185,7 +185,7 @@ SYSTEM_INSTRUCTIONS["Snowflake SQL"] = (
 )
 SYSTEM_INSTRUCTIONS["SQL"] = (
     "The question is in the context of SQL queries. Prefer Snowflake SQL, "
-    + "or PostgreSQL,",
+    + "or PostgreSQL, or ANSI SQL.",
     True,
 )
 
