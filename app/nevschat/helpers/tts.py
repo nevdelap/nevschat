@@ -1,5 +1,6 @@
 # https://codelabs.developers.google.com/codelabs/cloud-text-speech-python3
 
+import hashlib
 import os
 
 import google.cloud.texttospeech as tts
@@ -27,7 +28,8 @@ def text_to_wav(text: str, voice: int = 1) -> None:
     """
     assert voice < len(VOICES)
     try:
-        tts_wav_filename = f"assets/wav/tts_{text}.wav"
+        hash_ = hashlib.md5(text.encode(encoding="utf-8")).hexdigest()  # nosec
+        tts_wav_filename = f"assets/wav/tts_{hash_}.wav"
         if os.path.isfile(tts_wav_filename):
             print("Skipping tts.")
             return

@@ -1,5 +1,6 @@
 # mypy: disable-error-code="attr-defined,name-defined"
 
+import hashlib
 import os
 import unicodedata
 from collections import OrderedDict
@@ -457,12 +458,22 @@ class State(rx.State):  # type: ignore
         self.prompts_responses = []
         # self.invariant()
 
-    def speak(self, response: str) -> Any:
-        text_to_wav(response)
-        delete_old_wav_assets()
-        tts_wave_url = os.path.join(config.frontend_path, f"wav/tts_{response}.wav")
-        print(f"Playing url {tts_wave_url}.")
-        return rx.call_script(f"play('{tts_wave_url}');")
+    @rx.background  # type: ignore
+    async def speak(self, text: str) -> Any:
+        try:
+            text_to_wav(text)
+            delete_old_wav_assets()
+            hash_ = hashlib.md5(text.encode(encoding="utf-8")).hexdigest()  # nosec
+            tts_wave_filename = f"tts_{hash_}.wav"
+            tts_wave_url = os.path.join(
+                config.frontend_path, f"wav/{tts_wave_filename}"
+            )
+            print(f"Playing url {tts_wave_url}.")
+            return rx.call_script(f"play('{tts_wave_url}');")
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            async with self:
+                self.warning = str(ex)
+                print(f"Error: {ex}")
 
     def invariant(self) -> None:
         number_of_prompts_being_edited = sum(
