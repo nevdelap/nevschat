@@ -21,7 +21,7 @@ VOICES = [
 ]
 
 
-def text_to_wav(text: str, voice: int = 0) -> None:
+def text_to_wav(text: str, voice: int = 1) -> None:
     """
     Write a wave file into /assets.wav, if it doesn't already exist.
     """
