@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --upgrade pip --root-user-action=ignore && \
     pip install --root-user-action=ignore \
     `# prod` \
-    openai \
+    google-cloud-texttospeech==2.16.3 \
+    openai==1.23.2 \
     `# dev` \
     bandit \
     black \
