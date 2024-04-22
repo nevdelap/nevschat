@@ -87,7 +87,7 @@ monthly budget and email notification when it is exceeded.
 
 The Google TTS API key is supplied the GOOGLE_TTS_KEY environment variable. It
 should be [restricted](https://console.cloud.google.com/apis/credentials) to be
-usable only from the Cloud Text-to-Speech API, only only from the production and
+usable only for the Cloud Text-to-Speech API, only only from the production and
 development IP addresses.
 
 #### Page structure

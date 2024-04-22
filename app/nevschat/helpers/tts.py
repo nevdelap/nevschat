@@ -23,7 +23,7 @@ VOICES = [
 
 def text_to_wav(text: str, voice: int = 1) -> None:
     """
-    Write a wave file into /assets.wav, if it doesn't already exist.
+    Write a wave file into assets/wav, if it doesn't already exist.
     """
     assert voice < len(VOICES)
     try:
