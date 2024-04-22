@@ -1,7 +1,7 @@
 # mypy: disable-error-code="attr-defined,name-defined"
 
 import os
-import re
+import unicodedata
 from collections import OrderedDict
 from typing import Any
 
@@ -201,18 +201,36 @@ USE_QUICK_PROMPT = False  # True to add a first prompt, for testing.
 USE_CANNED_RESPONSE = False  # True to add a first response, for testing.
 
 
-def is_japanese(text: str) -> bool:
-    return (
-        len(text) > 0
-        and re.match(
-            (
-                r"^[\u3000-\u303F\u3040-\u309F\u30A0-\u30FF"
-                r"\uFF00-\uFFEF\u4E00-\u9FAF\u30FB\u30FC\uFF65\s1-9.]+$"
-            ),
-            text,
-        )
-        is not None
-    )
+def is_japanese_char(ch: str) -> bool:
+    """
+    Return True if the character is a Japanese character.
+    """
+    assert len(ch) == 1
+    try:
+        block = unicodedata.name(ch).split()[0]
+        return block in [
+            "CJK",
+            "DIGIT",
+            "FULLWIDTH",
+            "HIRAGANA",
+            "IDEOGRAPHIC",
+            "KATAKANA",
+        ]
+    except ValueError:
+        return False
+
+
+def is_japanese_text(text: str) -> bool:
+    """
+    Return True if at least X percent of characters in the
+    text are Japanese characters.
+    """
+    if len(text) == 0:
+        return False
+    percent_required = 80
+    japanese_characters = sum(1 for ch in text if is_japanese_char(ch))
+    percent = 100 * japanese_characters / len(text)
+    return percent > percent_required
 
 
 class PromptResponse(rx.Base):  # type: ignore
@@ -407,7 +425,7 @@ class State(rx.State):  # type: ignore
                     response = item.choices[0].delta.content  # type: ignore
                     if response:
                         self.prompts_responses[-1].response += response
-                        self.prompts_responses[-1].is_japanese = is_japanese(
+                        self.prompts_responses[-1].is_japanese = is_japanese_text(
                             self.prompts_responses[-1].response
                         )
                     if not self.is_processing:

@@ -56,8 +56,8 @@ with `scripts/install_hooks`.
 ```bash
 git add . &&
 git commit -m 'whatever' &&
-git merge latest &&
 scripts/lint &&
+git merge latest &&
 git push origin HEAD:master --no-verify &&
 git tag -f latest &&
 git push -f origin latest &&
