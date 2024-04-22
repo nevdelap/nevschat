@@ -122,6 +122,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                                 stroke_width=1.5,
                             ),
                             color_scheme="blue",
+                            disabled=State.is_processing,
                             margin_top="0.75em",
                             on_click=lambda: State.speak(  # pylint: disable=no-value-for-parameter
                                 prompt_response.response
