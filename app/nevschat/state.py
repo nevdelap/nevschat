@@ -208,14 +208,22 @@ def is_japanese_char(ch: str) -> bool:
     assert len(ch) == 1
     try:
         block = unicodedata.name(ch).split()[0]
-        return block in [
+        is_japanese= block in [
             "CJK",
+            "COMMA",
             "DIGIT",
             "FULLWIDTH",
+            "FULL STOP",
             "HIRAGANA",
             "IDEOGRAPHIC",
             "KATAKANA",
+            "KATAKANA-HIRAGANA",
+            "LEFT",
+            "RIGHT",
+            "SPACE",
         ]
+        # print(ch, block, "J" if is_japanese else "")
+        return is_japanese
     except ValueError:
         return False
 
@@ -227,10 +235,11 @@ def is_japanese_text(text: str) -> bool:
     """
     if len(text) == 0:
         return False
-    percent_required = 80
+    percent_required = 60
     japanese_characters = sum(1 for ch in text if is_japanese_char(ch))
     percent = 100 * japanese_characters / len(text)
-    return percent > percent_required
+    # print(f"{int(percent)}% Japanese.")
+    return percent >= percent_required
 
 
 class PromptResponse(rx.Base):  # type: ignore
