@@ -1,15 +1,18 @@
 # mypy: disable-error-code="attr-defined,name-defined"
 
-import hashlib
 import os
+import requests
+import time
 import unicodedata
 from collections import OrderedDict
+from urllib.parse import urljoin
 from typing import Any
 
 from nevschat.helpers import delete_old_wav_assets
 from nevschat.helpers import text_to_wav
 from openai import OpenAI
 from rxconfig import config
+from rxconfig import site_url
 
 import reflex as rx
 
@@ -248,6 +251,8 @@ class PromptResponse(rx.Base):  # type: ignore
     response: str
     is_editing: bool
     is_japanese: bool
+    has_tts: bool
+    tts_wav_url: str
     model: str
 
 
@@ -259,6 +264,8 @@ class State(rx.State):  # type: ignore
                 response="はい、そうです。",
                 is_editing=False,
                 is_japanese=True,
+                has_tts=False,
+                tts_wav_url="",
                 model="gpt-canned",
             ),
         ]
@@ -308,6 +315,7 @@ class State(rx.State):  # type: ignore
         return None
 
     def edit_prompt(self, index: int) -> None:
+        assert index < len(self.prompts_responses)
         self.edited_prompt = self.prompts_responses[index].prompt
         self.prompts_responses[index].is_editing = True
         self.is_editing = True
@@ -323,6 +331,7 @@ class State(rx.State):  # type: ignore
         self.new_prompt = ""
 
     def chatgpt_with_edited_prompt(self, index: int) -> Any:
+        assert index < len(self.prompts_responses)
         assert len(self.edited_prompt.strip()) > 0
         self.new_prompt = self.edited_prompt
         self.prompts_responses = self.prompts_responses[:index]
@@ -330,6 +339,7 @@ class State(rx.State):  # type: ignore
         return State.chatgpt
 
     def cancel_edit_prompt(self, index: int) -> None:
+        assert index < len(self.prompts_responses)
         self.edited_prompt = ""
         self.prompts_responses[index].is_editing = False
         self.is_editing = False
@@ -409,6 +419,8 @@ class State(rx.State):  # type: ignore
                     response="",
                     is_editing=False,
                     is_japanese=False,
+                    has_tts=False,
+                    tts_wav_url="",
                     model=model,
                 )
                 self.prompts_responses.append(prompt_response)
@@ -446,7 +458,7 @@ class State(rx.State):  # type: ignore
         except Exception as ex:  # pylint: disable=broad-exception-caught
             async with self:
                 self.warning = str(ex)
-                print(f"Error: {ex}")
+                print(self.warning)
         finally:
             async with self:
                 self.is_processing = False
@@ -459,21 +471,43 @@ class State(rx.State):  # type: ignore
         # self.invariant()
 
     @rx.background  # type: ignore
-    async def speak(self, text: str) -> Any:
+    async def speak(self, index: int, text: str) -> Any:
+        assert index < len(self.prompts_responses)
         try:
-            text_to_wav(text)
+            tts_wav_filename = text_to_wav(text)
+            # Take advantage of a moment for the Nginx to make the wav available
+            # by doing some housekeeping.
             delete_old_wav_assets()
-            hash_ = hashlib.md5(text.encode(encoding="utf-8")).hexdigest()  # nosec
-            tts_wave_filename = f"tts_{hash_}.wav"
-            tts_wave_url = os.path.join(
-                config.frontend_path, f"wav/{tts_wave_filename}"
+            tts_wav_url = os.path.join(
+                config.frontend_path, f"{tts_wav_filename[len('assets/'):]}"
             )
-            print(f"Playing url {tts_wave_url}.")
-            return rx.call_script(f"play('{tts_wave_url}');")
+            full_url = urljoin(site_url, tts_wav_url)
+            print(f"Checking that {full_url}...", end="")
+            for _ in range(0, 10):
+                try:
+                    response = requests.head(full_url, timeout=1.0)
+                    if response.status_code >= 200 and response.status_code < 400:
+                        print("OK")
+                        async with self:
+                            self.prompts_responses[index].tts_wav_url = tts_wav_url
+                            # This causes the rx.audio to be rendered, at which
+                            # point we know for sure it has a working url.
+                            self.prompts_responses[index].has_tts = True
+                        return
+                except Exception as ex:  # pylint: disable=broad-exception-caught
+                    async with self:
+                        self.warning = str(ex)
+                        print(self.warning)
+                time.sleep(0.25)
         except Exception as ex:  # pylint: disable=broad-exception-caught
             async with self:
                 self.warning = str(ex)
-                print(f"Error: {ex}")
+                print(self.warning)
+        else:
+            async with self:
+                print("NOT OK")
+                self.warning = "Some problem prevented the audio from being available to play."
+                print(self.warning)
 
     def invariant(self) -> None:
         number_of_prompts_being_edited = sum(

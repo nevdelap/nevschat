@@ -22,7 +22,7 @@ VOICES = [
 ]
 
 
-def text_to_wav(text: str, voice: int = 1) -> None:
+def text_to_wav(text: str, voice: int = 1) -> str:
     """
     Write a wave file into assets/wav, if it doesn't already exist.
     """
@@ -32,7 +32,7 @@ def text_to_wav(text: str, voice: int = 1) -> None:
         tts_wav_filename = f"assets/wav/tts_{hash_}.wav"
         if os.path.isfile(tts_wav_filename):
             print("Skipping tts.")
-            return
+            return tts_wav_filename
     except Exception as ex:  # pylint: disable=broad-exception-caught
         print(ex)
 
@@ -60,3 +60,4 @@ def text_to_wav(text: str, voice: int = 1) -> None:
     with open(tts_wav_filename, "wb") as f:
         f.write(response.audio_content)
     print("Done tts.")
+    return tts_wav_filename

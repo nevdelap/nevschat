@@ -5,46 +5,12 @@ from nevschat.state import State
 
 import reflex as rx
 
-VERSION = "0.0.48"
+VERSION = "0.0.49"
 TITLE = f"Nev's Awesome ChatGPT v{VERSION}"
 
 
 def index() -> rx.Component:
     return rx.center(
-        rx.script(
-            """
-                function play(tts_wav_url) {
-                    fetch(tts_wav_url)
-                        .then(response => {
-                            if (!response.ok) {
-                                console.log(
-                                    'Checking url ' + tts_wav_url +
-                                    ' got status ' + response.status +
-                                    '. Retrying after a moment...'
-                                );
-                                setTimeout(() => {
-                                    play(tts_wav_url);
-                                }, 250);
-                            } else {
-                                console.log('Playing url ' + tts_wav_url + '.');
-                                var audio = new Audio(tts_wav_url);
-                                audio.load();
-                                audio.play();
-                            }
-                        })
-                        .catch(error => {
-                            console.log(
-                                    'Checking url ' + tts_wav_url +
-                                    ' got error ' + error +
-                                    '. Retrying after a moment...'
-                                );
-                            setTimeout(() => {
-                                play(tts_wav_url);
-                            }, 250);
-                        });
-                }
-            """
-        ),
         rx.vstack(
             rx.heading(TITLE),
             rx.text(

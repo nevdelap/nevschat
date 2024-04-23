@@ -117,7 +117,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         prompt_response.is_japanese,
                         rx.button(
                             rx.icon(
-                                tag="play",
+                                tag="volume-2",
                                 size=20,
                                 stroke_width=1.5,
                             ),
@@ -125,6 +125,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                             disabled=State.is_processing,
                             margin_top="0.75em",
                             on_click=lambda: State.speak(  # pylint: disable=no-value-for-parameter
+                                index,
                                 prompt_response.response
                             ),
                         ),
@@ -142,6 +143,15 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     ),
                 ),
                 width="100%",
+            ),
+            rx.cond(
+                prompt_response.has_tts,
+                rx.audio(
+                    height="32px",
+                    url=prompt_response.tts_wav_url,
+                    width="100%",
+                ),
+                None,
             ),
             rx.text(
                 prompt_response.model,

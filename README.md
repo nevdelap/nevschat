@@ -76,7 +76,7 @@ exit
 
 * [Reflex Component Library](https://reflex.dev/docs/library/)
 * [Radix  UI](https://www.radix-ui.com/)
-  * [Icons](https://www.radix-ui.com/icons)
+  * [Icons](https://lucide.dev/icons)
   * [Colors](https://www.radix-ui.com/colors)
 
 #### OpenAI
