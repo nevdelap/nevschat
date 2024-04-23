@@ -178,14 +178,14 @@ def chat() -> rx.Component:
                 on_change=State.set_gpt_4,
             ),
             rx.checkbox(
-                "Terse",
+                "簡潔な返答",
                 checked=State.terse,
                 color="#333",
                 on_change=State.set_terse,
             ),
             rx.hstack(
                 rx.radio(
-                    ["Normal", "Instruction:"],
+                    ["通常モード", "システム指示:"],
                     color="#333",
                     direction="row",
                     spacing="2",

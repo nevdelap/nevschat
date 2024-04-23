@@ -276,7 +276,7 @@ class State(rx.State):  # type: ignore
     edited_prompt: str
     gpt_4: bool = False
     is_processing: bool = False
-    mode: str = "Normal"
+    mode: str = "通常モード"
     new_prompt: str = "可愛いウサギがいる?" if USE_QUICK_PROMPT else ""
     system_instruction: str = DEFAULT_SYSTEM_INSTRUCTION
     terse: bool = False
@@ -284,7 +284,7 @@ class State(rx.State):  # type: ignore
 
     @rx.var  # type: ignore
     def is_not_system_instruction(self) -> bool:
-        return self.mode != "Instruction:"
+        return self.mode != "システム指示:"
 
     @rx.var  # type: ignore
     def cannot_clear_chat(self) -> bool:
@@ -388,7 +388,7 @@ class State(rx.State):  # type: ignore
                         }
                     )
 
-                if self.mode == "Normal":
+                if self.mode == "通常モード":
                     system_instruction, code_related = NORMAL_SYSTEM_INSTRUCTION, False
                 else:
                     system_instruction, code_related = SYSTEM_INSTRUCTIONS[
