@@ -206,7 +206,7 @@ def chat() -> rx.Component:
                 wrap="wrap",
             ),
             rx.checkbox(
-                "オートスピーク",
+                "日本語のオートスピーク",
                 checked=State.auto_speak,
                 color="#333",
                 on_change=State.set_auto_speak,
