@@ -19,4 +19,7 @@ config = rx.Config(
     ],
     frontend_path="/chat" if is_prod else "",
 )
-site_url = "https://nevdelap.com:3000" if is_prod else "http://localhost:3000"
+# In dev the assets are served by reflex on port 3000. In prod it is served by Nginx.
+site_runtime_asserts_url = (
+    "https://nevdelap.com/chat" if is_prod else "http://localhost:3000"
+)

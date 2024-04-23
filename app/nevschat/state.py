@@ -12,7 +12,7 @@ from nevschat.helpers import delete_old_wav_assets
 from nevschat.helpers import text_to_wav
 from openai import OpenAI
 from rxconfig import config
-from rxconfig import site_url
+from rxconfig import site_runtime_asserts_url
 
 import reflex as rx
 
@@ -481,11 +481,11 @@ class State(rx.State):  # type: ignore
             tts_wav_url = os.path.join(
                 config.frontend_path, f"{tts_wav_filename[len('assets/'):]}"
             )
-            full_url = urljoin(site_url, tts_wav_url)
-            print(f"Checking that {full_url}...", end="")
+            full_tts_wav_url = urljoin(site_runtime_asserts_url, tts_wav_url)
+            print(f"Checking that {full_tts_wav_url}...", end="")
             for _ in range(0, 10):
                 try:
-                    response = requests.head(full_url, timeout=1.0)
+                    response = requests.head(full_tts_wav_url, timeout=10.0)
                     if response.status_code >= 200 and response.status_code < 400:
                         print("OK")
                         async with self:
@@ -498,6 +498,9 @@ class State(rx.State):  # type: ignore
                     async with self:
                         self.warning = str(ex)
                         print(self.warning)
+                else:
+                    async with self:
+                        self.warning = ""
                 time.sleep(0.25)
         except Exception as ex:  # pylint: disable=broad-exception-caught
             async with self:
