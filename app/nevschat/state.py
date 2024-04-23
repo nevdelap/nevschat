@@ -12,7 +12,7 @@ from nevschat.helpers import delete_old_wav_assets
 from nevschat.helpers import text_to_wav
 from openai import OpenAI
 from rxconfig import config
-from rxconfig import site_runtime_asserts_url
+from rxconfig import site_runtime_assets_url
 
 import reflex as rx
 
@@ -481,7 +481,7 @@ class State(rx.State):  # type: ignore
             tts_wav_url = os.path.join(
                 config.frontend_path, f"{tts_wav_filename[len('assets/'):]}"
             )
-            full_tts_wav_url = urljoin(site_runtime_asserts_url, tts_wav_url)
+            full_tts_wav_url = urljoin(site_runtime_assets_url, tts_wav_url)
             print(f"Checking that {full_tts_wav_url}...", end="")
             for _ in range(0, 10):
                 try:

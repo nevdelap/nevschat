@@ -5,7 +5,7 @@ import socket
 import reflex as rx
 
 PROD_HOSTNAMES = [
-    "buildkitsandbox",  # Buildtime docker container.
+    "buildkitsandbox",  # Build time docker container.
     "prod",  # Prod runtime docker container.
 ]
 
@@ -20,6 +20,6 @@ config = rx.Config(
     frontend_path="/chat" if is_prod else "",
 )
 # In dev the assets are served by reflex on port 3000. In prod it is served by Nginx.
-site_runtime_asserts_url = (
+site_runtime_assets_url = (
     "https://nevdelap.com/chat" if is_prod else "http://localhost:3000"
 )
