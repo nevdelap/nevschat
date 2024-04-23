@@ -48,7 +48,10 @@ def text_to_wav(text: str, voice: int = 1) -> None:
         language_code="ja-JP",
         name=VOICES[voice],
     )
-    audio_config = tts.AudioConfig(audio_encoding=tts.AudioEncoding.LINEAR16)
+    audio_config = tts.AudioConfig(
+        audio_encoding=tts.AudioEncoding.LINEAR16,
+        speaking_rate=0.9,
+    )
     response = client.synthesize_speech(
         input=text_input,
         voice=voice_params,
