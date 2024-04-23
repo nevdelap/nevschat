@@ -9,19 +9,9 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 RUN pip install --upgrade pip --root-user-action=ignore && \
     pip install --root-user-action=ignore \
-    `# prod` \
     google-cloud-texttospeech==2.16.3 \
     openai==1.23.2 \
-    `# dev` \
-    bandit \
-    black \
-    coverage \
-    isort \
-    mypy \
-    pylint \
-    pytest \
-    pyupgrade \
-    wheel
+    requests==2.31.0
 WORKDIR /app
 COPY app/ .
 COPY reflex/ reflex/

@@ -16,6 +16,7 @@ conda install -yq \
 	--quiet \
 	--yes \
 	`# prod` \
+	requests==2.31.0 \
 	`# dev` \
 	bandit \
 	black \
@@ -24,7 +25,8 @@ conda install -yq \
 	mypy \
 	pylint \
 	pytest \
-	pyupgrade
+	pyupgrade \
+	types-requests==2.31.0.*
 pip install -U \
 	google-cloud-texttospeech==2.16.3 \
 	openai==1.23.2
