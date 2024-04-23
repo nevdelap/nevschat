@@ -1,13 +1,13 @@
 # mypy: disable-error-code="attr-defined,name-defined"
 
 import os
-import requests
 import time
 import unicodedata
 from collections import OrderedDict
-from urllib.parse import urljoin
 from typing import Any
+from urllib.parse import urljoin
 
+import requests
 from nevschat.helpers import delete_old_wav_assets
 from nevschat.helpers import text_to_wav
 from openai import OpenAI
@@ -506,7 +506,9 @@ class State(rx.State):  # type: ignore
         else:
             async with self:
                 print("NOT OK")
-                self.warning = "Some problem prevented the audio from being available to play."
+                self.warning = (
+                    "Some problem prevented the audio from being available to play."
+                )
                 print(self.warning)
 
     def invariant(self) -> None:
