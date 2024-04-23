@@ -230,7 +230,7 @@ def chat() -> rx.Component:
                 on_change=State.set_new_prompt,
                 on_key_down=State.handle_key_down,
                 on_key_up=State.handle_key_up,
-                placeholder="Ask something.",
+                placeholder="何か質問はありますか？",
                 value=State.new_prompt,
                 width="100%",
             ),
