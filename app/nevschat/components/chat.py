@@ -205,6 +205,12 @@ def chat() -> rx.Component:
                 spacing="2",
                 wrap="wrap",
             ),
+            rx.checkbox(
+                "オートスピーク",
+                checked=State.auto_speak,
+                color="#333",
+                on_change=State.set_auto_speak,
+            ),
             align="center",
             direction="row",
             spacing="2",

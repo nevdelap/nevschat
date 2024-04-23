@@ -272,6 +272,7 @@ class State(rx.State):  # type: ignore
         if USE_CANNED_RESPONSE
         else []
     )
+    auto_speak: bool = False
     control_down: bool = False
     edited_prompt: str
     gpt_4: bool = False
@@ -455,6 +456,14 @@ class State(rx.State):  # type: ignore
                         self.prompts_responses[-1].response += " (cancelled)"
                         break
 
+            async with self:
+                if self.prompts_responses[-1].is_japanese and self.auto_speak:
+                    print("Auto speaking.")
+                    self.do_speak(
+                        len(self.prompts_responses) - 1,
+                        self.prompts_responses[-1].response,
+                    )
+
         except Exception as ex:  # pylint: disable=broad-exception-caught
             async with self:
                 self.warning = str(ex)
@@ -471,7 +480,14 @@ class State(rx.State):  # type: ignore
         # self.invariant()
 
     @rx.background  # type: ignore
-    async def speak(self, index: int, text: str) -> Any:
+    async def speak(self, index: int, text: str) -> None:
+        async with self:
+            return self.do_speak(index, text)
+
+    def do_speak(self, index: int, text: str) -> None:
+        """
+        Non-async version to call from the async rx.background handlers.
+        """
         assert index < len(self.prompts_responses)
         try:
             tts_wav_filename = text_to_wav(text)
@@ -488,31 +504,26 @@ class State(rx.State):  # type: ignore
                     response = requests.head(full_tts_wav_url, timeout=10.0)
                     if response.status_code >= 200 and response.status_code < 400:
                         print("OK")
-                        async with self:
-                            self.prompts_responses[index].tts_wav_url = tts_wav_url
-                            # This causes the rx.audio to be rendered, at which
-                            # point we know for sure it has a working url.
-                            self.prompts_responses[index].has_tts = True
+                        self.prompts_responses[index].tts_wav_url = tts_wav_url
+                        # This causes the rx.audio to be rendered, at which
+                        # point we know for sure it has a working url.
+                        self.prompts_responses[index].has_tts = True
                         return
                 except Exception as ex:  # pylint: disable=broad-exception-caught
-                    async with self:
-                        self.warning = str(ex)
-                        print(self.warning)
+                    self.warning = str(ex)
+                    print(self.warning)
                 else:
-                    async with self:
-                        self.warning = ""
+                    self.warning = ""
                 time.sleep(0.25)
         except Exception as ex:  # pylint: disable=broad-exception-caught
-            async with self:
-                self.warning = str(ex)
-                print(self.warning)
+            self.warning = str(ex)
+            print(self.warning)
         else:
-            async with self:
-                print("NOT OK")
-                self.warning = (
-                    "Some problem prevented the audio from being available to play."
-                )
-                print(self.warning)
+            print("NOT OK")
+            self.warning = (
+                "Some problem prevented the audio from being available to play."
+            )
+            print(self.warning)
 
     def invariant(self) -> None:
         number_of_prompts_being_edited = sum(
