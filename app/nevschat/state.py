@@ -9,6 +9,7 @@ from urllib.parse import urljoin
 
 import requests
 from nevschat.helpers import delete_old_wav_assets
+from nevschat.helpers import get_random_voice
 from nevschat.helpers import text_to_wav
 from openai import OpenAI
 from rxconfig import config
@@ -254,6 +255,7 @@ class PromptResponse(rx.Base):  # type: ignore
     has_tts: bool
     tts_wav_url: str
     model: str
+    voice: str
 
 
 class State(rx.State):  # type: ignore
@@ -267,6 +269,7 @@ class State(rx.State):  # type: ignore
                 has_tts=False,
                 tts_wav_url="",
                 model="gpt-canned",
+                voice="",
             ),
         ]
         if USE_CANNED_RESPONSE
@@ -278,9 +281,10 @@ class State(rx.State):  # type: ignore
     gpt_4: bool = False
     is_processing: bool = False
     mode: str = "通常モード"
-    new_prompt: str = "可愛いウサギがいる?" if USE_QUICK_PROMPT else ""
+    new_prompt: str = "可愛いウサギが好きですか?" if USE_QUICK_PROMPT else ""
     system_instruction: str = DEFAULT_SYSTEM_INSTRUCTION
     terse: bool = False
+    voice: str = get_random_voice()
     warning: str = ""
 
     @rx.var  # type: ignore
@@ -415,6 +419,9 @@ class State(rx.State):  # type: ignore
                     )
                 messages.append({"role": "user", "content": self.new_prompt})
 
+                if len(self.prompts_responses) == 0:
+                    self.voice = get_random_voice()
+
                 prompt_response = PromptResponse(
                     prompt=self.new_prompt,
                     response="",
@@ -423,6 +430,7 @@ class State(rx.State):  # type: ignore
                     has_tts=False,
                     tts_wav_url="",
                     model=model,
+                    voice="",
                 )
                 self.prompts_responses.append(prompt_response)
                 self.new_prompt = ""
@@ -488,9 +496,10 @@ class State(rx.State):  # type: ignore
         """
         Non-async version to call from the async rx.background handlers.
         """
+        assert self.voice != ""
         assert index < len(self.prompts_responses)
         try:
-            tts_wav_filename = text_to_wav(text)
+            tts_wav_filename = text_to_wav(text, self.voice)
             # Take advantage of a moment for the Nginx to make the wav available
             # by doing some housekeeping.
             delete_old_wav_assets()
@@ -505,6 +514,7 @@ class State(rx.State):  # type: ignore
                     if response.status_code >= 200 and response.status_code < 400:
                         print("OK")
                         self.prompts_responses[index].tts_wav_url = tts_wav_url
+                        self.prompts_responses[index].voice = self.voice
                         # This causes the rx.audio to be rendered, at which
                         # point we know for sure it has a working url.
                         self.prompts_responses[index].has_tts = True

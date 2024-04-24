@@ -153,8 +153,17 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                 ),
                 None,
             ),
-            rx.text(
-                prompt_response.model,
+            rx.center(
+                rx.box(
+                    rx.hstack(
+                        rx.text(prompt_response.model),
+                        rx.cond(
+                            prompt_response.has_tts,
+                            rx.text(prompt_response.voice),
+                            None,
+                        ),
+                    ),
+                ),
                 color="#aaa",
                 font_size="0.5em",
                 margin_bottom="0.5em",

@@ -2,31 +2,41 @@
 
 import hashlib
 import os
+import random
 
 import google.cloud.texttospeech as tts
 
-VOICES = [
-    # Female
-    "ja-JP-Neural2-B",
-    "ja-JP-Standard-A",
-    "ja-JP-Standard-B",
-    "ja-JP-Wavenet-A",
-    "ja-JP-Wavenet-B",
-    # Male
-    "ja-JP-Neural2-C",
-    "ja-JP-Neural2-D",
-    "ja-JP-Standard-C",
-    "ja-JP-Standard-D",
-    "ja-JP-Wavenet-C",
-    "ja-JP-Wavenet-D",
-]
+USE_BEST_VOICES = True
+
+VOICES = (
+    [
+        # Female
+        "ja-JP-Neural2-B",
+        # Male
+        "ja-JP-Neural2-C",
+        "ja-JP-Neural2-D",
+    ]
+    if USE_BEST_VOICES
+    else [
+        # Female
+        "ja-JP-Standard-A",
+        "ja-JP-Standard-B",
+        # Male
+        "ja-JP-Standard-C",
+        "ja-JP-Standard-D",
+    ]
+)
 
 
-def text_to_wav(text: str, voice: int = 1) -> str:
+def get_random_voice() -> str:
+    return VOICES[random.randrange(0, len(VOICES))]  # nosec
+
+
+def text_to_wav(text: str, voice: str = VOICES[0]) -> str:
     """
     Write a wave file into assets/wav, if it doesn't already exist.
     """
-    assert voice < len(VOICES)
+    assert voice in VOICES
     try:
         hash_ = hashlib.md5(text.encode(encoding="utf-8")).hexdigest()  # nosec
         tts_wav_filename = f"assets/wav/tts_{hash_}.wav"
@@ -46,7 +56,7 @@ def text_to_wav(text: str, voice: int = 1) -> str:
     text_input = tts.SynthesisInput(text=text)
     voice_params = tts.VoiceSelectionParams(
         language_code="ja-JP",
-        name=VOICES[voice],
+        name=voice,
     )
     audio_config = tts.AudioConfig(
         audio_encoding=tts.AudioEncoding.LINEAR16,
