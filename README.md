@@ -4,7 +4,7 @@ This is my private thing that I use everyday, deployed at
 [www.nevdelap.com/chat](http://www.nevdelap.com/chat) (behind auth), because it
 does exactly what I want and nothing else.
 
-![Screenshot](screenshot.jpg)
+![Screenshot](screenshot.png)
 
 ## Prerequisites
 
