@@ -122,7 +122,10 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                                 stroke_width=1.5,
                             ),
                             color_scheme="blue",
-                            disabled=prompt_response.has_tts,
+                            disabled=(
+                                prompt_response.tts_in_progress
+                                | prompt_response.has_tts
+                            ),
                             margin_top="0.75em",
                             on_click=lambda: State.speak(  # pylint: disable=no-value-for-parameter
                                 index, prompt_response.response
@@ -142,6 +145,17 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     ),
                 ),
                 width="100%",
+            ),
+            rx.cond(
+                prompt_response.tts_in_progress,
+                rx.center(
+                    rx.chakra.spinner(
+                        color="#888",
+                        size="sm",
+                    ),
+                    width="100%",
+                ),
+                None,
             ),
             rx.cond(
                 prompt_response.has_tts,

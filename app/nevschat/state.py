@@ -4,6 +4,7 @@ import os
 import time
 import unicodedata
 from collections import OrderedDict
+from collections.abc import AsyncGenerator
 from typing import Any
 from urllib.parse import urljoin
 
@@ -252,6 +253,7 @@ class PromptResponse(rx.Base):  # type: ignore
     response: str
     is_editing: bool
     is_japanese: bool
+    tts_in_progress: bool
     has_tts: bool
     tts_wav_url: str
     model: str
@@ -266,6 +268,7 @@ class State(rx.State):  # type: ignore
                 response="はい、そうです。",
                 is_editing=False,
                 is_japanese=True,
+                tts_in_progress=False,
                 has_tts=False,
                 tts_wav_url="",
                 model="gpt-canned",
@@ -371,7 +374,7 @@ class State(rx.State):  # type: ignore
         self.control_down = False
 
     @rx.background  # type: ignore
-    async def chatgpt(self) -> None:
+    async def chatgpt(self) -> AsyncGenerator[None, None]:
         try:
             async with self:
                 assert self.new_prompt != ""
@@ -427,6 +430,7 @@ class State(rx.State):  # type: ignore
                     response="",
                     is_editing=False,
                     is_japanese=False,
+                    tts_in_progress=False,
                     has_tts=False,
                     tts_wav_url="",
                     model=model,
@@ -464,14 +468,6 @@ class State(rx.State):  # type: ignore
                         self.prompts_responses[-1].response += " (cancelled)"
                         break
 
-            async with self:
-                if self.prompts_responses[-1].is_japanese and self.auto_speak:
-                    print("Auto speaking.")
-                    self.do_speak(
-                        len(self.prompts_responses) - 1,
-                        self.prompts_responses[-1].response,
-                    )
-
         except Exception as ex:  # pylint: disable=broad-exception-caught
             async with self:
                 self.warning = str(ex)
@@ -479,6 +475,22 @@ class State(rx.State):  # type: ignore
         finally:
             async with self:
                 self.is_processing = False
+
+        async with self:
+            if self.prompts_responses[-1].is_japanese and self.auto_speak:
+                self.prompts_responses[-1].tts_in_progress = True
+            yield
+            async with self:
+                if self.prompts_responses[-1].is_japanese and self.auto_speak:
+                    try:
+                        print("Auto speaking.")
+                        self.do_speak(
+                            len(self.prompts_responses) - 1,
+                            self.prompts_responses[-1].response,
+                        )
+                    finally:
+                        async with self:
+                            self.prompts_responses[-1].tts_in_progress = False
 
     def cancel_chatgpt(self) -> None:
         self.is_processing = False
@@ -488,9 +500,17 @@ class State(rx.State):  # type: ignore
         # self.invariant()
 
     @rx.background  # type: ignore
-    async def speak(self, index: int, text: str) -> None:
+    async def speak(self, index: int, text: str) -> AsyncGenerator[None, None]:
         async with self:
-            return self.do_speak(index, text)
+            self.prompts_responses[index].tts_in_progress = True
+        yield
+        async with self:
+            try:
+                print("Speaking.")
+                self.do_speak(index, text)
+            finally:
+                async with self:
+                    self.prompts_responses[index].tts_in_progress = False
 
     def do_speak(self, index: int, text: str) -> None:
         """
@@ -507,7 +527,7 @@ class State(rx.State):  # type: ignore
                 config.frontend_path, f"{tts_wav_filename[len('assets/'):]}"
             )
             full_tts_wav_url = urljoin(site_runtime_assets_url, tts_wav_url)
-            print(f"Checking that {full_tts_wav_url}...", end="")
+            print(f"Checking that {full_tts_wav_url} is being served...", end="")
             for _ in range(0, 10):
                 try:
                     response = requests.head(full_tts_wav_url, timeout=10.0)
