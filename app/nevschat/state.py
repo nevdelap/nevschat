@@ -28,6 +28,15 @@ SYSTEM_INSTRUCTIONS["日本語チャットボット"] = (
     ),
     False,
 )
+SYSTEM_INSTRUCTIONS["私の日本人の子供"] = (
+    (
+        "私の日本人の子供であるかのように日本語で応答すること。"
+        "プロンプトに漢字が含まれている場合、それは日本語であり、決して中国語ではありません。"
+        "日本語以外の言語で回答しないこと。\n"
+        "非常に重要だ： 初級から低級の学習者に適した日本語を使いましょう。"
+    ),
+    False,
+)
 SYSTEM_INSTRUCTIONS["Define"] = (
     (
         "DO NOT translate, define in English the meaning of the given text.\n"
