@@ -234,18 +234,13 @@ def is_japanese_char(ch: str) -> bool:
         return False
 
 
-def contains_japanese_text(text: str) -> bool:
+def contains_japanese(text: str) -> bool:
     """
-    Return True if at least X percent of characters in the
-    text are Japanese characters.
+    Return True if the text contains any Japanese at all.
     """
     if len(text) == 0:
         return False
-    percent_required = 10
-    japanese_characters = sum(1 for ch in text if is_japanese_char(ch))
-    percent = 100 * japanese_characters / len(text)
-    print(f"{int(percent)}% Japanese.")
-    return percent >= percent_required
+    return any(is_japanese_char(ch) for ch in text)
 
 
 def strip_non_japanese_characters(text: str) -> str:
@@ -259,7 +254,7 @@ class PromptResponse(rx.Base):  # type: ignore
     prompt: str
     response: str
     is_editing: bool
-    is_japanese: bool
+    contains_japanese: bool
     tts_in_progress: bool
     has_tts: bool
     tts_wav_url: str
@@ -274,7 +269,7 @@ class State(rx.State):  # type: ignore
                 prompt="そうですか？",
                 response="はい、そうです。",
                 is_editing=False,
-                is_japanese=True,
+                contains_japanese=True,
                 tts_in_progress=False,
                 has_tts=False,
                 tts_wav_url="",
@@ -436,7 +431,7 @@ class State(rx.State):  # type: ignore
                     prompt=self.new_prompt,
                     response="",
                     is_editing=False,
-                    is_japanese=False,
+                    contains_japanese=False,
                     tts_in_progress=False,
                     has_tts=False,
                     tts_wav_url="",
@@ -467,8 +462,8 @@ class State(rx.State):  # type: ignore
                     response = item.choices[0].delta.content  # type: ignore
                     if response:
                         self.prompts_responses[-1].response += response
-                        self.prompts_responses[-1].is_japanese = contains_japanese_text(
-                            self.prompts_responses[-1].response
+                        self.prompts_responses[-1].contains_japanese = (
+                            contains_japanese(self.prompts_responses[-1].response)
                         )
                     if not self.is_processing:
                         # It's been cancelled.
@@ -484,11 +479,11 @@ class State(rx.State):  # type: ignore
                 self.is_processing = False
 
         async with self:
-            if self.prompts_responses[-1].is_japanese and self.auto_speak:
+            if self.prompts_responses[-1].contains_japanese and self.auto_speak:
                 self.prompts_responses[-1].tts_in_progress = True
             yield
             async with self:
-                if self.prompts_responses[-1].is_japanese and self.auto_speak:
+                if self.prompts_responses[-1].contains_japanese and self.auto_speak:
                     try:
                         index = len(self.prompts_responses) - 1
                         print("Auto speaking.")

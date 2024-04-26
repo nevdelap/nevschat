@@ -114,7 +114,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                 ),
                 rx.hstack(
                     rx.cond(
-                        ~State.is_processing & prompt_response.is_japanese,
+                        ~State.is_processing & prompt_response.contains_japanese,
                         rx.button(
                             rx.icon(
                                 tag="volume-2",
