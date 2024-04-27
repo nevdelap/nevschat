@@ -132,25 +132,22 @@ SYSTEM_INSTRUCTIONS["Explain Usage"] = (
 SYSTEM_INSTRUCTIONS["Give example sentences using the given words."] = (
     (
         "Give a dot point list of 5 varied example sentences in Japanese using the "
-        "given word. Use simple vocabulary.\n"
-        " - The response MUST NOT CONTAIN pronunciation of the example sentences.\n"
-        " - The response MUST NOT CONTAIN romaji for the Japanese of the example "
-        "sentences.\n"
-        " - The response MUST NOT CONTAIN translations of the example sentences.\n"
-        " - ONLY give definitions of unusual or uncommon words."
-    ),
-    False,
-)
-SYSTEM_INSTRUCTIONS[
-    "Give example sentences using the given words with translations."
-] = (
-    (
-        "Give a dot point list of 5 varied example sentences in Japanese using the "
         "given word, with their translation in brackets. Use simple vocabulary.\n"
         " - The response MUST NOT CONTAIN pronunciation of the example sentences.\n"
         " - The response MUST NOT CONTAIN romaji for the Japanese of the example "
         "sentences.\n"
-        " - ONLY give definitions of unusual or uncommon words."
+        " - Give definitions of unusual or uncommon words."
+    ),
+    False,
+)
+SYSTEM_INSTRUCTIONS["Give varied ways of expressing the given meaning."] = (
+    (
+        "Give a dot point list of up to 5 varied ways of expressing the given meaning "
+        "in Japanese, with their translations in brackets.\n"
+        " - The response MUST NOT CONTAIN pronunciation of the example sentences.\n"
+        " - The response MUST NOT CONTAIN romaji for the Japanese of the example "
+        "sentences.\n"
+        " - Give definitions of unusual or uncommon words."
     ),
     False,
 )
