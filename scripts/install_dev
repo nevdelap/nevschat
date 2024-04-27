@@ -8,7 +8,7 @@ cd "$PROJECT_DIR"
 conda config --set auto_activate_base false
 conda deactivate
 conda env remove -yn nevschat
-conda create -yqn nevschat python=3.12
+conda create -yqn nevschat pypy python=3.9
 conda activate nevschat
 conda install -yq \
 	--channel conda-forge \

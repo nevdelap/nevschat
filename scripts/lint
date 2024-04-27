@@ -7,7 +7,7 @@ cd "$PROJECT_DIR"
 mypy --strict app
 pylint --recursive=y --ignore=.web app
 bandit --recursive --skip B101 --exclude=.web --quiet app
-PYVERSION=py312
+PYVERSION=py39
 pyupgrade --$PYVERSION-plus -- app/**/*.py
 isort --force-single-line-imports --profile black -- app/**/*.py
 black --target-version=$PYVERSION -- app/**/*.py

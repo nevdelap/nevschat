@@ -1,4 +1,4 @@
-FROM python:3.11-slim as base
+FROM pypy:3.9-slim as base
 RUN apt-get update && apt-get install -y \
     curl \
     && curl -fsSL https://deb.nodesource.com/setup_19.x | bash - \

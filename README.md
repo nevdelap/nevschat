@@ -107,3 +107,15 @@ development IP addresses.
       buttons.
     * if not being edited and is being generated renders a cancel button next to
       the response.
+
+#### Experimenting With pypy
+
+* Uninstall `docker` and its dependencies.
+* `docker-git`/`runc` does not work with `go` >=1.22.
+* Install latest `go`.
+* Download `PKGBUILD` for 1.21.7 from [here](https://gitlab.archlinux.org/archlinux/packaging/packages/go/-/commits/main).
+* Install the required public key with `gpg --recv-key 4EB27DB2A3B88B8B`.
+* Build and install the old `go` with `makepkg -i`.
+* Install `docker-git`.
+* Update `scripts/install_dev` and `docker/Dockerfile` to use `pypy` 3.9.
+* Update a couple of things that are not compatible with 3.9.
