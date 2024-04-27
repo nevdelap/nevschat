@@ -63,13 +63,7 @@ git merge latest &&
 git push origin HEAD:master --no-verify &&
 git tag -f latest &&
 git push -f origin latest --no-verify &&
-ssh_droplet
-
-# On the droplet.
-cd ~/nevschat &&
-scripts/deploy && sleep 30 && scripts/logs
-^C
-exit
+ssh_droplet bash -c "scripts/deploy && sleep 30 && scripts/logs"
 ```
 
 ### General Info
