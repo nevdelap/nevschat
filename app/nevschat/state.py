@@ -260,13 +260,19 @@ def contains_japanese(text: str) -> bool:
 
 def strip_non_japanese_split_sentences(text: str) -> str:
     """
-    Remove non-Japanese characters from the text.
+    Remove non-Japanese characters from the text. Remove duplicate sentences.
     """
-    return re.sub(
+    text = re.sub(
         r"。+",
         "。",
         "".join(ch if is_japanese_char(ch) else "。" for ch in text) + "。",
     ).lstrip("。")
+    while True:
+        old_len = len(text)
+        text = re.sub(r"([^。]*。)\1", r"\1", text)
+        if len(text) == old_len:
+            break
+    return text
 
 
 stripped = strip_non_japanese_split_sentences(
@@ -276,6 +282,10 @@ stripped = strip_non_japanese_split_sentences(
     "something else."
 )
 expected = "異る。違う。異る。"
+assert stripped == expected, f"{stripped} != {expected}"
+
+stripped = strip_non_japanese_split_sentences("違う。違う。違う。hello.違う。違う。")
+expected = "違う。"
 assert stripped == expected, f"{stripped} != {expected}"
 
 
