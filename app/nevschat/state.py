@@ -142,8 +142,22 @@ SYSTEM_INSTRUCTIONS["Give example sentences using the given words."] = (
 )
 SYSTEM_INSTRUCTIONS["Give varied ways of expressing the given meaning."] = (
     (
-        "Give a dot point list of up to 5 varied ways of expressing the given meaning "
-        "in Japanese, with their translations in brackets.\n"
+        "Give a dot point list of up to 5 varied ways of expressing the same meaning "
+        "as the given text, in Japanese, with their translations in brackets.\n"
+        " - The response MUST NOT CONTAIN pronunciation of the example sentences.\n"
+        " - The response MUST NOT CONTAIN romaji for the Japanese of the example "
+        "sentences.\n"
+        " - Give definitions of unusual or uncommon words."
+    ),
+    False,
+)
+SYSTEM_INSTRUCTIONS[
+    "Give varied ways of expressing the opposite of the given meaning."
+] = (
+    (
+        "Give a dot point list of up to 5 varied ways of expressing the meaning "
+        "opposite to that of the given text, in Japanese, with their translations "
+        "in brackets.\n"
         " - The response MUST NOT CONTAIN pronunciation of the example sentences.\n"
         " - The response MUST NOT CONTAIN romaji for the Japanese of the example "
         "sentences.\n"
