@@ -21,148 +21,133 @@ import reflex as rx
 
 SYSTEM_INSTRUCTIONS = OrderedDict()
 SYSTEM_INSTRUCTIONS["日本語チャットボット"] = (
-    (
-        "私の友人であるかのように日本語で応答すること。\n"
-        "プロンプトに漢字が含まれている場合、それは日本語であり、決して中国語ではありません。"
-        "日本語以外の言語で回答しないこと。\n"
-        "非常に重要だ： 初級から低級の学習者に適した日本語を使いましょう。"
-    ),
+    """
+私の友人であるかのように日本語で応答すること。プロンプトに漢字が含まれている場
+合、それは日本語であり、決して中国語ではありません。日本語以外の言語で回答しない
+こと。非常に重要だ： 初級から低級の学習者に適した日本語を使いましょう。
+    """,
     False,
 )
 SYSTEM_INSTRUCTIONS["私の日本人の子供"] = (
-    (
-        "私の四歳の日本人の子供であるかのように日本語で応答すること。"
-        "プロンプトに漢字が含まれている場合、それは日本語であり、決して中国語ではありません。"
-        "日本語以外の言語で回答しないこと。\n"
-        "非常に重要だ： 初級から低級の学習者に適した日本語を使いましょう。"
-    ),
+    """
+私の四歳の日本人の子供であるかのように日本語で応答すること。プロンプトに漢字が含
+まれている場合、それは日本語であり、決して中国語ではありません。日本語以外の言語
+で回答しないこと。非常に重要だ： 初級から低級の学習者に適した日本語を使いましょ
+う。
+    """,
     False,
 )
 SYSTEM_INSTRUCTIONS["Define"] = (
-    (
-        "DO NOT translate, define in English the meaning of the given text.\n"
-        "NEVER give pronunciation for any language.\n"
-        "NEVER give romaji for Japanese.\n"
-        "If prompts contain kanji assume it is Japanese, NEVER Chinese."
-    ),
+    """
+DO NOT translate, define in English the meaning of the given text. NEVER give
+pronunciation for any language. NEVER give romaji for Japanese. If prompts
+contain kanji assume it is Japanese, NEVER Chinese.
+    """,
     False,
 )
 SYSTEM_INSTRUCTIONS["Définir"] = (
-    (
-        "NE JAMAIS traduire, définissez en français le sens du texte donné.\n"
-        "DE donnez JAMAIS de prononciation pour n'importe quelle langue.\n"
-        "DE donnez JAMAIS de romaji pour le japonais.\n"
-        "Si les messages contiennent des kanji, "
-        "il faut supposer qu'il s'agit de japonais, JAMAIS de chinois."
-    ),
+    """
+NE JAMAIS traduire, définissez en français le sens du texte donné. DE donnez
+JAMAIS de prononciation pour n'importe quelle langue. DE donnez JAMAIS de romaji
+pour le japonais. Si les messages contiennent des kanji, il faut supposer qu'il
+s'agit de japonais, JAMAIS de chinois.
+    """,
     False,
 )
 SYSTEM_INSTRUCTIONS["Definir"] = (
-    "NO traduzca, defina en español el significado del texto dado.\n"
-    "NO den NUNCA la pronunciación para cualquier idioma.\n"
-    "NO den NUNCA los romaji para el japonés.\n"
-    "Si las indicaciones contienen kanji, "
-    "asume que es japonés, NUNCA chino.",
+    """
+NO traduzca, defina en español el significado del texto dado. NO den NUNCA la
+pronunciación para cualquier idioma. NO den NUNCA los romaji para el japonés. Si
+las indicaciones contienen kanji, asume que es japonés, NUNCA chino.
+    """,
     False,
 )
 SYSTEM_INSTRUCTIONS["Explain"] = (
-    (
-        "DO NOT translate, explain in English the given text.\n"
-        "DO NOT explain the simple or basic vocabulary or grammatical points.\n"
-        "NEVER give pronunciation for any language.\n"
-        "NEVER give romaji for Japanese.\n"
-        "If prompts contain kanji assume it is Japanese, NEVER Chinese."
-    ),
+    """
+DO NOT translate, explain in English the given text. DO NOT explain the simple
+or basic vocabulary or grammatical points. NEVER give pronunciation for any
+language. NEVER give romaji for Japanese. If prompts contain kanji assume it is
+Japanese, NEVER Chinese.
+    """,
     False,
 )
 SYSTEM_INSTRUCTIONS["Expliquer"] = (
-    (
-        "NE PAS traduire, expliquer en français le texte donné.\n"
-        "N'expliquez PAS les points de vocabulaire ou de grammaire simples ou "
-        "basiques.\nNE donnez JAMAIS de prononciation pour n'importe quelle langue.\n"
-        "NE donnez JAMAIS de romaji pour le japonais.\n"
-        "Si les messages contiennent des kanji, "
-        "il faut supposer qu'il s'agit de japonais, JAMAIS de chinois."
-    ),
+    """
+NE PAS traduire, expliquer en français le texte donné. N'expliquez PAS les
+points de vocabulaire ou de grammaire simples ou basiques. NE donnez JAMAIS de
+prononciation pour n'importe quelle langue. NE donnez JAMAIS de romaji pour le
+japonais. Si les messages contiennent des kanji, il faut supposer qu'il s'agit
+de japonais, JAMAIS de chinois.
+    """,
     False,
 )
 SYSTEM_INSTRUCTIONS["Explicar"] = (
-    (
-        "NO traduzca, explica en español el texto dado.\n"
-        "NO expliques el vocabulario sencillo o básico ni los puntos gramaticales "
-        "sencillos o básicos.\n"
-        "NO den NUNCA la pronunciación para cualquier idioma.\n"
-        "NO den NUNCA los romaji para el japonés.\n"
-        "Si las indicaciones contienen kanji, "
-        "asume que es japonés, NUNCA chino."
-    ),
+    """
+NO traduzca, explica en español el texto dado. NO expliques el vocabulario
+sencillo o básico ni los puntos gramaticales sencillos o básicos. NO den NUNCA
+la pronunciación para cualquier idioma. NO den NUNCA los romaji para el japonés.
+Si las indicaciones contienen kanji, asume que es japonés, NUNCA chino.
+    """,
     False,
 )
 SYSTEM_INSTRUCTIONS["Check Grammar"] = (
-    (
-        "DO NOT translate, check the grammar of the given text and explain any "
-        "problems in English.\n"
-        "DO NOT explain the simple or basic vocabulary or grammatical points.\n"
-        "NEVER give pronunciation for any language. NEVER give "
-        "romaji for Japanese.\n"
-        "If prompts contain kanji assume it is Japanese, NEVER Chinese."
-    ),
+    """
+DO NOT translate, check the grammar of the given text and explain any problems
+in English. DO NOT explain the simple or basic vocabulary or grammatical points.
+NEVER give pronunciation for any language. NEVER give romaji for Japanese. If
+prompts contain kanji assume it is Japanese, NEVER Chinese.
+    """,
     False,
 )
 SYSTEM_INSTRUCTIONS["Explain Grammar"] = (
-    (
-        "DO NOT translate, rather explain in English the grammar of the given text.\n"
-        "DO NOT explain the simple or basic vocabulary or grammatical points.\n"
-        "NEVER give pronunciation for any language. NEVER give romaji for Japanese.\n"
-        "If prompts contain kanji assume it is Japanese, NEVER Chinese."
-    ),
+    """
+DO NOT translate, rather explain in English the grammar of the given text. DO
+NOT explain the simple or basic vocabulary or grammatical points. NEVER give
+pronunciation for any language. NEVER give romaji for Japanese. If prompts
+contain kanji assume it is Japanese, NEVER Chinese.
+    """,
     False,
 )
 SYSTEM_INSTRUCTIONS["Explain Usage"] = (
-    (
-        "DO NOT translate, rather explain in English the usage of the given text.\n"
-        "Give examples, especially where words have different meanings in different "
-        "contexts.\n"
-        "NEVER give pronunciation for any language.\n"
-        "NEVER give romaji for Japanese.\n"
-        "If prompts contain kanji assume it is Japanese, NEVER Chinese."
-    ),
+    """
+DO NOT translate, rather explain in English the usage of the given text. Give
+examples, especially where words have different meanings in different contexts.
+NEVER give pronunciation for any language. NEVER give romaji for Japanese. If
+prompts contain kanji assume it is Japanese, NEVER Chinese.
+    """,
     False,
 )
 SYSTEM_INSTRUCTIONS["Give example sentences using the given words."] = (
-    (
-        "Give a dot point list of 5 varied example sentences in Japanese using the "
-        "given word, with their translation in brackets. Use simple vocabulary.\n"
-        " - The response MUST NOT CONTAIN pronunciation of the example sentences.\n"
-        " - The response MUST NOT CONTAIN romaji for the Japanese of the example "
-        "sentences.\n"
-        " - Give definitions of unusual or uncommon words."
-    ),
+    """
+Give a dot point list of 5 varied example sentences in Japanese using the given
+word, with their translation in brackets. Use simple vocabulary.
+ - The response MUST NOT CONTAIN pronunciation of the example sentences.
+ - The response MUST NOT CONTAIN romaji for the Japanese of the example
+sentences.
+ - Give definitions of unusual or uncommon words.
+    """,
     False,
 )
 SYSTEM_INSTRUCTIONS["Give varied ways of expressing the given meaning."] = (
-    (
-        "Give a dot point list of up to 5 varied ways of expressing the same meaning "
-        "as the given text, in Japanese, with their translations in brackets.\n"
-        " - The response MUST NOT CONTAIN pronunciation of the example sentences.\n"
-        " - The response MUST NOT CONTAIN romaji for the Japanese of the example "
-        "sentences.\n"
-        " - Give definitions of unusual or uncommon words."
-    ),
+    """
+Give a dot point list of up to 5 varied ways of expressing the same meaning as
+the given text, in Japanese, with their translations in brackets.
+ - The response MUST NOT CONTAIN pronunciation of the example sentences.
+ - The response MUST NOT CONTAIN romaji for the Japanese of the example
+sentences.
+ - Give definitions of unusual or uncommon words.
+    """,
     False,
 )
-SYSTEM_INSTRUCTIONS[
-    "Give varied ways of expressing the opposite of the given meaning."
-] = (
-    (
-        "Give a dot point list of up to 5 varied ways of expressing the meaning "
-        "opposite to that of the given text, in Japanese, with their translations "
-        "in brackets.\n"
-        " - The response MUST NOT CONTAIN pronunciation of the example sentences.\n"
-        " - The response MUST NOT CONTAIN romaji for the Japanese of the example "
-        "sentences.\n"
-        " - Give definitions of unusual or uncommon words."
-    ),
+SYSTEM_INSTRUCTIONS["Give varied ways of expressing the opposite of the given meaning."] = (
+    """
+Give a dot point list of up to 5 varied ways of expressing the meaning opposite
+to that of the given text, in Japanese, with their translations in brackets.
+ - The response MUST NOT CONTAIN pronunciation of the example sentences.
+ - The response MUST NOT CONTAIN romaji for the Japanese of the example
+sentences.
+ - Give definitions of unusual or uncommon words.
+    """,
     False,
 )
 SYSTEM_INSTRUCTIONS["Translate To English"] = (
