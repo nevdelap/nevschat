@@ -250,11 +250,16 @@ def is_japanese_char(ch: str) -> bool:
         block = unicodedata.name(ch).split()[0]
         is_japanese = block in [
             "CJK",
+            "DIGIT",
+            "FULLWIDTH",
             "HIRAGANA",
+            "IDEOGRAPHIC",
             "KATAKANA",
             "KATAKANA-HIRAGANA",
+            "LEFT",
+            "RIGHT",
         ]
-        # print(ch, block, "J" if is_japanese else "")
+        print(ch, block, "J" if is_japanese else "")
         return is_japanese
     except ValueError:
         return False
@@ -297,6 +302,10 @@ assert stripped == expected, f"{stripped} != {expected}"
 
 stripped = strip_non_japanese_split_sentences("違う。違う。違う。hello.違う。違う。")
 expected = "違う。"
+assert stripped == expected, f"{stripped} != {expected}"
+
+stripped = strip_non_japanese_split_sentences("日本語あるハー「」。、ab, ()1")
+expected = "日本語あるハー「」。、。()1。"
 assert stripped == expected, f"{stripped} != {expected}"
 
 
