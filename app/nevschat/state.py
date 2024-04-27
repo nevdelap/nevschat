@@ -1,6 +1,7 @@
 # mypy: disable-error-code="attr-defined,name-defined"
 
 import os
+import re
 import time
 import unicodedata
 from collections import OrderedDict
@@ -130,12 +131,25 @@ SYSTEM_INSTRUCTIONS["Explain Usage"] = (
 )
 SYSTEM_INSTRUCTIONS["Give example sentences using the given words."] = (
     (
-        "Give a dot point list of ten varied example sentences in Japanese using the "
+        "Give a dot point list of 5 varied example sentences in Japanese using the "
         "given word. Use simple vocabulary.\n"
         " - The response MUST NOT CONTAIN pronunciation of the example sentences.\n"
         " - The response MUST NOT CONTAIN romaji for the Japanese of the example "
         "sentences.\n"
         " - The response MUST NOT CONTAIN translations of the example sentences.\n"
+        " - ONLY give definitions of unusual or uncommon words."
+    ),
+    False,
+)
+SYSTEM_INSTRUCTIONS[
+    "Give example sentences using the given words with translations."
+] = (
+    (
+        "Give a dot point list of 5 varied example sentences in Japanese using the "
+        "given word, with their translation in brackets. Use simple vocabulary.\n"
+        " - The response MUST NOT CONTAIN pronunciation of the example sentences.\n"
+        " - The response MUST NOT CONTAIN romaji for the Japanese of the example "
+        "sentences.\n"
         " - ONLY give definitions of unusual or uncommon words."
     ),
     False,
@@ -225,17 +239,9 @@ def is_japanese_char(ch: str) -> bool:
         block = unicodedata.name(ch).split()[0]
         is_japanese = block in [
             "CJK",
-            "COMMA",
-            "DIGIT",
-            "FULLWIDTH",
-            "FULL STOP",
             "HIRAGANA",
-            "IDEOGRAPHIC",
             "KATAKANA",
             "KATAKANA-HIRAGANA",
-            "LEFT",
-            "RIGHT",
-            "SPACE",
         ]
         # print(ch, block, "J" if is_japanese else "")
         return is_japanese
@@ -252,11 +258,25 @@ def contains_japanese(text: str) -> bool:
     return any(is_japanese_char(ch) for ch in text)
 
 
-def strip_non_japanese_characters(text: str) -> str:
+def strip_non_japanese_split_sentences(text: str) -> str:
     """
     Remove non-Japanese characters from the text.
     """
-    return "".join(ch for ch in text if is_japanese_char(ch))
+    return re.sub(
+        r"。+",
+        "。",
+        "".join(ch if is_japanese_char(ch) else "。" for ch in text) + "。",
+    ).lstrip("。")
+
+
+stripped = strip_non_japanese_split_sentences(
+    "Both '異る' and '違う' are verbs in Japanese that can be translated as "
+    "'to differ' or 'to be different'. '異る' carries a stronger connotation "
+    "of being unusual, rare, or significant in its difference compared to "
+    "something else."
+)
+expected = "異る。違う。異る。"
+assert stripped == expected, f"{stripped} != {expected}"
 
 
 class PromptResponse(rx.Base):  # type: ignore
@@ -495,10 +515,9 @@ class State(rx.State):  # type: ignore
                 if self.prompts_responses[-1].contains_japanese and self.auto_speak:
                     try:
                         index = len(self.prompts_responses) - 1
-                        print("Auto speaking.")
                         self.do_speak(
                             index,
-                            strip_non_japanese_characters(
+                            strip_non_japanese_split_sentences(
                                 self.prompts_responses[index].response
                             ),
                         )
@@ -520,8 +539,7 @@ class State(rx.State):  # type: ignore
         yield
         async with self:
             try:
-                print("Speaking.")
-                self.do_speak(index, strip_non_japanese_characters(text))
+                self.do_speak(index, strip_non_japanese_split_sentences(text))
             finally:
                 async with self:
                     self.prompts_responses[index].tts_in_progress = False
@@ -533,6 +551,7 @@ class State(rx.State):  # type: ignore
         assert self.voice != ""
         assert index < len(self.prompts_responses)
         try:
+            print(f"Speaking: {text}")
             tts_wav_filename = text_to_wav(text, self.voice)
             # Take advantage of a moment for the Nginx to make the wav available
             # by doing some housekeeping.
