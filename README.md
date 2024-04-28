@@ -60,9 +60,9 @@ git add . &&
 git commit -m 'whatever' &&
 scripts/lint &&
 git merge latest &&
-git push origin HEAD:master --no-verify &&
-git tag -f latest &&
-git push -f origin latest --no-verify &&
+git push --force origin HEAD:master --no-verify &&
+git tag --force latest &&
+git push --force origin latest --no-verify &&
 ssh_droplet "cd ~/nevschat && scripts/deploy && sleep 30 && scripts/logs"
 ```
 
