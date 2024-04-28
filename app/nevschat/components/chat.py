@@ -38,7 +38,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         size=20,
                         stroke_width=1.5,
                     ),
-                    color_scheme="grass",
+                    color_scheme="jade",
                     disabled=State.cannot_clear_or_chatgpt_with_edited_prompt,
                     on_click=lambda: State.chatgpt_with_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                     margin_top="0.75em",
@@ -69,7 +69,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         size=20,
                         stroke_width=1.5,
                     ),
-                    color_scheme="grass",
+                    color_scheme="jade",
                     disabled=State.cannot_enter_new_prompt_or_edit,
                     is_loading=State.is_processing,
                     on_click=lambda: State.edit_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
@@ -229,8 +229,8 @@ def chat() -> rx.Component:
             rx.flex(
                 rx.text(
                     State.who_am_i,
-                    background_color="#e9f6e9",
-                    border_color="#94ce9a",
+                    background_color="#d6f1e3",
+                    border_color="#56ba9f",
                     border_radius="8px",
                     border_style="solid",
                     border_width="3px",
@@ -244,7 +244,7 @@ def chat() -> rx.Component:
                         size=20,
                         stroke_width=1.5,
                     ),
-                    color_scheme="grass",
+                    color_scheme="jade",
                     on_click=lambda: State.change_profile,
                 ),
                 align="center",
@@ -287,7 +287,7 @@ def chat() -> rx.Component:
                     size=20,
                     stroke_width=1.5,
                 ),
-                color_scheme="grass",
+                color_scheme="jade",
                 disabled=State.cannot_chatgpt_with_new_prompt,
                 is_loading=State.is_processing,
                 on_click=State.chatgpt,
