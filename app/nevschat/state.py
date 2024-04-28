@@ -43,59 +43,6 @@ SYSTEM_INSTRUCTIONS["日本語チャットボット"] = (
     """,
     False,
 )
-SYSTEM_INSTRUCTIONS["Define"] = (
-    """
-DO NOT translate, define in English the meaning of the given text. NEVER give
-pronunciation for any language. NEVER give romaji for Japanese. If prompts
-contain kanji assume it is Japanese, NEVER Chinese.
-    """,
-    False,
-)
-SYSTEM_INSTRUCTIONS["Définir"] = (
-    """
-NE JAMAIS traduire, définissez en français le sens du texte donné. DE donnez
-JAMAIS de prononciation pour n'importe quelle langue. DE donnez JAMAIS de romaji
-pour le japonais. Si les messages contiennent des kanji, il faut supposer qu'il
-s'agit de japonais, JAMAIS de chinois.
-    """,
-    False,
-)
-SYSTEM_INSTRUCTIONS["Definir"] = (
-    """
-NO traduzca, defina en español el significado del texto dado. NO den NUNCA la
-pronunciación para cualquier idioma. NO den NUNCA los romaji para el japonés. Si
-las indicaciones contienen kanji, asume que es japonés, NUNCA chino.
-    """,
-    False,
-)
-SYSTEM_INSTRUCTIONS["Explain"] = (
-    """
-DO NOT translate, explain in English the given text. DO NOT explain the simple
-or basic vocabulary or grammatical points. NEVER give pronunciation for any
-language. NEVER give romaji for Japanese. If prompts contain kanji assume it is
-Japanese, NEVER Chinese.
-    """,
-    False,
-)
-SYSTEM_INSTRUCTIONS["Expliquer"] = (
-    """
-NE PAS traduire, expliquer en français le texte donné. N'expliquez PAS les
-points de vocabulaire ou de grammaire simples ou basiques. NE donnez JAMAIS de
-prononciation pour n'importe quelle langue. NE donnez JAMAIS de romaji pour le
-japonais. Si les messages contiennent des kanji, il faut supposer qu'il s'agit
-de japonais, JAMAIS de chinois.
-    """,
-    False,
-)
-SYSTEM_INSTRUCTIONS["Explicar"] = (
-    """
-NO traduzca, explica en español el texto dado. NO expliques el vocabulario
-sencillo o básico ni los puntos gramaticales sencillos o básicos. NO den NUNCA
-la pronunciación para cualquier idioma. NO den NUNCA los romaji para el japonés.
-Si las indicaciones contienen kanji, asume que es japonés, NUNCA chino.
-    """,
-    False,
-)
 SYSTEM_INSTRUCTIONS["Check Grammar"] = (
     """
 DO NOT translate, check the grammar of the given text and explain any problems
@@ -158,39 +105,6 @@ sentences.
     """,
     False,
 )
-SYSTEM_INSTRUCTIONS["Translate To English"] = (
-    "Translate the given text into English.",
-    False,
-)
-SYSTEM_INSTRUCTIONS["Translate To French"] = (
-    "Traduisez le texte donné en français.",
-    False,
-)
-SYSTEM_INSTRUCTIONS["Translate To Japanese"] = (
-    "Translate the given text into Japanese.",
-    False,
-)
-SYSTEM_INSTRUCTIONS["Translate To Spanish"] = (
-    "Traduce el texto dado al español.",
-    False,
-)
-# SYSTEM_INSTRUCTIONS["Translate JSON"] = (
-#     """Translate the given text into Spanish, French
-# and Japanese. Respond in the format below delimited by three backticks and
-# formatting with the keys in this order, in a three backticks code block. Do
-# not translate these instructions, simply acknowledge that you understand.
-
-#     ```
-#     [
-#         ("en", "The English"),
-#         ("es", "Spanish translation"),
-#         ("fr", "French translation"),
-#         ("ja", "Japanese translation"),
-#     ],
-#     ```
-# """,
-#     False,
-# )
 SYSTEM_INSTRUCTIONS["Bash"] = (
     "The question is in the context of Bash shell scripting.",
     True,
