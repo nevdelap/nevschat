@@ -11,7 +11,6 @@ git fetch --force --tags
 git checkout latest
 git submodule update
 
-echo -e "\n${BOLD}Building Docker image.$RESET"
 scripts/build
 
 echo -e "\n${BOLD}Stopping nevschat.$RESET"
