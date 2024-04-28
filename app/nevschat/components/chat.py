@@ -228,6 +228,12 @@ def chat() -> rx.Component:
             State.using_profile,
             rx.text(
                 State.who_am_i,
+                background_color="#e9f6e9",
+                border_color="#94ce9a",
+                border_radius="8px",
+                border_style="solid",
+                border_width="3px",
+                padding="0.5em 1em 0.5em 1em",
                 weight="bold",
             ),
             None,

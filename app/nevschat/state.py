@@ -449,6 +449,59 @@ HOBBIES = [
     "音楽鑑賞",
 ]
 
+MOODS = [
+    "おかしな",
+    "がっかりした",
+    "もどかしい",
+    "やる気に満ちた",
+    "わくわくしている",
+    "イライラしている",
+    "イライラしている",
+    "ストレスを感じる",
+    "リラックスした",
+    "不安な",
+    "不機嫌な",
+    "同情的な",
+    "圧倒されている",
+    "大喜びの",
+    "大喜びの",
+    "失望した",
+    "好奇心旺盛な",
+    "嫉妬している",
+    "嫌悪感を抱く",
+    "寂しい",
+    "希望に満ちた",
+    "幸せな",
+    "後悔している",
+    "怒っている",
+    "恐れている",
+    "恥ずかしい",
+    "悲しい",
+    "情熱的な",
+    "感謝している",
+    "拒絶された",
+    "楽観的な",
+    "混乱している",
+    "満足している",
+    "無関心な",
+    "無関心な",
+    "物思いにふける",
+    "物憂げな",
+    "疲れた",
+    "病気で",
+    "皮肉な",
+    "絶望的な",
+    "緊張している",
+    "罪悪感を感じる",
+    "自信がある",
+    "興奮した",
+    "落ち着かない",
+    "誇りに思う",
+    "退屈している",
+    "陽気な",
+    "驚いた",
+]
+
 
 def get_random_age() -> int:
     return random.randint(3, 50)  # nosec
@@ -480,12 +533,20 @@ def get_random_hobbies() -> str:
     return "と".join(random.sample(HOBBIES, random.randint(2, 4)))  # nosec
 
 
+def get_random_mood() -> str:
+    return MOODS[random.randint(0, len(MOODS) - 1)]  # nosec
+
+
 def get_random_profile() -> str:
     age = get_random_age()
     location = get_random_city()
     profession = get_random_profession(age)
     hobbies = get_random_hobbies()
-    return f"{age}歳で、{location}に住んでいます。{profession}で、趣味は{hobbies}です。"
+    mood = get_random_mood()
+    return (
+        f"{age}歳で、{location}に住んでいます。"
+        f"{profession}で、趣味は{hobbies}です。今は{mood}です。"
+    )
 
 
 class PromptResponse(rx.Base):  # type: ignore
