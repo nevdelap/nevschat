@@ -43,6 +43,41 @@ SYSTEM_INSTRUCTIONS["日本語チャットボット"] = (
     """,
     False,
 )
+SYSTEM_INSTRUCTIONS["日本語: Give example sentences using the given words."] = (
+    """
+Give a dot point list of 5 varied example sentences in Japanese using the given
+word, with their translation in brackets. Use simple vocabulary.
+ - The response MUST NOT CONTAIN pronunciation of the example sentences.
+ - The response MUST NOT CONTAIN romaji for the Japanese of the example
+sentences.
+ - Give definitions of unusual or uncommon words.
+    """,
+    False,
+)
+SYSTEM_INSTRUCTIONS["日本語: Give varied ways of expressing the given meaning."] = (
+    """
+Give a dot point list of up to 5 varied ways of expressing the same meaning as
+the given text, in Japanese, with their translations in brackets.
+ - The response MUST NOT CONTAIN pronunciation of the example sentences.
+ - The response MUST NOT CONTAIN romaji for the Japanese of the example
+sentences.
+ - Give definitions of unusual or uncommon words.
+    """,
+    False,
+)
+SYSTEM_INSTRUCTIONS[
+    "日本語: Give varied ways of expressing the opposite of the given meaning."
+] = (
+    """
+Give a dot point list of up to 5 varied ways of expressing the meaning opposite
+to that of the given text, in Japanese, with their translations in brackets.
+ - The response MUST NOT CONTAIN pronunciation of the example sentences.
+ - The response MUST NOT CONTAIN romaji for the Japanese of the example
+sentences.
+ - Give definitions of unusual or uncommon words.
+    """,
+    False,
+)
 SYSTEM_INSTRUCTIONS["Check Grammar"] = (
     """
 DO NOT translate, check the grammar of the given text and explain any problems
@@ -67,41 +102,6 @@ DO NOT translate, rather explain in English the usage of the given text. Give
 examples, especially where words have different meanings in different contexts.
 NEVER give pronunciation for any language. NEVER give romaji for Japanese. If
 prompts contain kanji assume it is Japanese, NEVER Chinese.
-    """,
-    False,
-)
-SYSTEM_INSTRUCTIONS["Give example sentences using the given words."] = (
-    """
-Give a dot point list of 5 varied example sentences in Japanese using the given
-word, with their translation in brackets. Use simple vocabulary.
- - The response MUST NOT CONTAIN pronunciation of the example sentences.
- - The response MUST NOT CONTAIN romaji for the Japanese of the example
-sentences.
- - Give definitions of unusual or uncommon words.
-    """,
-    False,
-)
-SYSTEM_INSTRUCTIONS["Give varied ways of expressing the given meaning."] = (
-    """
-Give a dot point list of up to 5 varied ways of expressing the same meaning as
-the given text, in Japanese, with their translations in brackets.
- - The response MUST NOT CONTAIN pronunciation of the example sentences.
- - The response MUST NOT CONTAIN romaji for the Japanese of the example
-sentences.
- - Give definitions of unusual or uncommon words.
-    """,
-    False,
-)
-SYSTEM_INSTRUCTIONS[
-    "Give varied ways of expressing the opposite of the given meaning."
-] = (
-    """
-Give a dot point list of up to 5 varied ways of expressing the meaning opposite
-to that of the given text, in Japanese, with their translations in brackets.
- - The response MUST NOT CONTAIN pronunciation of the example sentences.
- - The response MUST NOT CONTAIN romaji for the Japanese of the example
-sentences.
- - Give definitions of unusual or uncommon words.
     """,
     False,
 )
