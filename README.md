@@ -59,7 +59,6 @@ with `scripts/install_hooks`.
 git add . &&
 git commit -m 'whatever' &&
 scripts/lint &&
-git merge latest &&
 git push --force origin HEAD:master --no-verify &&
 git tag --force latest &&
 git push --force origin latest --no-verify &&
