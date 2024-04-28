@@ -21,7 +21,7 @@ import reflex as rx
 
 SYSTEM_INSTRUCTIONS = OrderedDict()
 SYSTEM_INSTRUCTIONS["Normal English"] = ("Respond in English.", False)
-SYSTEM_INSTRUCTIONS["私の三才の日本人の子供"] = (
+SYSTEM_INSTRUCTIONS["私の三才の日本人の子供のチャットボット"] = (
     """
 私の三才の日本人の子供であるかのように日本語で応答すること。
 - プロンプトに漢字が含まれている場合、それは日本語であり、決して中国語ではない。
@@ -136,8 +136,7 @@ SYSTEM_INSTRUCTIONS["SQL"] = (
     True,
 )
 
-DEFAULT_SYSTEM_INSTRUCTION = "私の三才の日本人の子供"
-assert DEFAULT_SYSTEM_INSTRUCTION in SYSTEM_INSTRUCTIONS
+DEFAULT_SYSTEM_INSTRUCTION = list(SYSTEM_INSTRUCTIONS.keys())[1]
 
 GPT4_MODEL = "gpt-4-turbo"
 GPT3_MODEL = "gpt-3.5-turbo"
