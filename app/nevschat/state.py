@@ -22,7 +22,7 @@ import reflex as rx
 
 SYSTEM_INSTRUCTIONS = OrderedDict()
 SYSTEM_INSTRUCTIONS["Normal English"] = ("Respond in English.", False)
-SYSTEM_INSTRUCTIONS["無造作な人"] = (
+SYSTEM_INSTRUCTIONS["ランダムな人"] = (
     """
 あなたは{profile}です。あなたは日本語を話せて、他の言語を話せません。自然で親し
 みやすいスタイルで答える。箇条書きで答えない。
@@ -532,7 +532,7 @@ class State(rx.State):  # type: ignore
 
     @rx.var  # type: ignore
     def using_profile(self) -> bool:
-        return self.system_instruction == "無造作な人"
+        return self.system_instruction == "ランダムな人"
 
     @rx.var  # type: ignore
     def who_am_i(self) -> str:
