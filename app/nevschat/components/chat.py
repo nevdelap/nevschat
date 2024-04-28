@@ -193,7 +193,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
 def chat() -> rx.Component:
     """List all the messages in a single conversation."""
     return rx.vstack(
-        rx.hstack(
+        rx.flex(
             rx.checkbox(
                 "GPT4",
                 checked=State.gpt_4,
@@ -220,21 +220,36 @@ def chat() -> rx.Component:
                 on_change=State.set_auto_speak,
             ),
             align="center",
-            direction="row",
             spacing="2",
+            width="100%",
             wrap="wrap",
         ),
         rx.cond(
             State.using_profile,
-            rx.text(
-                State.who_am_i,
-                background_color="#e9f6e9",
-                border_color="#94ce9a",
-                border_radius="8px",
-                border_style="solid",
-                border_width="3px",
-                padding="0.5em 1em 0.5em 1em",
-                weight="bold",
+            rx.flex(
+                rx.text(
+                    State.who_am_i,
+                    background_color="#e9f6e9",
+                    border_color="#94ce9a",
+                    border_radius="8px",
+                    border_style="solid",
+                    border_width="3px",
+                    padding="0.5em 1em 0.5em 1em",
+                    weight="bold",
+                    width="100%",
+                ),
+                rx.button(
+                    rx.icon(
+                        tag="refresh-cw",
+                        size=20,
+                        stroke_width=1.5,
+                    ),
+                    color_scheme="grass",
+                    on_click=lambda: State.change_profile,
+                ),
+                align="center",
+                spacing="2",
+                width="100%",
             ),
             None,
         ),
@@ -245,7 +260,7 @@ def chat() -> rx.Component:
             ),
             width="100%",
         ),
-        rx.hstack(
+        rx.flex(
             rx.text_area(
                 disabled=State.cannot_enter_new_prompt_or_edit,
                 on_blur=State.cancel_control,
@@ -265,7 +280,6 @@ def chat() -> rx.Component:
                 color_scheme="red",
                 disabled=State.cannot_chatgpt_with_new_prompt,
                 on_click=lambda: State.clear_new_prompt,
-                margin_top="0.75em",
             ),
             rx.button(
                 rx.icon(
@@ -277,8 +291,9 @@ def chat() -> rx.Component:
                 disabled=State.cannot_chatgpt_with_new_prompt,
                 is_loading=State.is_processing,
                 on_click=State.chatgpt,
-                margin_top="0.75em",
             ),
+            align="center",
+            spacing="2",
             width="100%",
         ),
         width="100%",

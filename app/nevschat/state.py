@@ -599,6 +599,9 @@ class State(rx.State):  # type: ignore
     def who_am_i(self) -> str:
         return f"私は{self.profile}"
 
+    def change_profile(self) -> None:
+        self.profile = get_random_profile()
+
     @rx.var  # type: ignore
     def cannot_clear_chat(self) -> bool:
         return len(self.prompts_responses) == 0
