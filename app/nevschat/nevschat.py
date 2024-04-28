@@ -14,7 +14,7 @@ def index() -> rx.Component:
         rx.vstack(
             rx.heading(TITLE),
             rx.text(
-                f"リフレックス v{rx.constants.Reflex.VERSION}.",
+                f"リフレックス v{rx.constants.Reflex.VERSION}",
                 color="#aaa",
             ),
             chat(),
