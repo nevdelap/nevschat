@@ -224,6 +224,14 @@ def chat() -> rx.Component:
             spacing="2",
             wrap="wrap",
         ),
+        rx.cond(
+            State.using_profile,
+            rx.text(
+                State.who_am_i,
+                weight="bold",
+            ),
+            None,
+        ),
         rx.box(
             rx.foreach(
                 State.prompts_responses,

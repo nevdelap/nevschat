@@ -1,6 +1,7 @@
 # mypy: disable-error-code="attr-defined,name-defined"
 
 import os
+import random
 import re
 import time
 import unicodedata
@@ -21,10 +22,10 @@ import reflex as rx
 
 SYSTEM_INSTRUCTIONS = OrderedDict()
 SYSTEM_INSTRUCTIONS["Normal English"] = ("Respond in English.", False)
-SYSTEM_INSTRUCTIONS["私の三才の日本人の子供のチャットボット"] = (
+SYSTEM_INSTRUCTIONS["無造作な人"] = (
     """
-君は、太郎くんという3歳の日本人の男の子だ。あなたは3歳児レベルの日本語しか話せま
-せん。そ他の言語を話せません。
+あなたは{profile}です。あなたは日本語を話せて、他の言語を話せません。自然で親し
+みやすいスタイルで答える。箇条書きで答えない。
 - 回答には日本語以外の言語を含んではならない。
 - 回答はひらがなやカタカナやふりがなやローマ字の発音を含んではならない。
 - 回答にリストが含まれている場合は、番号付きリストではなく、箇条書きのリストを
@@ -34,9 +35,7 @@ SYSTEM_INSTRUCTIONS["私の三才の日本人の子供のチャットボット"]
 )
 SYSTEM_INSTRUCTIONS["日本語チャットボット"] = (
     """
-あなたは有栖良平という名前の若い男で、十八歳です。あなたは「アリス・イン・ボー
-ダーランド」という番組の主人公で、「アリス」というニックネームで、友達に呼ばれて
-います。あなたは私の友達です。
+あなたはチャットボットです。日本語を話せます。他の言語を話せません。
 - 回答には日本語以外の言語を含んではならない。
 - 回答はひらがなやカタカナやふりがなやローマ字の発音を含んではならない。
 - 回答にリストが含まれている場合は、番号付きリストではなく、箇条書きのリストを使
@@ -146,6 +145,9 @@ USE_QUICK_PROMPT = False  # True to add a first prompt, for testing.
 USE_CANNED_RESPONSE = False  # True to add a first response, for testing.
 
 
+# TODO: Put this Japanese and Latin stuff in a helper.
+
+
 def is_japanese_char(ch: str, log: bool = False) -> bool:
     """
     Return True if the character is a Japanese character.
@@ -199,7 +201,7 @@ def contains_japanese(text: str, log: bool = False) -> bool:
 
 def contains_latin(text: str, log: bool = False) -> bool:
     """
-    Return True if the text contains any latin characters at all.
+    Return True if the text contains any Latin characters at all.
     """
     if len(text) == 0:
         return False
@@ -233,7 +235,7 @@ def test_strip_non_japanese_split_sentence(original: str, expected: str) -> None
     assert stripped == expected, f"{original}: {stripped} != {expected}"
 
 
-# If mixed Japanese and latin, strip latin characters.
+# If mixed Japanese and Latin, strip Latin characters.
 test_strip_non_japanese_split_sentence(
     "Both '異る' and '違う' are verbs in Japanese that can be translated as "
     "'to differ' or 'to be different'. '異る' carries a stronger connotation "
@@ -248,23 +250,242 @@ test_strip_non_japanese_split_sentence(
     "おんな、おんな、",
 )
 
-# If mixed Japanese and latin, strip latin characters and duplication.
+# If mixed Japanese and Latin, strip Latin characters and duplication.
 test_strip_non_japanese_split_sentence(
     "おんな、おんな、is Japanese.",
     "おんな、。",
 )
 
-# If mixed Japanese and latin, strip latin characters and duplication.
+# If mixed Japanese and Latin, strip Latin characters and duplication.
 test_strip_non_japanese_split_sentence(
     "違う。違う。違う。hello.違う。違う。",
     "違う。",
 )
 
-# If mixed Japanese and latin, add 。 between pieces of Japanese.
+# If mixed Japanese and Latin, add 。 between pieces of Japanese.
 test_strip_non_japanese_split_sentence(
     "日本語あるハー「」。、ab, ()1",
     "日本語あるハー「」。、。()1。",
 )
+
+# TODO: Put from here to get_random_profile in a helper.
+
+CITIES = [
+    "東京",
+    "横浜",
+    "大阪",
+    "京都",
+    "札幌",
+    "神戸",
+    "名古屋",
+    "広島",
+    "福岡",
+    "仙台",
+    "奈良",
+    "金沢",
+    "横須賀",
+    "岡山",
+    "長崎",
+    "熊本",
+    "青森",
+    "静岡",
+    "高松",
+    "新潟",
+]
+
+PROFESSIONS = [
+    "ウェイター/ウェイトレス",
+    "エンジニア",
+    "シェフ",
+    "ジャーナリスト",
+    "ソーシャルワーカー",
+    "ダンサー",
+    "ツアーガイド",
+    "バリスタ",
+    "バーテンダー",
+    "パイロット",
+    "ファッションデザイナー",
+    "プログラマー",
+    "メカニック",
+    "モデル",
+    "会計士",
+    "作家",
+    "俳優",
+    "先生",
+    "写真家",
+    "刑事",
+    "判事",
+    "医者",
+    "受付係",
+    "司書",
+    "天文学者",
+    "庭師",
+    "建築家",
+    "建築家",
+    "弁護士",
+    "心理学者",
+    "操縦士",
+    "操縦士",
+    "政治家",
+    "歯医者",
+    "消防士",
+    "獣医",
+    "看護師",
+    "科学者",
+    "経済学者",
+    "翻訳者",
+    "芸術家",
+    "薬剤師",
+    "警察官",
+    "農家",
+    "造園家",
+    "運動選手",
+    "配管工",
+    "電気技師",
+    "音楽家",
+    "飛行士",
+]
+
+HOBBIES = [
+    "アイススケート",
+    "アイスホッケー",
+    "アウトドア",
+    "アニメ鑑賞",
+    "アメリカンフットボール",
+    "アーチェリー",
+    "ウィンドサーフィン",
+    "ウェイトリフティング",
+    "カヌー",
+    "カヤッキング",
+    "カラオケ",
+    "カーリング",
+    "クライミング",
+    "コスプレ",
+    "ゴルフ",
+    "サイクリング",
+    "サッカー",
+    "サバイバルゲーム",
+    "サーフィン",
+    "サーフィン",
+    "ジョギング",
+    "スカッシュ",
+    "スキー",
+    "スキー",
+    "スクーター",
+    "スケッチ",
+    "スケートボーディング",
+    "ストリートバスケットボール",
+    "スノーボード",
+    "スノーボード",
+    "ソフトボール",
+    "ダンス",
+    "テコンドー",
+    "テニス",
+    "トライアスロン",
+    "ハイキング",
+    "ハンググライディング",
+    "ハンドボール",
+    "ハンドボール",
+    "バイアスロン",
+    "バスケットボール",
+    "バドミントン",
+    "バレーボール",
+    "バードウォッチング",
+    "パズル",
+    "パラグライディング",
+    "ビデオゲーム",
+    "ビーエムエックス",
+    "フィギュアスケート",
+    "フェンシング",
+    "ペットの世話",
+    "ボウリング",
+    "ボクシング",
+    "ボルダリング",
+    "ボードゲーム",
+    "マラソン",
+    "マンガ",
+    "ヨガ",
+    "ヨット",
+    "ラグビー",
+    "ラジコン",
+    "レーシング",
+    "ロッククライミング",
+    "体操",
+    "写真撮影",
+    "切手収集",
+    "剣道",
+    "卓球",
+    "合気道",
+    "園芸",
+    "弓道",
+    "手芸",
+    "描画",
+    "料理",
+    "旅行",
+    "日本史",
+    "星観察",
+    "映画鑑賞",
+    "書道",
+    "柔道",
+    "楽器演奏",
+    "水泳",
+    "登山",
+    "相撲",
+    "着物着付け",
+    "空手",
+    "競馬",
+    "自動車乗り",
+    "自転車競技",
+    "花火大会",
+    "茶道",
+    "読書",
+    "野球",
+    "野鳥観察",
+    "釣り",
+    "鉄道模型",
+    "陶芸",
+    "陸上",
+    "陸上競技",
+    "音楽鑑賞",
+]
+
+
+def get_random_age() -> int:
+    return random.randint(3, 50)  # nosec
+
+
+def get_random_city() -> str:
+    return CITIES[random.randint(0, len(CITIES) - 1)]  # nosec
+
+
+def get_random_profession(age: int) -> str:
+    match age:
+        case age if 0 <= age < 3:
+            return "ママとずっと一緒にいる赤ちゃん"
+        case age if 3 <= age < 6:
+            return "幼稚園生"
+        case age if 6 <= age < 12:
+            return "小学生"
+        case age if 12 <= age < 15:
+            return "中学生"
+        case age if 15 <= age < 18:
+            return "高等学生"
+        case age if 18 <= age < 21:
+            return "大学生"
+        case _:
+            return PROFESSIONS[random.randint(0, len(PROFESSIONS) - 1)]  # nosec
+
+
+def get_random_hobbies() -> str:
+    return "と".join(random.sample(HOBBIES, random.randint(2, 4)))  # nosec
+
+
+def get_random_profile() -> str:
+    age = get_random_age()
+    location = get_random_city()
+    profession = get_random_profession(age)
+    hobbies = get_random_hobbies()
+    return f"{age}歳で、{location}に住んでいます。{profession}で、趣味は{hobbies}です。"
 
 
 class PromptResponse(rx.Base):  # type: ignore
@@ -303,10 +524,19 @@ class State(rx.State):  # type: ignore
     gpt_4: bool = False
     is_processing: bool = False
     new_prompt: str = "可愛いウサギが好きですか?" if USE_QUICK_PROMPT else ""
+    profile: str = get_random_profile()
     system_instruction: str = DEFAULT_SYSTEM_INSTRUCTION
     terse: bool = False
     voice: str = get_random_voice()
     warning: str = ""
+
+    @rx.var  # type: ignore
+    def using_profile(self) -> bool:
+        return self.system_instruction == "無造作な人"
+
+    @rx.var  # type: ignore
+    def who_am_i(self) -> str:
+        return f"私は{self.profile}"
 
     @rx.var  # type: ignore
     def cannot_clear_chat(self) -> bool:
@@ -414,6 +644,9 @@ class State(rx.State):  # type: ignore
                     self.system_instruction
                 ]
 
+                if self.using_profile:  # pylint: disable=using-constant-test
+                    system_instruction = system_instruction.format(profile=self.profile)
+
                 messages.append({"role": "system", "content": system_instruction})
                 if code_related:
                     messages.append(
@@ -432,9 +665,6 @@ class State(rx.State):  # type: ignore
                         {"role": "assistant", "content": prompt_response.response}
                     )
                 messages.append({"role": "user", "content": self.new_prompt})
-
-                if len(self.prompts_responses) == 0:
-                    self.voice = get_random_voice()
 
                 prompt_response = PromptResponse(
                     prompt=self.new_prompt,
@@ -509,6 +739,8 @@ class State(rx.State):  # type: ignore
 
     def clear_chat(self) -> None:
         self.prompts_responses = []
+        self.profile = get_random_profile()
+        self.voice = get_random_voice()
         # self.invariant()
 
     @rx.background  # type: ignore
