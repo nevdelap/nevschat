@@ -206,27 +206,12 @@ def chat() -> rx.Component:
                 color="#333",
                 on_change=State.set_terse,
             ),
-            rx.hstack(
-                rx.radio(
-                    ["通常モード", "システム指示:"],
-                    color="#333",
-                    direction="row",
-                    spacing="2",
-                    on_change=State.set_mode,
-                    value=State.mode,
-                ),
-                rx.select(
-                    list(SYSTEM_INSTRUCTIONS.keys()),
-                    default_value=DEFAULT_SYSTEM_INSTRUCTION,
-                    disabled=State.is_not_system_instruction,
-                    on_change=State.set_system_instruction,
-                    value=State.system_instruction,
-                    variant="surface",
-                ),
-                align="center",
-                direction="row",
-                spacing="2",
-                wrap="wrap",
+            rx.select(
+                list(SYSTEM_INSTRUCTIONS.keys()),
+                default_value=DEFAULT_SYSTEM_INSTRUCTION,
+                on_change=State.set_system_instruction,
+                value=State.system_instruction,
+                variant="surface",
             ),
             rx.checkbox(
                 "日本語のオートスピーク",

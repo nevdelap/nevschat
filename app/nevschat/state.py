@@ -20,9 +20,10 @@ from rxconfig import site_runtime_assets_url
 import reflex as rx
 
 SYSTEM_INSTRUCTIONS = OrderedDict()
-SYSTEM_INSTRUCTIONS["日本語チャットボット"] = (
+SYSTEM_INSTRUCTIONS["Normal English"] = ("Respond in English.", False)
+SYSTEM_INSTRUCTIONS["私の三才の日本人の子供"] = (
     """
-友達になったつもりで日本語で答えてください。
+私の三才の日本人の子供であるかのように日本語で応答すること。
 - プロンプトに漢字が含まれている場合、それは日本語であり、決して中国語ではない。
 - 回答には日本語以外の言語を含んではならない。
 - 回答はひらがなやカタカナやふりがなやローマ字の発音を含んではならない。
@@ -31,9 +32,9 @@ SYSTEM_INSTRUCTIONS["日本語チャットボット"] = (
     """,
     False,
 )
-SYSTEM_INSTRUCTIONS["私の日本人の子供"] = (
+SYSTEM_INSTRUCTIONS["日本語チャットボット"] = (
     """
-私の四歳の日本人の子供であるかのように日本語で応答すること。
+友達になったつもりで日本語で答えてください。
 - プロンプトに漢字が含まれている場合、それは日本語であり、決して中国語ではない。
 - 回答には日本語以外の言語を含んではならない。
 - 回答はひらがなやカタカナやふりがなやローマ字の発音を含んではならない。
@@ -221,9 +222,7 @@ SYSTEM_INSTRUCTIONS["SQL"] = (
     True,
 )
 
-NORMAL_SYSTEM_INSTRUCTION = "Respond in English."
-
-DEFAULT_SYSTEM_INSTRUCTION = "日本語チャットボット"
+DEFAULT_SYSTEM_INSTRUCTION = "私の三才の日本人の子供"
 assert DEFAULT_SYSTEM_INSTRUCTION in SYSTEM_INSTRUCTIONS
 
 GPT4_MODEL = "gpt-4-turbo"
@@ -233,7 +232,7 @@ USE_QUICK_PROMPT = False  # True to add a first prompt, for testing.
 USE_CANNED_RESPONSE = False  # True to add a first response, for testing.
 
 
-def is_japanese_char(ch: str) -> bool:
+def is_japanese_char(ch: str, log: bool = False) -> bool:
     """
     Return True if the character is a Japanese character.
     """
@@ -251,29 +250,33 @@ def is_japanese_char(ch: str) -> bool:
             "LEFT",
             "RIGHT",
         ]
-        print(ch, block, "J" if is_japanese else "")
+        if log:
+            print(ch, block, "J" if is_japanese else "")
         return is_japanese
     except ValueError:
         return False
 
 
-def contains_japanese(text: str) -> bool:
+def contains_japanese(text: str, log: bool = False) -> bool:
     """
     Return True if the text contains any Japanese at all.
     """
     if len(text) == 0:
         return False
-    return any(is_japanese_char(ch) for ch in text)
+    return any(is_japanese_char(ch, log) for ch in text)
 
 
 def strip_non_japanese_split_sentences(text: str) -> str:
     """
-    Remove non-Japanese characters from the text. Remove duplicate sentences.
+    Remove non-Japanese characters from the text. Insert 。 between pieces of
+    Japanese that were separated by non-Japanese to make the tts insert a pause
+    rather then running them all together. Remove consecutive duplicate
+    sentences.
     """
     text = re.sub(
         r"。+",
         "。",
-        "".join(ch if is_japanese_char(ch) else "。" for ch in text) + "。",
+        "".join(ch if is_japanese_char(ch, True) else "。" for ch in text) + "。",
     ).lstrip("。")
     while True:
         old_len = len(text)
@@ -336,16 +339,11 @@ class State(rx.State):  # type: ignore
     edited_prompt: str
     gpt_4: bool = False
     is_processing: bool = False
-    mode: str = "通常モード"
     new_prompt: str = "可愛いウサギが好きですか?" if USE_QUICK_PROMPT else ""
     system_instruction: str = DEFAULT_SYSTEM_INSTRUCTION
     terse: bool = False
     voice: str = get_random_voice()
     warning: str = ""
-
-    @rx.var  # type: ignore
-    def is_not_system_instruction(self) -> bool:
-        return self.mode != "システム指示:"
 
     @rx.var  # type: ignore
     def cannot_clear_chat(self) -> bool:
@@ -449,12 +447,9 @@ class State(rx.State):  # type: ignore
                         }
                     )
 
-                if self.mode == "通常モード":
-                    system_instruction, code_related = NORMAL_SYSTEM_INSTRUCTION, False
-                else:
-                    system_instruction, code_related = SYSTEM_INSTRUCTIONS[
-                        self.system_instruction
-                    ]
+                system_instruction, code_related = SYSTEM_INSTRUCTIONS[
+                    self.system_instruction
+                ]
 
                 messages.append({"role": "system", "content": system_instruction})
                 if code_related:
@@ -495,7 +490,6 @@ class State(rx.State):  # type: ignore
                 print(
                     f"GPT4? {self.gpt_4}\n"
                     f"Terse? {self.terse}\n"
-                    f"Mode? {self.mode}\n"
                     f"Messages: {messages}"
                 )
 
