@@ -6,40 +6,25 @@ import random
 
 import google.cloud.texttospeech as tts
 
-USE_BEST_VOICES = True
 
-VOICES = (
-    [
-        # Female
-        "ja-JP-Neural2-B",
-        # Male
-        "ja-JP-Neural2-C",
-        "ja-JP-Neural2-D",
-    ]
-    if USE_BEST_VOICES
-    else [
-        # Female
-        "ja-JP-Standard-A",
-        "ja-JP-Standard-B",
-        # Male
-        "ja-JP-Standard-C",
-        "ja-JP-Standard-D",
-    ]
-)
+def get_random_voice(male: bool) -> str:
+    if male:
+        return random.choice(
+            [  # nosec
+                "ja-JP-Neural2-C",
+                "ja-JP-Neural2-D",
+            ]
+        )
+    return "ja-JP-Neural2-B"  # nosec
 
 
-def get_random_voice() -> str:
-    return VOICES[random.randrange(0, len(VOICES))]  # nosec
-
-
-def text_to_wav(text: str, voice: str = VOICES[0]) -> str:
+def text_to_wav(text: str, voice: str) -> str:
     """
     Write a wave file into assets/wav, if it doesn't already exist.
     """
-    assert voice in VOICES
     try:
         hash_ = hashlib.md5(text.encode(encoding="utf-8")).hexdigest()  # nosec
-        tts_wav_filename = f"assets/wav/tts_{hash_}.wav"
+        tts_wav_filename = f"assets/wav/tts_{voice}_{hash_}.wav"
         if os.path.isfile(tts_wav_filename):
             print("Skipping tts.")
             return tts_wav_filename

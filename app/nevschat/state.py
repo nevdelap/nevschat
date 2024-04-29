@@ -142,7 +142,7 @@ GPT4_MODEL = "gpt-4-turbo"
 GPT3_MODEL = "gpt-3.5-turbo"
 
 USE_QUICK_PROMPT = False  # True to add a first prompt, for testing.
-USE_CANNED_RESPONSE = False  # True to add a first response, for testing.
+USE_CANNED_RESPONSE = False  # True to add a profile and first response, for testing.
 
 
 # TODO: Put this Japanese and Latin stuff in a helper.
@@ -269,6 +269,415 @@ test_strip_non_japanese_split_sentence(
 )
 
 # TODO: Put from here to get_random_profile in a helper.
+
+FAMILY_NAMES = [
+    "三宅",
+    "三浦",
+    "上村",
+    "上田",
+    "中島",
+    "中川",
+    "中村",
+    "中沢",
+    "中西",
+    "中野",
+    "丸山",
+    "久保",
+    "久保田",
+    "亀田",
+    "五十嵐",
+    "井上",
+    "井手",
+    "今井",
+    "伊東",
+    "伊藤",
+    "佐々木",
+    "佐々木",
+    "佐久間",
+    "佐藤",
+    "佐野",
+    "児玉",
+    "前川",
+    "前田",
+    "加藤",
+    "古屋",
+    "古川",
+    "古田",
+    "古谷",
+    "吉川",
+    "吉本",
+    "吉田",
+    "吉野",
+    "向井",
+    "和田",
+    "城戸",
+    "堀",
+    "堀内",
+    "堀口",
+    "堀田",
+    "夏目",
+    "大塚",
+    "大島",
+    "大森",
+    "大西",
+    "大野",
+    "太田",
+    "奥田",
+    "宇野",
+    "安田",
+    "宮崎",
+    "宮本",
+    "富永",
+    "富田",
+    "小島",
+    "小川",
+    "小林",
+    "小池",
+    "小田",
+    "小野寺",
+    "山下",
+    "山口",
+    "山崎",
+    "山本",
+    "山田",
+    "岡崎",
+    "岡本",
+    "岡田",
+    "岡野",
+    "岩崎",
+    "岩田",
+    "川口",
+    "川崎",
+    "川村",
+    "川越",
+    "市川",
+    "平山",
+    "廣田",
+    "後藤",
+    "戸塚",
+    "戸田",
+    "手塚",
+    "新井",
+    "新宿",
+    "星野",
+    "有馬",
+    "服部",
+    "望月",
+    "朝倉",
+    "本多",
+    "本田",
+    "本間",
+    "杉山",
+    "杉本",
+    "杉浦",
+    "村山",
+    "松下",
+    "松井",
+    "松尾",
+    "松岡",
+    "松崎",
+    "松田",
+    "柏木",
+    "柳",
+    "桜井",
+    "梶山",
+    "森下",
+    "森山",
+    "森田",
+    "榎本",
+    "樋口",
+    "横山",
+    "横田",
+    "橋本",
+    "水谷",
+    "江口",
+    "沢田",
+    "河野",
+    "浅野",
+    "浜田",
+    "清水",
+    "渡辺",
+    "滝本",
+    "烏山",
+    "熊谷",
+    "片岡",
+    "玉川",
+    "田上",
+    "田中",
+    "田口",
+    "田口",
+    "田所",
+    "田村",
+    "田沢",
+    "田畑",
+    "田辺",
+    "畑",
+    "白井",
+    "白石",
+    "相田",
+    "石井",
+    "石原",
+    "石垣",
+    "石山",
+    "石川",
+    "石橋",
+    "石田",
+    "石黒",
+    "福岡",
+    "福本",
+    "福田",
+    "竹下",
+    "竹中",
+    "竹内",
+    "竹田",
+    "竹田",
+    "細川",
+    "若林",
+    "菅原",
+    "菊池",
+    "藤井",
+    "藤原",
+    "藤田",
+    "衣笠",
+    "西山",
+    "西岡",
+    "西川",
+    "西川",
+    "西村",
+    "西田",
+    "西野",
+    "谷川",
+    "辻",
+    "野口",
+    "野崎",
+    "野村",
+    "金井",
+    "鈴木",
+    "鈴木",
+    "長尾",
+    "長岡",
+    "長谷",
+    "長谷川",
+    "青山",
+    "青木",
+    "須藤",
+    "馬場",
+    "高山",
+    "高木",
+    "高橋",
+    "高瀬",
+    "高田",
+    "高畑",
+    "鳥居",
+    "黒木",
+    "黒田",
+]
+
+MALE_NAMES = [
+    "修司",
+    "健太",
+    "優",
+    "光",
+    "光太",
+    "公平",
+    "円",
+    "剛",
+    "功",
+    "勇気",
+    "勝",
+    "勝也",
+    "友樹",
+    "和樹",
+    "哲也",
+    "啓太",
+    "大樹",
+    "大翔",
+    "大輝",
+    "太一",
+    "太郎",
+    "太陽",
+    "将太",
+    "岳",
+    "峻太",
+    "崇",
+    "康太",
+    "彰",
+    "彰",
+    "忍",
+    "怜",
+    "悠",
+    "悠人",
+    "悠人",
+    "悠太",
+    "悠真",
+    "慎一",
+    "慎二",
+    "慎吾",
+    "拓也",
+    "拓斗",
+    "拓海",
+    "敏夫",
+    "昌宏",
+    "明浩",
+    "春樹",
+    "智也",
+    "武",
+    "武蔵",
+    "泰平",
+    "泰輝",
+    "浦",
+    "浩一",
+    "浩司",
+    "海",
+    "海斗",
+    "涼太",
+    "渉",
+    "潤",
+    "琢磨",
+    "登",
+    "直人",
+    "直樹",
+    "真",
+    "真一",
+    "真央",
+    "真央",
+    "瞬",
+    "祐也",
+    "祐介",
+    "祐佑",
+    "祐太",
+    "祐樹",
+    "穂高",
+    "竜太",
+    "章",
+    "翔",
+    "翔太",
+    "翔平",
+    "翼",
+    "聡",
+    "聡太",
+    "良太",
+    "裕之",
+    "裕太",
+    "裕貴",
+    "規",
+    "誠",
+    "貴",
+    "貴之",
+    "陸",
+    "陽斗",
+    "隼人",
+    "雄大",
+    "雄太",
+    "雅人",
+    "風馬",
+    "颯太",
+    "駿",
+    "駿太",
+]
+
+FEMALE_NAMES = [
+    "さつき",
+    "はるな",
+    "まどか",
+    "ゆりか",
+    "るみ",
+    "レナ",
+    "七海",
+    "久子",
+    "光",
+    "光",
+    "公子",
+    "典子",
+    "千佳",
+    "千尋",
+    "千恵",
+    "咲",
+    "夏子",
+    "夏希",
+    "夏美",
+    "奈緒",
+    "宝",
+    "小春",
+    "巧美",
+    "幸",
+    "幸子",
+    "幸子",
+    "幸恵",
+    "弥生",
+    "彩香",
+    "恵",
+    "恵美",
+    "愛子",
+    "愛莉",
+    "愛菜",
+    "憂奈",
+    "文子",
+    "日向",
+    "明子",
+    "明日香",
+    "春",
+    "智子",
+    "栞",
+    "桃子",
+    "桜",
+    "楓",
+    "歩美",
+    "沙也香",
+    "浩子",
+    "涼可",
+    "清子",
+    "渚",
+    "澪",
+    "玲",
+    "珠希",
+    "理香",
+    "由布子",
+    "由美子",
+    "百合",
+    "百合子",
+    "百合絵",
+    "真理",
+    "真理子",
+    "真紀",
+    "真美",
+    "瞳",
+    "礼子",
+    "空",
+    "紀子",
+    "純子",
+    "紗由理",
+    "結衣",
+    "結香",
+    "絵里",
+    "絵里菜",
+    "綾乃",
+    "緑",
+    "美和子",
+    "美咲",
+    "美咲",
+    "美奈子",
+    "美恵",
+    "美春",
+    "美羽",
+    "美貴",
+    "舞",
+    "花子",
+    "茜",
+    "莉子",
+    "莉緒",
+    "菜々",
+    "菫",
+    "萌",
+    "裕美",
+    "貴子",
+    "遥",
+    "里菜",
+    "陽子",
+    "陽菜",
+    "雪",
+    "香菜",
+]
 
 CITIES = [
     "東京",
@@ -503,6 +912,19 @@ MOODS = [
 ]
 
 
+def get_random_is_male() -> bool:
+    return random.choice([True, False])  # nosec
+
+
+def get_random_name(male: bool) -> str:
+    family_name = FAMILY_NAMES[random.randint(0, len(FAMILY_NAMES) - 1)]  # nosec
+    if male:
+        first_name = MALE_NAMES[random.randint(0, len(MALE_NAMES) - 1)]  # nosec
+    else:
+        first_name = FEMALE_NAMES[random.randint(0, len(FEMALE_NAMES) - 1)]  # nosec
+    return f"{family_name}{first_name}"
+
+
 def get_random_age() -> int:
     return random.randint(3, 50)  # nosec
 
@@ -565,14 +987,15 @@ test_age_to_kanji(44, "四十四")
 test_age_to_kanji(50, "五十")
 
 
-def get_random_profile() -> str:
+def get_random_profile(male: bool) -> str:
+    name = get_random_name(male)
     age = get_random_age()
     location = get_random_city()
     profession = get_random_profession(age)
     hobbies = get_random_hobbies()
     mood = get_random_mood()
     return (
-        f"{age_to_kanji(age)}歳で、{location}に住んでいます。"
+        f"{name}、{age_to_kanji(age)}歳で、{location}に住んでいます。"
         f"{profession}で、趣味は{hobbies}です。今私は{mood}"
     )
 
@@ -611,12 +1034,25 @@ class State(rx.State):  # type: ignore
     control_down: bool = False
     edited_prompt: str
     gpt_4: bool = False
-    is_processing: bool = False
+    processing: bool = False
     new_prompt: str = "可愛いウサギが好きですか?" if USE_QUICK_PROMPT else ""
-    profile: str = get_random_profile()
+    # TODO: move male and all this profile stuff into a Profile class.
+    male: bool = False
+    profile: str = (
+        (
+            "中西七海、二十五歳で、大阪に住んでいます。バーテンダーで、"
+            "趣味は写真撮影とスキーと書道です。今私は焦っています。"
+        )
+        if USE_CANNED_RESPONSE
+        else get_random_profile(False)
+    )
+    profile_has_tts: bool = False
+    profile_tts_in_progress: bool = False
+    profile_tts_wav_url: str = ""
+    profile_voice: str = ""
     system_instruction: str = DEFAULT_SYSTEM_INSTRUCTION
     terse: bool = False
-    voice: str = get_random_voice()
+    voice: str = get_random_voice(False)
     warning: str = ""
 
     @rx.var  # type: ignore
@@ -628,7 +1064,18 @@ class State(rx.State):  # type: ignore
         return f"私は{self.profile}"
 
     def change_profile(self) -> None:
-        self.profile = get_random_profile()
+        self.male = get_random_is_male()
+        self.profile = get_random_profile(self.male)
+        self.profile_has_tts = False
+        self.profile_tts_in_progress = False
+        self.profile_tts_wav_url = ""
+        self.profile_voice = ""
+        self.voice = get_random_voice(self.male)
+        for prompt_response in self.prompts_responses:
+            prompt_response.tts_in_progress = False
+            prompt_response.has_tts = False
+            prompt_response.tts_wav_url = ""
+            prompt_response.voice = ""
 
     @rx.var  # type: ignore
     def cannot_clear_chat(self) -> bool:
@@ -640,7 +1087,7 @@ class State(rx.State):  # type: ignore
 
     @rx.var  # type: ignore
     def cannot_enter_new_prompt_or_edit(self) -> bool:
-        return self.is_editing or self.is_processing
+        return self.is_editing or self.processing
 
     @rx.var  # type: ignore
     def cannot_chatgpt_with_new_prompt(self) -> bool:
@@ -716,7 +1163,7 @@ class State(rx.State):  # type: ignore
                 assert self.new_prompt != ""
 
                 self.cancel_control()
-                self.is_processing = True
+                self.processing = True
                 self.warning = ""
 
                 model = GPT4_MODEL if self.gpt_4 else GPT3_MODEL
@@ -801,7 +1248,7 @@ class State(rx.State):  # type: ignore
                         self.prompts_responses[-1].contains_japanese = (
                             contains_japanese(self.prompts_responses[-1].response)
                         )
-                    if not self.is_processing:
+                    if not self.processing:
                         # It's been cancelled.
                         self.prompts_responses[-1].response += " (cancelled)"
                         break
@@ -812,7 +1259,7 @@ class State(rx.State):  # type: ignore
                 print(self.warning)
         finally:
             async with self:
-                self.is_processing = False
+                self.processing = False
 
         async with self:
             if self.prompts_responses[-1].contains_japanese and self.auto_speak:
@@ -833,32 +1280,38 @@ class State(rx.State):  # type: ignore
                             self.prompts_responses[-1].tts_in_progress = False
 
     def cancel_chatgpt(self) -> None:
-        self.is_processing = False
+        self.processing = False
 
     def clear_chat(self) -> None:
         self.prompts_responses = []
-        self.profile = get_random_profile()
-        self.voice = get_random_voice()
+        self.change_profile()
         # self.invariant()
 
     @rx.background  # type: ignore
     async def speak(self, index: int, text: str) -> AsyncGenerator[None, None]:
         async with self:
-            self.prompts_responses[index].tts_in_progress = True
+            assert -1 <= index < len(self.prompts_responses)
+            if index == -1:
+                self.profile_tts_in_progress = True
+            else:
+                self.prompts_responses[index].tts_in_progress = True
         yield
         async with self:
             try:
                 self.do_speak(index, strip_non_japanese_split_sentences(text))
             finally:
                 async with self:
-                    self.prompts_responses[index].tts_in_progress = False
+                    if index == -1:
+                        self.profile_tts_in_progress = False
+                    else:
+                        self.prompts_responses[index].tts_in_progress = False
 
     def do_speak(self, index: int, text: str) -> None:
         """
         Non-async version to call from the async rx.background handlers.
         """
         assert self.voice != ""
-        assert index < len(self.prompts_responses)
+        assert -1 <= index < len(self.prompts_responses)
         try:
             print(f"Speaking: {text}")
             tts_wav_filename = text_to_wav(text, self.voice)
@@ -875,11 +1328,18 @@ class State(rx.State):  # type: ignore
                     response = requests.head(full_tts_wav_url, timeout=10.0)
                     if response.status_code >= 200 and response.status_code < 400:
                         print("OK")
-                        self.prompts_responses[index].tts_wav_url = tts_wav_url
-                        self.prompts_responses[index].voice = self.voice
-                        # This causes the rx.audio to be rendered, at which
-                        # point we know for sure it has a working url.
-                        self.prompts_responses[index].has_tts = True
+                        if index == -1:
+                            self.profile_tts_wav_url = tts_wav_url
+                            self.profile_voice = self.voice
+                            # This causes the rx.audio to be rendered, at which
+                            # point we know for sure it has a working url.
+                            self.profile_has_tts = True
+                        else:
+                            self.prompts_responses[index].tts_wav_url = tts_wav_url
+                            self.prompts_responses[index].voice = self.voice
+                            # This causes the rx.audio to be rendered, at which
+                            # point we know for sure it has a working url.
+                            self.prompts_responses[index].has_tts = True
                         return
                 except Exception as ex:  # pylint: disable=broad-exception-caught
                     self.warning = str(ex)
