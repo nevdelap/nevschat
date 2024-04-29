@@ -760,7 +760,7 @@ class State(rx.State):  # type: ignore
 
                 prompt_response = PromptResponse(
                     prompt=self.new_prompt,
-                    response="",
+                    response="\u00A0",  # Non-breaking space.
                     is_editing=False,
                     contains_japanese=False,
                     tts_in_progress=False,
@@ -791,7 +791,13 @@ class State(rx.State):  # type: ignore
                 async with self:
                     response = item.choices[0].delta.content  # type: ignore
                     if response:
-                        self.prompts_responses[-1].response += response
+                        # The non-breaking space is used to make the markdown
+                        # component render as if it had something in it, until
+                        # it does, without being visible to the user.
+                        if self.prompts_responses[-1].response == "\u00A0":
+                            self.prompts_responses[-1].response = response
+                        else:
+                            self.prompts_responses[-1].response += response
                         self.prompts_responses[-1].contains_japanese = (
                             contains_japanese(self.prompts_responses[-1].response)
                         )

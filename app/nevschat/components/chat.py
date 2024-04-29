@@ -57,9 +57,15 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
             ),
             rx.hstack(
                 rx.box(
-                    rx.markdown(prompt_response.prompt),
-                    background_color="#f8f8f8",
+                    rx.markdown(
+                        prompt_response.prompt,
+                        width="100%",
+                    ),
+                    background_color="#e1f6fd",
+                    border_color="#60b3d7",
                     border_radius="10px",
+                    border_style="solid",
+                    border_width="3px",
                     padding="0 1em 0 1em",
                     width="100%",
                 ),
@@ -90,9 +96,58 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
         ),
         rx.vstack(
             rx.hstack(
-                rx.box(
-                    rx.markdown(
-                        prompt_response.response,
+                rx.vstack(
+                    rx.box(
+                        rx.markdown(
+                            prompt_response.response,
+                            width="100%",
+                        ),
+                        background_color="#ffefd6",
+                        border_color="#c2a499",
+                        border_radius="10px",
+                        border_style="solid",
+                        border_width="3px",
+                        padding="0 1em 0 1em",
+                        width="100%",
+                    ),
+                    rx.cond(
+                        prompt_response.tts_in_progress,
+                        rx.center(
+                            rx.chakra.spinner(
+                                color="#888",
+                                margin_top="0.5em",
+                                size="md",
+                            ),
+                            width="100%",
+                        ),
+                        None,
+                    ),
+                    rx.cond(
+                        prompt_response.has_tts,
+                        rx.audio(
+                            height="32px",
+                            margin_top="0.5em",
+                            playing=True,
+                            url=prompt_response.tts_wav_url,
+                            width="100%",
+                        ),
+                        None,
+                    ),
+                    rx.flex(
+                        rx.spacer(
+                            width="100%",
+                        ),
+                        rx.text(prompt_response.model),
+                        rx.cond(
+                            prompt_response.has_tts,
+                            rx.text(prompt_response.voice),
+                            None,
+                        ),
+                        color="#aaa",
+                        font_size="0.4em",
+                        margin_bottom="0.5em",
+                        margin_top="-0.5em",
+                        padding_right="1em",
                         width="100%",
                     ),
                     margin_left="1em",
@@ -107,8 +162,8 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                             stroke_width=1.5,
                         ),
                         color_scheme="tomato",
-                        on_click=State.cancel_chatgpt,
                         margin_top="0.75em",
+                        on_click=State.cancel_chatgpt,
                     ),
                     None,
                 ),
@@ -126,7 +181,6 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                                 prompt_response.tts_in_progress
                                 | prompt_response.has_tts
                             ),
-                            margin_top="0.75em",
                             on_click=lambda: State.speak(  # pylint: disable=no-value-for-parameter
                                 index, prompt_response.response
                             ),
@@ -140,48 +194,11 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                             stroke_width=1.5,
                         ),
                         color_scheme="gray",
-                        margin_top="0.75em",
                         on_click=rx.set_clipboard(prompt_response.response),
                     ),
+                    margin_top="0.75em",
                 ),
-                width="100%",
-            ),
-            rx.cond(
-                prompt_response.tts_in_progress,
-                rx.center(
-                    rx.chakra.spinner(
-                        color="#888",
-                        size="sm",
-                    ),
-                    width="100%",
-                ),
-                None,
-            ),
-            rx.cond(
-                prompt_response.has_tts,
-                rx.audio(
-                    height="32px",
-                    playing=True,
-                    url=prompt_response.tts_wav_url,
-                    width="100%",
-                ),
-                None,
-            ),
-            rx.center(
-                rx.box(
-                    rx.hstack(
-                        rx.text(prompt_response.model),
-                        rx.cond(
-                            prompt_response.has_tts,
-                            rx.text(prompt_response.voice),
-                            None,
-                        ),
-                    ),
-                ),
-                color="#aaa",
-                font_size="0.5em",
-                margin_bottom="0.5em",
-                text_align="center",
+                margin_top="1em",
                 width="100%",
             ),
             width="100%",
@@ -234,6 +251,7 @@ def chat() -> rx.Component:
                     border_radius="8px",
                     border_style="solid",
                     border_width="3px",
+                    margin_bottom="0.5em",
                     padding="0.5em 1em 0.5em 1em",
                     weight="bold",
                     width="100%",
