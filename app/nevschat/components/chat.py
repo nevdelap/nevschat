@@ -14,6 +14,9 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
             prompt_response.is_editing,
             rx.hstack(
                 rx.text_area(
+                    border_color="#C2A499",
+                    border_style="solid",
+                    border_width="3px",
                     on_blur=State.cancel_control,
                     on_change=State.update_edited_prompt,
                     on_key_down=State.handle_key_down,
@@ -373,6 +376,9 @@ def chat() -> rx.Component:
         ),
         rx.flex(
             rx.text_area(
+                border_color="#C2A499",
+                border_style="solid",
+                border_width="3px",
                 disabled=State.cannot_enter_new_prompt_or_edit,
                 on_blur=State.cancel_control,
                 on_change=State.set_new_prompt,

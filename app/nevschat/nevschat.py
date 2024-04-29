@@ -50,10 +50,10 @@ def index() -> rx.Component:
 
 app = rx.App(
     theme=rx.theme(
-        accent_color="teal",
+        accent_color="bronze",
         appearance="light",
         has_background=True,
-        radius="large",
+        radius="none",
         scaling="100%",
     )
 )
