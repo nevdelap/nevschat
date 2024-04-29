@@ -573,7 +573,7 @@ def get_random_profile() -> str:
     mood = get_random_mood()
     return (
         f"{age_to_kanji(age)}歳で、{location}に住んでいます。"
-        f"{profession}で、趣味は{hobbies}です。今、私は{mood}"
+        f"{profession}で、趣味は{hobbies}です。今私は{mood}"
     )
 
 
