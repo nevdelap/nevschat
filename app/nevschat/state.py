@@ -1,18 +1,18 @@
 # mypy: disable-error-code="attr-defined,name-defined"
 
 import os
-import re
 import time
-import unicodedata
 from collections.abc import AsyncGenerator
 from typing import Any
 from urllib.parse import urljoin
 
 import requests
+from nevschat.helpers import contains_japanese
 from nevschat.helpers import delete_old_wav_assets
 from nevschat.helpers import get_random_is_male
 from nevschat.helpers import get_random_profile
 from nevschat.helpers import get_random_voice
+from nevschat.helpers import strip_non_japanese_and_split_sentences
 from nevschat.helpers import text_to_wav
 from nevschat.system_instructions import get_system_instructions
 from openai import OpenAI
@@ -30,129 +30,9 @@ GPT3_MODEL = "gpt-3.5-turbo"
 USE_QUICK_PROMPT = False  # True to add a first prompt, for testing.
 USE_CANNED_RESPONSE = False  # True to add a profile and first response, for testing.
 
-
-# TODO: Put this Japanese and Latin stuff in a helper.
-
-
-def is_japanese_char(ch: str, log: bool = False) -> bool:
-    """
-    Return True if the character is a Japanese character.
-    """
-    assert len(ch) == 1
-    try:
-        block = unicodedata.name(ch).split()[0]
-        is_japanese = block in [
-            "CJK",
-            "DIGIT",
-            "FULLWIDTH",
-            "HIRAGANA",
-            "IDEOGRAPHIC",
-            "KATAKANA",
-            "KATAKANA-HIRAGANA",
-            "LEFT",
-            "RIGHT",
-        ]
-        if log:
-            print(ch, block, "J" if is_japanese else "")
-        return is_japanese
-    except ValueError:
-        return False
-
-
-def is_latin_char(ch: str, log: bool = False) -> bool:
-    """
-    Return True if the character is a Japanese character.
-    """
-    assert len(ch) == 1
-    try:
-        block = unicodedata.name(ch).split()[0]
-        is_latin = block in [
-            "LATIN",
-        ]
-        if log:
-            print(ch, block, "L" if is_latin else "")
-        return is_latin
-    except ValueError:
-        return False
-
-
-def contains_japanese(text: str, log: bool = False) -> bool:
-    """
-    Return True if the text contains any Japanese at all.
-    """
-    if len(text) == 0:
-        return False
-    return any(is_japanese_char(ch, log) for ch in text)
-
-
-def contains_latin(text: str, log: bool = False) -> bool:
-    """
-    Return True if the text contains any Latin characters at all.
-    """
-    if len(text) == 0:
-        return False
-    return any(is_latin_char(ch, log) for ch in text)
-
-
-def strip_non_japanese_split_sentences(text: str) -> str:
-    """
-    If the text contains non-Japanese characters from the text, insert 。
-    between pieces of Japanese that were separated by non-Japanese to make the
-    tts insert a pause rather then running them all together, and remove
-    consecutive duplicate sentences.
-    """
-    if contains_latin(text):
-        text = re.sub(
-            r"。+",
-            "。",
-            "".join(ch if is_japanese_char(ch, True) else "。" for ch in text) + "。",
-        ).lstrip("。")
-        while True:
-            old_len = len(text)
-            text = re.sub(r"([^、。]*[、。])\1", r"\1", text)
-            if len(text) == old_len:
-                break
-    return text
-
-
-# Built-in test.
-def test_strip_non_japanese_split_sentence(original: str, expected: str) -> None:
-    stripped = strip_non_japanese_split_sentences(original)
-    assert stripped == expected, f"{original}: {stripped} != {expected}"
-
-
-# If mixed Japanese and Latin, strip Latin characters.
-test_strip_non_japanese_split_sentence(
-    "Both '異る' and '違う' are verbs in Japanese that can be translated as "
-    "'to differ' or 'to be different'. '異る' carries a stronger connotation "
-    "of being unusual, rare, or significant in its difference compared to "
-    "something else.",
-    "異る。違う。異る。",
-)
-
-# If only Japanese leave as is.
-test_strip_non_japanese_split_sentence(
-    "おんな、おんな、",
-    "おんな、おんな、",
-)
-
-# If mixed Japanese and Latin, strip Latin characters and duplication.
-test_strip_non_japanese_split_sentence(
-    "おんな、おんな、is Japanese.",
-    "おんな、。",
-)
-
-# If mixed Japanese and Latin, strip Latin characters and duplication.
-test_strip_non_japanese_split_sentence(
-    "違う。違う。違う。hello.違う。違う。",
-    "違う。",
-)
-
-# If mixed Japanese and Latin, add 。 between pieces of Japanese.
-test_strip_non_japanese_split_sentence(
-    "日本語あるハー「」。、ab, ()1",
-    "日本語あるハー「」。、。()1。",
-)
+# TODO: move profile stuff into a Profile class, probably with a base class to
+# capture the commonality between it and PromptResponse and remove some of the
+# conditional logic, and other ugliness hacked in this afternoon.
 
 
 class PromptResponse(rx.Base):  # type: ignore
@@ -426,7 +306,7 @@ class State(rx.State):  # type: ignore
                         index = len(self.prompts_responses) - 1
                         self.do_speak(
                             index,
-                            strip_non_japanese_split_sentences(
+                            strip_non_japanese_and_split_sentences(
                                 self.prompts_responses[index].response
                             ),
                         )
@@ -453,7 +333,7 @@ class State(rx.State):  # type: ignore
         yield
         async with self:
             try:
-                self.do_speak(index, strip_non_japanese_split_sentences(text))
+                self.do_speak(index, strip_non_japanese_and_split_sentences(text))
             finally:
                 async with self:
                     if index == -1:
