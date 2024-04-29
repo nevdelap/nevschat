@@ -4,7 +4,6 @@ import os
 import re
 import time
 import unicodedata
-from collections import OrderedDict
 from collections.abc import AsyncGenerator
 from typing import Any
 from urllib.parse import urljoin
@@ -15,128 +14,14 @@ from nevschat.helpers import get_random_is_male
 from nevschat.helpers import get_random_profile
 from nevschat.helpers import get_random_voice
 from nevschat.helpers import text_to_wav
+from nevschat.system_instructions import get_system_instructions
 from openai import OpenAI
 from rxconfig import config
 from rxconfig import site_runtime_assets_url
 
 import reflex as rx
 
-SYSTEM_INSTRUCTIONS = OrderedDict()
-SYSTEM_INSTRUCTIONS["Normal English"] = ("Respond in English.", False)
-SYSTEM_INSTRUCTIONS["ランダムな人"] = (
-    """
-あなたは{profile}です。あなたは日本語を話せて、他の言語を話せません。自然で親し
-みやすいスタイルで答える。箇条書きで答えない。
-- 回答には日本語以外の言語を含んではならない。
-- 回答はひらがなやカタカナやふりがなやローマ字の発音を含んではならない。
-- 回答にリストが含まれている場合は、番号付きリストではなく、箇条書きのリストを
-使用してください。
-    """,
-    False,
-)
-SYSTEM_INSTRUCTIONS["日本語チャットボット"] = (
-    """
-あなたはチャットボットです。日本語を話せます。他の言語を話せません。
-- 回答には日本語以外の言語を含んではならない。
-- 回答はひらがなやカタカナやふりがなやローマ字の発音を含んではならない。
-- 回答にリストが含まれている場合は、番号付きリストではなく、箇条書きのリストを使
-  用してください。
-    """,
-    False,
-)
-SYSTEM_INSTRUCTIONS["日本語: Give example sentences using the given words."] = (
-    """
-Give a dot point list of 5 varied example sentences in Japanese using the given
-word, with their translation in brackets. Use simple vocabulary.
- - The response MUST NOT CONTAIN pronunciation of the example sentences.
- - The response MUST NOT CONTAIN romaji for the Japanese of the example
-sentences.
- - Give definitions of unusual or uncommon words.
-    """,
-    False,
-)
-SYSTEM_INSTRUCTIONS["日本語: Give varied ways of expressing the given meaning."] = (
-    """
-Give a dot point list of up to 5 varied ways of expressing in Japanese the same
-meaning as the given text, with their translations in brackets.
- - The response MUST NOT CONTAIN pronunciation of the example sentences.
- - The response MUST NOT CONTAIN romaji for the Japanese of the example
-sentences.
- - Give definitions of unusual or uncommon words.
-    """,
-    False,
-)
-SYSTEM_INSTRUCTIONS[
-    "日本語: Give varied ways of expressing the opposite of the given meaning."
-] = (
-    """
-Give a dot point list of up to 5 varied ways of expressing in Japanese the
-meaning opposite to that of the given text, with their translations in brackets.
- - The response MUST NOT CONTAIN pronunciation of the example sentences.
- - The response MUST NOT CONTAIN romaji for the Japanese of the example
-sentences.
- - Give definitions of unusual or uncommon words.
-    """,
-    False,
-)
-SYSTEM_INSTRUCTIONS["Check Grammar"] = (
-    """
-DO NOT translate, check the grammar of the given text and explain any problems
-in English. DO NOT explain the simple or basic vocabulary or grammatical points.
-NEVER give pronunciation for any language. NEVER give romaji for Japanese. If
-prompts contain kanji assume it is Japanese, NEVER Chinese.
-    """,
-    False,
-)
-SYSTEM_INSTRUCTIONS["Explain Grammar"] = (
-    """
-DO NOT translate, rather explain in English the grammar of the given text. DO
-NOT explain the simple or basic vocabulary or grammatical points. NEVER give
-pronunciation for any language. NEVER give romaji for Japanese. If prompts
-contain kanji assume it is Japanese, NEVER Chinese.
-    """,
-    False,
-)
-SYSTEM_INSTRUCTIONS["Explain Usage"] = (
-    """
-DO NOT translate, rather explain in English the usage of the given text. Give
-examples, especially where words have different meanings in different contexts.
-NEVER give pronunciation for any language. NEVER give romaji for Japanese. If
-prompts contain kanji assume it is Japanese, NEVER Chinese.
-    """,
-    False,
-)
-SYSTEM_INSTRUCTIONS["Bash"] = (
-    "The question is in the context of Bash shell scripting.",
-    True,
-)
-SYSTEM_INSTRUCTIONS["Docker"] = (
-    "The question is in the context of Docker containerisation technology.",
-    True,
-)
-SYSTEM_INSTRUCTIONS["Git"] = (
-    "The question is in the context of the Git version control tool.",
-    True,
-)
-SYSTEM_INSTRUCTIONS["Linux"] = ("The question is in the context of Linux.", True)
-SYSTEM_INSTRUCTIONS["Nginx"] = (
-    "The question is in the context of Nginx configuration.",
-    True,
-)
-SYSTEM_INSTRUCTIONS["Python"] = (
-    "The question is in the context of the Python programming language.",
-    True,
-)
-SYSTEM_INSTRUCTIONS["Snowflake SQL"] = (
-    "The question is in the context of Snowflake SQL queries.",
-    True,
-)
-SYSTEM_INSTRUCTIONS["SQL"] = (
-    "The question is in the context of SQL queries. Prefer Snowflake SQL, "
-    + "or PostgreSQL, or ANSI SQL.",
-    True,
-)
-
+SYSTEM_INSTRUCTIONS = get_system_instructions()
 DEFAULT_SYSTEM_INSTRUCTION = list(SYSTEM_INSTRUCTIONS.keys())[1]
 
 GPT4_MODEL = "gpt-4-turbo"
