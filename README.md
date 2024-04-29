@@ -6,7 +6,7 @@ does exactly what I want and nothing else.
 
 <img
   src="screenshot.png"
-  width="638px"
+  width="796px"
   alt="Screenshot of Nev's Awesome ChatGPT" />
 
 ## Prerequisites
