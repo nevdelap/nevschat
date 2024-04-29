@@ -15,7 +15,7 @@ def index() -> rx.Component:
             rx.heading(TITLE),
             rx.text(
                 f"リフレックス v{rx.constants.Reflex.VERSION}",
-                color="#aaa",
+                color="rgba(0, 0, 0, 0.4)",
             ),
             chat(),
             rx.button(
@@ -39,12 +39,13 @@ def index() -> rx.Component:
                 None,
             ),
             max_width="800px",
-            padding="1em",
+            spacing="2",
             width="100%",
         ),
         align="center",
         direction="column",
         justify="start",
+        margin_top="2em",
     )
 
 
@@ -53,7 +54,7 @@ app = rx.App(
         accent_color="bronze",
         appearance="light",
         has_background=True,
-        radius="none",
+        radius="medium",
         scaling="100%",
     )
 )

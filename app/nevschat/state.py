@@ -61,6 +61,17 @@ class State(rx.State):  # type: ignore
                 model="gpt-canned",
                 voice="",
             ),
+            PromptResponse(
+                prompt="いいです？",
+                response="はい、いいですよ！",
+                is_editing=False,
+                contains_japanese=True,
+                tts_in_progress=False,
+                has_tts=False,
+                tts_wav_url="",
+                model="gpt-canned",
+                voice="",
+            ),
         ]
         if USE_CANNED_RESPONSE
         else []
@@ -111,6 +122,10 @@ class State(rx.State):  # type: ignore
             prompt_response.has_tts = False
             prompt_response.tts_wav_url = ""
             prompt_response.voice = ""
+
+    @rx.var  # type: ignore
+    def has_prompts_responses(self) -> bool:
+        return len(self.prompts_responses) > 0
 
     @rx.var  # type: ignore
     def cannot_clear_chat(self) -> bool:
