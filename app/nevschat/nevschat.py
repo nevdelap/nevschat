@@ -45,7 +45,7 @@ def index() -> rx.Component:
         align="center",
         direction="column",
         justify="start",
-        margin_top="2em",
+        margin="2em 1em 1em 1em",
     )
 
 
