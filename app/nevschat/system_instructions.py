@@ -130,4 +130,10 @@ PostgreSQL, or ANSI SQL.
         """,
         True,
     )
+    system_instructions["Web Development"] = (
+        """
+The question is in the context of Web development, CSS, HTML, and Javascript.
+        """,
+        True,
+    )
     return system_instructions
