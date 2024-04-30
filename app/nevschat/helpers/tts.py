@@ -18,7 +18,7 @@ def get_random_voice(male: bool) -> str:
     return "ja-JP-Neural2-B"  # nosec
 
 
-def text_to_wav(text: str, voice: str) -> str:
+def text_to_wav(text: str, voice: str, speaking_rate: float, pitch: float) -> str:
     """
     Write a wave file into assets/wav, if it doesn't already exist.
     """
@@ -45,7 +45,8 @@ def text_to_wav(text: str, voice: str) -> str:
     )
     audio_config = tts.AudioConfig(
         audio_encoding=tts.AudioEncoding.LINEAR16,
-        speaking_rate=0.9,
+        speaking_rate=speaking_rate,
+        pitch=pitch,
     )
     response = client.synthesize_speech(
         input=text_input,

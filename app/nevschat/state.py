@@ -10,8 +10,11 @@ from urllib.parse import urljoin
 import requests
 from nevschat.helpers import contains_japanese
 from nevschat.helpers import delete_old_wav_assets
+from nevschat.helpers import get_random_age
 from nevschat.helpers import get_random_is_male
+from nevschat.helpers import get_random_pitch
 from nevschat.helpers import get_random_profile
+from nevschat.helpers import get_random_speaking_rate
 from nevschat.helpers import get_random_voice
 from nevschat.helpers import strip_non_japanese_and_split_sentences
 from nevschat.helpers import text_to_wav
@@ -91,12 +94,15 @@ class State(rx.State):  # type: ignore
             "趣味は写真撮影とスキーと書道です。今私は焦っています。"
         )
         if USE_CANNED_RESPONSE
-        else get_random_profile(False)
+        else get_random_profile(False, 20)
     )
+    profile_is_male: bool = get_random_is_male()
     profile_has_tts: bool = False
     profile_tts_in_progress: bool = False
     profile_tts_wav_url: str = ""
     profile_voice: str = ""
+    profile_pitch: float = get_random_pitch(get_random_age())
+    profile_speaking_rate: float = get_random_speaking_rate()
     system_instruction: str = DEFAULT_SYSTEM_INSTRUCTION
     terse: bool = False
     voice: str = get_random_voice(False)
@@ -111,12 +117,15 @@ class State(rx.State):  # type: ignore
         return f"私は{self.profile}"
 
     def change_profile(self) -> None:
-        if self.system_instruction == "ランダムな人":
+        if self.using_profile:  # pylint: disable=using-constant-test
+            age = get_random_age()
             self.male = get_random_is_male()
-            self.profile = get_random_profile(self.male)
+            self.profile = get_random_profile(self.male, age)
             self.profile_has_tts = False
             self.profile_tts_in_progress = False
             self.profile_tts_wav_url = ""
+            self.profile_pitch = get_random_pitch(age)
+            self.profile_speaking_rate = get_random_speaking_rate()
             self.profile_voice = ""
             self.voice = get_random_voice(self.male)
         else:
@@ -379,7 +388,18 @@ class State(rx.State):  # type: ignore
         assert -1 <= index < len(self.prompts_responses)
         try:
             print(f"Speaking: {text}")
-            tts_wav_filename = text_to_wav(text, self.voice)
+            if self.using_profile:  # pylint: disable=using-constant-test
+                speaking_rate = self.profile_speaking_rate
+                pitch = self.profile_pitch
+            else:
+                speaking_rate = 1
+                pitch = 0
+            tts_wav_filename = text_to_wav(
+                text,
+                self.voice,
+                speaking_rate,
+                pitch,
+            )
             # Take advantage of a moment for the Nginx to make the wav available
             # by doing some housekeeping.
             delete_old_wav_assets()

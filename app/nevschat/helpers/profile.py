@@ -659,6 +659,32 @@ def get_random_age() -> int:
     return random.randint(3, 50)  # nosec
 
 
+def get_random_pitch(age: int) -> float:
+    match age:
+        case age if 0 <= age < 3:
+            return -10
+        case age if 3 <= age < 6:
+            return -8
+        case age if 6 <= age < 12:
+            return -6
+        case age if 12 <= age < 15:
+            return -4
+        case age if 15 <= age < 18:
+            return -2
+        case age if 18 <= age < 21:
+            return -0
+        case age if 21 <= age < 30:
+            return -8
+        case age if 30 <= age < 40:
+            return -15
+        case _:
+            return -20
+
+
+def get_random_speaking_rate() -> float:
+    return random.uniform(0.7, 1)  # nosec
+
+
 def get_random_city() -> str:
     return CITIES[random.randint(0, len(CITIES) - 1)]  # nosec
 
@@ -717,9 +743,8 @@ test_age_to_kanji(44, "四十四")
 test_age_to_kanji(50, "五十")
 
 
-def get_random_profile(male: bool) -> str:
+def get_random_profile(male: bool, age: int) -> str:
     name = get_random_name(male)
-    age = get_random_age()
     location = get_random_city()
     profession = get_random_profession(age)
     hobbies = get_random_hobbies()

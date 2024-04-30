@@ -5,7 +5,7 @@ from nevschat.state import State
 
 import reflex as rx
 
-VERSION = "0.0.82"
+VERSION = "0.0.83"
 TITLE = f"ネヴの素晴らしいチャットジーピーティー v{VERSION}"
 
 
