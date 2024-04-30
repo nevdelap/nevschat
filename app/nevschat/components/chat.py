@@ -32,7 +32,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     ),
                     color_scheme="red",
                     disabled=State.cannot_clear_or_chatgpt_with_edited_prompt,
-                    margin_top="0.75em",
+                    margin_top="0.5em",
                     on_click=lambda: State.clear_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
                 rx.button(
@@ -43,7 +43,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     ),
                     color_scheme="jade",
                     disabled=State.cannot_clear_or_chatgpt_with_edited_prompt,
-                    margin_top="0.75em",
+                    margin_top="0.5em",
                     on_click=lambda: State.chatgpt_with_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
                 rx.button(
@@ -53,7 +53,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         stroke_width=1.5,
                     ),
                     color_scheme="tomato",
-                    margin_top="0.75em",
+                    margin_top="0.5em",
                     on_click=lambda: State.cancel_edit_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
                 width="100%",
@@ -85,7 +85,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     color_scheme="jade",
                     disabled=State.cannot_enter_new_prompt_or_edit,
                     is_loading=State.processing,
-                    margin_top="0.75em",
+                    margin_top="0.5em",
                     on_click=lambda: State.edit_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                 ),
                 rx.button(
@@ -95,7 +95,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         stroke_width=1.5,
                     ),
                     color_scheme="gray",
-                    margin_top="0.75em",
+                    margin_top="0.5em",
                     on_click=rx.set_clipboard(prompt_response.prompt),
                 ),
                 width="100%",
@@ -186,7 +186,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                             stroke_width=1.5,
                         ),
                         color_scheme="tomato",
-                        margin_top="0.75em",
+                        margin_top="0.5em",
                         on_click=State.cancel_chatgpt,
                     ),
                 ),
@@ -204,7 +204,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                                 prompt_response.tts_in_progress
                                 | prompt_response.has_tts
                             ),
-                            margin_top="0.75em",
+                            margin_top="0.5em",
                             on_click=lambda: State.speak(  # pylint: disable=no-value-for-parameter
                                 index,
                                 prompt_response.response,
@@ -218,7 +218,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                             stroke_width=1.5,
                         ),
                         color_scheme="gray",
-                        margin_top="0.75em",
+                        margin_top="0.5em",
                         on_click=rx.set_clipboard(prompt_response.response),
                     ),
                 ),
@@ -344,7 +344,7 @@ def chat() -> rx.Component:
                             stroke_width=1.5,
                         ),
                         color_scheme="jade",
-                        margin_top="0.75em",
+                        margin_top="0.5em",
                         on_click=lambda: State.change_profile,
                     ),
                     rx.hstack(
@@ -391,7 +391,7 @@ def chat() -> rx.Component:
                 width="100%",
             ),
         ),
-        rx.flex(
+        rx.hstack(
             rx.text_area(
                 border_color="#C2A499",
                 border_style="solid",
@@ -413,6 +413,7 @@ def chat() -> rx.Component:
                 ),
                 color_scheme="red",
                 disabled=State.cannot_chatgpt_with_new_prompt,
+                margin_top="0.5em",
                 on_click=lambda: State.clear_new_prompt,
             ),
             rx.button(
@@ -424,9 +425,9 @@ def chat() -> rx.Component:
                 color_scheme="jade",
                 disabled=State.cannot_chatgpt_with_new_prompt,
                 is_loading=State.processing,
+                margin_top="0.5em",
                 on_click=State.chatgpt,
             ),
-            align="center",
             spacing="2",
             width="100%",
         ),
