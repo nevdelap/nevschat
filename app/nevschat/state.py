@@ -1,6 +1,7 @@
 # mypy: disable-error-code="attr-defined,name-defined"
 
 import os
+import re
 import time
 from collections.abc import AsyncGenerator
 from typing import Any
@@ -243,8 +244,12 @@ class State(rx.State):  # type: ignore
                     self.system_instruction
                 ]
 
+                print(system_instruction)
+
                 if self.using_profile:  # pylint: disable=using-constant-test
-                    system_instruction = system_instruction.format(profile=self.profile)
+                    system_instruction = re.sub(
+                        r"\s+", " ", system_instruction.format(profile=self.profile)
+                    ).strip()
 
                 messages.append({"role": "system", "content": system_instruction})
                 if code_related:
