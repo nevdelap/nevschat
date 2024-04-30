@@ -110,13 +110,19 @@ class State(rx.State):  # type: ignore
         return f"私は{self.profile}"
 
     def change_profile(self) -> None:
-        self.male = get_random_is_male()
-        self.profile = get_random_profile(self.male)
-        self.profile_has_tts = False
-        self.profile_tts_in_progress = False
-        self.profile_tts_wav_url = ""
-        self.profile_voice = ""
-        self.voice = get_random_voice(self.male)
+        if self.system_instruction == "ランダムな人":
+            self.male = get_random_is_male()
+            self.profile = get_random_profile(self.male)
+            self.profile_has_tts = False
+            self.profile_tts_in_progress = False
+            self.profile_tts_wav_url = ""
+            self.profile_voice = ""
+            self.voice = get_random_voice(self.male)
+        else:
+            if not self.male:
+                self.male = True
+                self.profile_voice = ""
+                self.voice = get_random_voice(self.male)
         for prompt_response in self.prompts_responses:
             prompt_response.tts_in_progress = False
             prompt_response.has_tts = False
@@ -205,6 +211,10 @@ class State(rx.State):  # type: ignore
 
     def cancel_control(self, _text: str = "") -> None:
         self.control_down = False
+
+    def set_system_instruction(self, system_instruction: str) -> None:
+        self.system_instruction = system_instruction
+        self.change_profile()
 
     @rx.background  # type: ignore
     async def chatgpt(self) -> AsyncGenerator[None, None]:
