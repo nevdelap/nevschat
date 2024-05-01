@@ -52,7 +52,7 @@ class Profile(rx.Base):  # type: ignore
 
     def render(self, pronoun: str) -> str:
         return (
-            f"{pronoun}{self.name}、{age_to_kanji(self.age)}歳で、"
+            f"{pronoun}は{self.name}、{age_to_kanji(self.age)}歳で、"
             f"{self.city}に住んでいます。{self.profession}で、"
             f"趣味は{self.hobbies}です。今私は{self.mood}"
         )
