@@ -834,9 +834,9 @@ def get_random_profession(age: int) -> str:
         case age if 15 <= age < 18:
             return "高等学生"
         case age if 18 <= age < 21:
-            return "大学生"
-        case _:
-            return PROFESSIONS[random.randint(0, len(PROFESSIONS) - 1)]  # nosec
+            if random.choice([True, False, False]):  # nosec
+                return "大学生"
+    return PROFESSIONS[random.randint(0, len(PROFESSIONS) - 1)]  # nosec
 
 
 def get_random_hobbies(age: int) -> str:
