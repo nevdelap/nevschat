@@ -8,13 +8,9 @@ from typing import Any
 from urllib.parse import urljoin
 
 import requests
+from nevschat.helpers import Profile
 from nevschat.helpers import contains_japanese
 from nevschat.helpers import delete_old_wav_assets
-from nevschat.helpers import get_random_age
-from nevschat.helpers import get_random_is_male
-from nevschat.helpers import get_random_pitch
-from nevschat.helpers import get_random_profile
-from nevschat.helpers import get_random_speaking_rate
 from nevschat.helpers import get_random_voice
 from nevschat.helpers import strip_non_japanese_and_split_sentences
 from nevschat.helpers import text_to_wav
@@ -33,10 +29,6 @@ GPT3_MODEL = "gpt-3.5-turbo"
 
 USE_QUICK_PROMPT = False  # True to add a first prompt, for testing.
 USE_CANNED_RESPONSE = False  # True to add a profile and first response, for testing.
-
-# TODO: move profile stuff into a Profile class, probably with a base class to
-# capture the commonality between it and PromptResponse and remove some of the
-# conditional logic, and other ugliness hacked in this afternoon.
 
 
 class PromptResponse(rx.Base):  # type: ignore
@@ -86,26 +78,10 @@ class State(rx.State):  # type: ignore
     gpt_4: bool = False
     processing: bool = False
     new_prompt: str = "可愛いウサギが好きですか?" if USE_QUICK_PROMPT else ""
-    # TODO: move male and all this profile stuff into a Profile class.
-    male: bool = False
-    profile: str = (
-        (
-            "中西七海、二十五歳で、大阪に住んでいます。バーテンダーで、"
-            "趣味は写真撮影とスキーと書道です。今私は焦っています。"
-        )
-        if USE_CANNED_RESPONSE
-        else get_random_profile(False, 20)
-    )
-    profile_is_male: bool = get_random_is_male()
-    profile_has_tts: bool = False
-    profile_tts_in_progress: bool = False
-    profile_tts_wav_url: str = ""
-    profile_voice: str = ""
-    profile_pitch: float = get_random_pitch(get_random_age())
-    profile_speaking_rate: float = get_random_speaking_rate()
+    non_profile_voice: str = get_random_voice(True)
+    profile: Profile = Profile()
     system_instruction: str = DEFAULT_SYSTEM_INSTRUCTION
     terse: bool = False
-    voice: str = get_random_voice(False)
     warning: str = ""
 
     @rx.var  # type: ignore
@@ -113,26 +89,20 @@ class State(rx.State):  # type: ignore
         return self.system_instruction == "ランダムな人"
 
     @rx.var  # type: ignore
-    def who_am_i(self) -> str:
-        return f"私は{self.profile}"
+    def you_are(self) -> str:
+        return self.profile.render("あなた")
+
+    @rx.var  # type: ignore
+    def i_am(self) -> str:
+        return self.profile.render("私")
 
     def change_profile(self) -> None:
-        if self.using_profile:  # pylint: disable=using-constant-test
-            age = get_random_age()
-            self.male = get_random_is_male()
-            self.profile = get_random_profile(self.male, age)
-            self.profile_has_tts = False
-            self.profile_tts_in_progress = False
-            self.profile_tts_wav_url = ""
-            self.profile_pitch = get_random_pitch(age)
-            self.profile_speaking_rate = get_random_speaking_rate()
-            self.profile_voice = ""
-            self.voice = get_random_voice(self.male)
-        else:
-            if not self.male:
-                self.male = True
-                self.profile_voice = ""
-                self.voice = get_random_voice(self.male)
+        self.profile.new()
+        # TODO: Investigate if this indicates a bug in Reflex or not. It used to
+        # be that these assignments were necessary to trigger UI state changes
+        # but I thought it wasn't the case anymore. It might be because it is
+        # two levels deep.
+        self.profile.male = self.profile.male
         for prompt_response in self.prompts_responses:
             prompt_response.tts_in_progress = False
             prompt_response.has_tts = False
@@ -257,7 +227,7 @@ class State(rx.State):  # type: ignore
 
                 if self.using_profile:  # pylint: disable=using-constant-test
                     system_instruction = re.sub(
-                        r"\s+", " ", system_instruction.format(profile=self.profile)
+                        r"\s+", " ", system_instruction.format(you_are=self.you_are)
                     ).strip()
 
                 messages.append({"role": "system", "content": system_instruction})
@@ -366,7 +336,7 @@ class State(rx.State):  # type: ignore
         async with self:
             assert -1 <= index < len(self.prompts_responses)
             if index == -1:
-                self.profile_tts_in_progress = True
+                self.profile.tts_in_progress = True
             else:
                 self.prompts_responses[index].tts_in_progress = True
         yield
@@ -376,7 +346,7 @@ class State(rx.State):  # type: ignore
             finally:
                 async with self:
                     if index == -1:
-                        self.profile_tts_in_progress = False
+                        self.profile.tts_in_progress = False
                     else:
                         self.prompts_responses[index].tts_in_progress = False
 
@@ -384,19 +354,21 @@ class State(rx.State):  # type: ignore
         """
         Non-async version to call from the async rx.background handlers.
         """
-        assert self.voice != ""
+        assert self.non_profile_voice != ""
         assert -1 <= index < len(self.prompts_responses)
         try:
             print(f"Speaking: {text}")
             if self.using_profile:  # pylint: disable=using-constant-test
-                speaking_rate = self.profile_speaking_rate
-                pitch = self.profile_pitch
+                voice = self.profile.voice
+                speaking_rate = self.profile.speaking_rate
+                pitch = self.profile.pitch
             else:
+                voice = self.non_profile_voice
                 speaking_rate = 1
                 pitch = 0
             tts_wav_filename = text_to_wav(
                 text,
-                self.voice,
+                voice,
                 speaking_rate,
                 pitch,
             )
@@ -414,14 +386,13 @@ class State(rx.State):  # type: ignore
                     if response.status_code >= 200 and response.status_code < 400:
                         print(" OK")
                         if index == -1:
-                            self.profile_tts_wav_url = tts_wav_url
-                            self.profile_voice = self.voice
+                            self.profile.tts_wav_url = tts_wav_url
                             # This causes the rx.audio to be rendered, at which
                             # point we know for sure it has a working url.
-                            self.profile_has_tts = True
+                            self.profile.has_tts = True
                         else:
                             self.prompts_responses[index].tts_wav_url = tts_wav_url
-                            self.prompts_responses[index].voice = self.voice
+                            self.prompts_responses[index].voice = self.non_profile_voice
                             # This causes the rx.audio to be rendered, at which
                             # point we know for sure it has a working url.
                             self.prompts_responses[index].has_tts = True

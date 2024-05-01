@@ -117,3 +117,31 @@ test_strip_non_japanese_split_sentence(
     "日本語あるハー「」。、ab, ()1",
     "日本語あるハー「」。、。()1。",
 )
+
+
+def age_to_kanji(age: int) -> str:
+    kanji_numbers = ["零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"]
+    if age == 0:
+        return kanji_numbers[age]
+    tens = age // 10
+    ones = age % 10
+    return (
+        (kanji_numbers[tens] if age >= 20 else "")
+        + (kanji_numbers[10] if age >= 10 else "")
+        + (kanji_numbers[ones] if ones > 0 else "")
+    )
+
+
+def test_age_to_kanji(age: int, expected: str) -> None:
+    kanji = age_to_kanji(age)
+    assert kanji == expected, f"{age}: {kanji} != {expected}"
+
+
+test_age_to_kanji(0, "零")
+test_age_to_kanji(1, "一")
+test_age_to_kanji(7, "七")
+test_age_to_kanji(10, "十")
+test_age_to_kanji(16, "十六")
+test_age_to_kanji(40, "四十")
+test_age_to_kanji(44, "四十四")
+test_age_to_kanji(50, "五十")

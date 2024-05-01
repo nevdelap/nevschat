@@ -111,7 +111,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                             ),
                             rx.cond(
                                 ~State.using_profile  # pylint: disable=invalid-unary-operand-type
-                                | State.male,
+                                | State.profile.male,
                                 rx.box(
                                     rx.markdown(
                                         prompt_response.response,
@@ -273,10 +273,10 @@ def chat() -> rx.Component:
                     rx.box(
                         rx.cond(
                             ~State.using_profile  # pylint: disable=invalid-unary-operand-type
-                            | State.male,
+                            | State.profile.male,
                             rx.box(
                                 rx.markdown(
-                                    State.who_am_i,
+                                    State.i_am,
                                     width="100%",
                                 ),
                                 background_color="#e1f6fd",
@@ -288,7 +288,7 @@ def chat() -> rx.Component:
                             ),
                             rx.box(
                                 rx.markdown(
-                                    State.who_am_i,
+                                    State.i_am,
                                     width="100%",
                                 ),
                                 background_color="#fee9f5",
@@ -301,9 +301,9 @@ def chat() -> rx.Component:
                             ),
                         ),
                         rx.cond(
-                            State.profile_has_tts,
+                            State.profile.has_tts,
                             rx.box(
-                                rx.text(State.profile_voice),
+                                rx.text(State.profile.voice),
                                 color="rgba(0, 0, 0, 0.4)",
                                 font_size="0.4em",
                                 padding_bottom="1em",
@@ -316,7 +316,7 @@ def chat() -> rx.Component:
                         position="relative",
                     ),
                     rx.cond(
-                        State.profile_tts_in_progress,
+                        State.profile.tts_in_progress,
                         rx.center(
                             rx.chakra.spinner(
                                 color="#888",
@@ -326,11 +326,11 @@ def chat() -> rx.Component:
                         ),
                     ),
                     rx.cond(
-                        State.profile_has_tts,
+                        State.profile.has_tts,
                         rx.audio(
                             height="32px",
                             playing=True,
-                            url=State.profile_tts_wav_url,
+                            url=State.profile.tts_wav_url,
                             width="100%",
                         ),
                     ),
@@ -356,11 +356,11 @@ def chat() -> rx.Component:
                             ),
                             color_scheme="blue",
                             disabled=(
-                                State.profile_tts_in_progress | State.profile_has_tts
+                                State.profile.tts_in_progress | State.profile.has_tts
                             ),
                             on_click=lambda: State.speak(  # pylint: disable=no-value-for-parameter
                                 -1,
-                                State.who_am_i,
+                                State.i_am,
                             ),
                         ),
                         rx.button(
@@ -371,7 +371,7 @@ def chat() -> rx.Component:
                             ),
                             color_scheme="gray",
                             on_click=rx.set_clipboard(
-                                State.who_am_i,
+                                State.i_am,
                             ),
                         ),
                         width="100%",
