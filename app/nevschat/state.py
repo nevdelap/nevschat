@@ -412,7 +412,7 @@ class State(rx.State):  # type: ignore
                 try:
                     response = requests.head(full_tts_wav_url, timeout=10.0)
                     if response.status_code >= 200 and response.status_code < 400:
-                        print("OK")
+                        print(" OK")
                         if index == -1:
                             self.profile_tts_wav_url = tts_wav_url
                             self.profile_voice = self.voice
@@ -436,7 +436,7 @@ class State(rx.State):  # type: ignore
             self.warning = str(ex)
             print(self.warning)
         else:
-            print("NOT OK")
+            print(" NOT OK")
             self.warning = (
                 "Some problem prevented the audio from being available to play."
             )

@@ -1,5 +1,8 @@
 import random
 
+MIN_AGE = 3
+MAX_AGE = 60
+
 FAMILY_NAMES = [
     "三宅",
     "三浦",
@@ -656,33 +659,34 @@ def get_random_name(male: bool) -> str:
 
 
 def get_random_age() -> int:
-    return random.randint(3, 50)  # nosec
+    return random.randint(MIN_AGE, MAX_AGE)  # nosec
 
 
 def get_random_pitch(age: int) -> float:
+    assert MIN_AGE <= age <= MAX_AGE
     match age:
-        case age if 0 <= age < 3:
-            return -10
         case age if 3 <= age < 6:
-            return -8
+            return 15
         case age if 6 <= age < 12:
-            return -6
+            return 10
         case age if 12 <= age < 15:
-            return -4
+            return 5
         case age if 15 <= age < 18:
-            return -2
+            return 2
         case age if 18 <= age < 21:
-            return -0
+            return 0
         case age if 21 <= age < 30:
-            return -8
+            return -5
         case age if 30 <= age < 40:
+            return -10
+        case age if 40 <= age < 50:
             return -15
         case _:
             return -20
 
 
 def get_random_speaking_rate() -> float:
-    return random.uniform(0.7, 1)  # nosec
+    return random.uniform(0.7, 1.1)  # nosec
 
 
 def get_random_city() -> str:

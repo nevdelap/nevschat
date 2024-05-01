@@ -24,7 +24,7 @@ def text_to_wav(text: str, voice: str, speaking_rate: float, pitch: float) -> st
     """
     try:
         hash_ = hashlib.md5(text.encode(encoding="utf-8")).hexdigest()  # nosec
-        tts_wav_filename = f"assets/wav/tts_{voice}_{hash_}.wav"
+        tts_wav_filename = f"assets/wav/tts_{voice}_{speaking_rate}_{pitch}_{hash_}.wav"
         if os.path.isfile(tts_wav_filename):
             print("Skipping tts.")
             return tts_wav_filename
