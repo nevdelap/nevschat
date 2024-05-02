@@ -44,6 +44,7 @@ class Profile(rx.Base):  # type: ignore
         self.city = get_random_city()
         self.profession = get_random_profession(self.age)
         self.hobbies = get_random_hobbies(self.age)
+        self.foods_and_drinks = get_random_foods_and_drinks()
         self.mood = get_random_mood()
         self.pitch = get_random_pitch(self.age)
         self.speaking_rate = get_random_speaking_rate()
