@@ -350,7 +350,8 @@ def chat() -> rx.Component:
                                 ),
                                 color_scheme="blue",
                                 disabled=(
-                                    State.profile.tts_in_progress | State.profile.has_tts
+                                    State.profile.tts_in_progress
+                                    | State.profile.has_tts
                                 ),
                                 on_click=lambda: State.speak(  # pylint: disable=no-value-for-parameter
                                     -1,

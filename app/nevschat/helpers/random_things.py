@@ -1024,9 +1024,9 @@ def get_random_pitch(age: int) -> float:
     assert MIN_AGE <= age <= MAX_AGE
     match age:
         case age if age < 12:
-            return 10
+            return 6
         case age if 12 <= age < 15:
-            return 5
+            return 4
         case age if 15 <= age < 18:
             return 2
         case age if 18 <= age < 21:
@@ -1042,4 +1042,4 @@ def get_random_pitch(age: int) -> float:
 
 
 def get_random_speaking_rate() -> float:
-    return random.uniform(0.7, 1.1)  # nosec
+    return random.uniform(0.6, 1.2)  # nosec
