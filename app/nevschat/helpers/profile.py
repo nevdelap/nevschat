@@ -4,13 +4,13 @@ import time
 import reflex as rx
 
 from .japanese_text import age_to_kanji
+from .random_things import get_pitch
 from .random_things import get_random_age
 from .random_things import get_random_city
 from .random_things import get_random_foods_and_drinks
 from .random_things import get_random_hobbies
 from .random_things import get_random_mood
 from .random_things import get_random_name
-from .random_things import get_random_pitch
 from .random_things import get_random_profession
 from .random_things import get_random_speaking_rate
 from .tts import get_random_voice
@@ -32,7 +32,7 @@ class Profile(rx.Base):  # type: ignore
     hobbies = get_random_hobbies(age)
     foods_and_drinks = get_random_foods_and_drinks()
     mood = get_random_mood()
-    pitch = get_random_pitch(age)
+    pitch = get_pitch(male, age)
     speaking_rate = get_random_speaking_rate()
     voice = get_random_voice(male)
     # Set by tts.
@@ -49,7 +49,7 @@ class Profile(rx.Base):  # type: ignore
         self.hobbies = get_random_hobbies(self.age)
         self.foods_and_drinks = get_random_foods_and_drinks()
         self.mood = get_random_mood()
-        self.pitch = get_random_pitch(self.age)
+        self.pitch = get_pitch(self.male, self.age)
         self.speaking_rate = get_random_speaking_rate()
         self.voice = get_random_voice(self.male)
         self.tts_in_progress = False

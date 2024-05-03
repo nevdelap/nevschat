@@ -5,6 +5,8 @@ random.seed(time.time())
 
 MIN_AGE = 3
 MAX_AGE = 60
+MALE_PITCH_CHANGE_SEMITONES = 12
+FEMALE_PITCH_CHANGE_SEMITONES = 6
 
 FAMILY_NAMES = [
     "三宅",
@@ -1020,25 +1022,56 @@ def get_random_mood() -> str:
     return MOODS[random.randint(0, len(MOODS) - 1)]  # nosec
 
 
-def get_random_pitch(age: int) -> float:
+def get_pitch(male: bool, age: int) -> float:
     assert MIN_AGE <= age <= MAX_AGE
     match age:
-        case age if age < 12:
-            return 6
-        case age if 12 <= age < 15:
-            return 4
-        case age if 15 <= age < 18:
-            return 2
-        case age if 18 <= age < 21:
+        case age if age < 18:
+            x1, y1 = MIN_AGE, (
+                MALE_PITCH_CHANGE_SEMITONES if male else FEMALE_PITCH_CHANGE_SEMITONES
+            )
+            x2, y2 = 18, 0
+            m = (y2 - y1) / (x2 - x1)
+            b = y1 - m * x1
+            return m * age + b
+        case age if 18 <= age < 40:
             return 0
-        case age if 21 <= age < 30:
-            return -5
-        case age if 30 <= age < 40:
-            return -10
-        case age if 40 <= age < 50:
-            return -15
         case _:
-            return -20
+            x1, y1 = 40, 0
+            x2, y2 = MAX_AGE, -20
+            m = (y2 - y1) / (x2 - x1)
+            b = y1 - m * x1
+            return m * age + b
+
+
+def test_get_pitch(male: bool, age: int, expected: float) -> None:
+    pitch = get_pitch(male, age)
+    assert round(pitch, 1) == expected, f"{age}: {round(pitch, 1)} != {expected}"
+
+
+male = True
+test_get_pitch(male, 3, 12)
+test_get_pitch(male, 4, 11.2)
+test_get_pitch(male, 10, 6.4)
+test_get_pitch(male, 14, 3.2)
+test_get_pitch(male, 18, 0)
+test_get_pitch(male, 25, 0)
+test_get_pitch(male, 39, 0)
+test_get_pitch(male, 40, 0)
+test_get_pitch(male, 45, -5)
+test_get_pitch(male, 50, -10)
+test_get_pitch(male, 60, -20)
+male = False
+test_get_pitch(male, 3, 6)
+test_get_pitch(male, 4, 5.6)
+test_get_pitch(male, 10, 3.2)
+test_get_pitch(male, 14, 1.6)
+test_get_pitch(male, 18, 0)
+test_get_pitch(male, 25, 0)
+test_get_pitch(male, 39, 0)
+test_get_pitch(male, 40, 0)
+test_get_pitch(male, 45, -5)
+test_get_pitch(male, 50, -10)
+test_get_pitch(male, 60, -20)
 
 
 def get_random_speaking_rate() -> float:

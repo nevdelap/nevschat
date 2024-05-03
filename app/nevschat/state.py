@@ -82,7 +82,7 @@ class State(rx.State):  # type: ignore
     profile: Profile = Profile()
     system_instruction: str = DEFAULT_SYSTEM_INSTRUCTION
     terse: bool = False
-    warning: str = ""
+    warning: str
 
     @rx.var  # type: ignore
     def using_profile(self) -> bool:
