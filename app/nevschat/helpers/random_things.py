@@ -1,4 +1,7 @@
 import random
+import time
+
+random.seed(time.time())
 
 MIN_AGE = 3
 MAX_AGE = 60

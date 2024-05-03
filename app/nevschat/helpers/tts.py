@@ -3,8 +3,11 @@
 import hashlib
 import os
 import random
+import time
 
 import google.cloud.texttospeech as tts
+
+random.seed(time.time())
 
 
 def get_random_voice(male: bool) -> str:

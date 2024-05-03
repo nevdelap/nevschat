@@ -1,4 +1,5 @@
 import random
+import time
 
 import reflex as rx
 
@@ -13,6 +14,8 @@ from .random_things import get_random_pitch
 from .random_things import get_random_profession
 from .random_things import get_random_speaking_rate
 from .tts import get_random_voice
+
+random.seed(time.time())
 
 
 def get_random_is_male() -> bool:
