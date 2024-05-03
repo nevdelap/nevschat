@@ -165,15 +165,6 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                             width="100%",
                         ),
                     ),
-                    rx.cond(
-                        prompt_response.has_tts,
-                        rx.audio(
-                            height="32px",
-                            playing=True,
-                            url=prompt_response.tts_wav_url,
-                            width="100%",
-                        ),
-                    ),
                     spacing="2",
                     width="100%",
                 ),
@@ -224,6 +215,15 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                 ),
                 width="100%",
             ),
+            rx.cond(
+                prompt_response.has_tts,
+                rx.audio(
+                    height="32px",
+                    playing=True,
+                    url=prompt_response.tts_wav_url,
+                    width="100%",
+                ),
+            ),
             spacing="2",
             width="100%",
         ),
@@ -268,117 +268,119 @@ def chat() -> rx.Component:
         ),
         rx.cond(
             State.using_profile,
-            rx.hstack(
-                rx.vstack(
-                    rx.box(
-                        rx.cond(
-                            ~State.using_profile  # pylint: disable=invalid-unary-operand-type
-                            | State.profile.male,
-                            rx.box(
-                                rx.markdown(
-                                    State.i_am,
+            rx.vstack(
+                rx.hstack(
+                    rx.vstack(
+                        rx.box(
+                            rx.cond(
+                                ~State.using_profile  # pylint: disable=invalid-unary-operand-type
+                                | State.profile.male,
+                                rx.box(
+                                    rx.markdown(
+                                        State.i_am,
+                                        width="100%",
+                                    ),
+                                    background_color="#e1f6fd",
+                                    border_color="#60b3d7",
+                                    border_style="solid",
+                                    border_width="3px",
+                                    min_width="10em",
+                                    padding="0 1em 0 1em",
                                     width="100%",
                                 ),
-                                background_color="#e1f6fd",
-                                border_color="#60b3d7",
-                                border_style="solid",
-                                border_width="3px",
-                                min_width="10em",
-                                padding="0 1em 0 1em",
-                                width="100%",
+                                rx.box(
+                                    rx.markdown(
+                                        State.i_am,
+                                        width="100%",
+                                    ),
+                                    background_color="#fee9f5",
+                                    border_color="#dd93c2",
+                                    border_radius="10px",
+                                    border_style="solid",
+                                    border_width="3px",
+                                    min_width="10em",
+                                    padding="0 1em 0 1em",
+                                    width="100%",
+                                ),
                             ),
-                            rx.box(
-                                rx.markdown(
-                                    State.i_am,
-                                    width="100%",
+                            rx.cond(
+                                State.profile.has_tts,
+                                rx.box(
+                                    rx.text(State.profile.voice),
+                                    color="rgba(0, 0, 0, 0.4)",
+                                    font_size="0.4em",
+                                    padding_bottom="1em",
+                                    padding_right="1.5em",
+                                    position="absolute",
+                                    bottom="0",
+                                    right="0",
                                 ),
-                                background_color="#fee9f5",
-                                border_color="#dd93c2",
-                                border_radius="10px",
-                                border_style="solid",
-                                border_width="3px",
-                                min_width="10em",
-                                padding="0 1em 0 1em",
+                            ),
+                            position="relative",
+                        ),
+                        rx.cond(
+                            State.profile.tts_in_progress,
+                            rx.center(
+                                rx.chakra.spinner(
+                                    color="#888",
+                                    size="md",
+                                ),
                                 width="100%",
                             ),
                         ),
-                        rx.cond(
-                            State.profile.has_tts,
-                            rx.box(
-                                rx.text(State.profile.voice),
-                                color="rgba(0, 0, 0, 0.4)",
-                                font_size="0.4em",
-                                padding_bottom="1em",
-                                padding_right="1.5em",
-                                position="absolute",
-                                bottom="0",
-                                right="0",
-                            ),
-                        ),
-                        position="relative",
+                        spacing="2",
                     ),
-                    rx.cond(
-                        State.profile.tts_in_progress,
-                        rx.center(
-                            rx.chakra.spinner(
-                                color="#888",
-                                size="md",
+                    rx.vstack(
+                        rx.button(
+                            rx.icon(
+                                tag="refresh-cw",
+                                size=20,
+                                stroke_width=1.5,
+                            ),
+                            color_scheme="jade",
+                            margin_top="0.5em",
+                            on_click=lambda: State.change_profile,
+                        ),
+                        rx.hstack(
+                            rx.button(
+                                rx.icon(
+                                    tag="volume-2",
+                                    size=20,
+                                    stroke_width=1.5,
+                                ),
+                                color_scheme="blue",
+                                disabled=(
+                                    State.profile.tts_in_progress | State.profile.has_tts
+                                ),
+                                on_click=lambda: State.speak(  # pylint: disable=no-value-for-parameter
+                                    -1,
+                                    State.i_am,
+                                ),
+                            ),
+                            rx.button(
+                                rx.icon(
+                                    tag="copy",
+                                    size=20,
+                                    stroke_width=1.5,
+                                ),
+                                color_scheme="gray",
+                                on_click=rx.set_clipboard(
+                                    State.i_am,
+                                ),
                             ),
                             width="100%",
                         ),
+                        spacing="2",
                     ),
-                    rx.cond(
-                        State.profile.has_tts,
-                        rx.audio(
-                            height="32px",
-                            playing=True,
-                            url=State.profile.tts_wav_url,
-                            width="100%",
-                        ),
-                    ),
-                    spacing="2",
                 ),
-                rx.vstack(
-                    rx.button(
-                        rx.icon(
-                            tag="refresh-cw",
-                            size=20,
-                            stroke_width=1.5,
-                        ),
-                        color_scheme="jade",
-                        margin_top="0.5em",
-                        on_click=lambda: State.change_profile,
-                    ),
-                    rx.hstack(
-                        rx.button(
-                            rx.icon(
-                                tag="volume-2",
-                                size=20,
-                                stroke_width=1.5,
-                            ),
-                            color_scheme="blue",
-                            disabled=(
-                                State.profile.tts_in_progress | State.profile.has_tts
-                            ),
-                            on_click=lambda: State.speak(  # pylint: disable=no-value-for-parameter
-                                -1,
-                                State.i_am,
-                            ),
-                        ),
-                        rx.button(
-                            rx.icon(
-                                tag="copy",
-                                size=20,
-                                stroke_width=1.5,
-                            ),
-                            color_scheme="gray",
-                            on_click=rx.set_clipboard(
-                                State.i_am,
-                            ),
-                        ),
+                rx.cond(
+                    State.profile.has_tts,
+                    rx.audio(
+                        height="32px",
+                        playing=True,
+                        url=State.profile.tts_wav_url,
                         width="100%",
                     ),
-                    spacing="2",
                 ),
             ),
         ),
