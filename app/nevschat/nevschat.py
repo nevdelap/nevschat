@@ -239,14 +239,14 @@ def index() -> rx.Component:
                     update_selection_state();
                 """
             ),
-            max_width="800px",
             spacing="2",
             width="100%",
         ),
         align="center",
         direction="column",
         justify="start",
-        margin="2em 1em 1em 1em",
+        max_width="800px",
+        margin="2em 1em 5em 1em",
     )
 
 
