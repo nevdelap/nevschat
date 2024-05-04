@@ -3,7 +3,6 @@
 import os
 import re
 import time
-from collections.abc import AsyncGenerator
 from typing import Any
 from urllib.parse import urljoin
 
@@ -44,6 +43,10 @@ class PromptResponse(rx.Base):  # type: ignore
 
 
 class State(rx.State):  # type: ignore
+
+    ####################################################################################
+    # State
+
     prompts_responses: list[PromptResponse] = (
         [
             PromptResponse(
@@ -76,6 +79,15 @@ class State(rx.State):  # type: ignore
     control_down: bool = False
     edited_prompt: str
     gpt_4: bool = False
+    # TODO: Factor out.
+    learning_aide_system_instruction: str
+    learning_aide_prompt: str
+    learning_aide_response: str
+    learning_aide_tts_in_progress: bool = False
+    learning_aide_has_tts: bool = False
+    learning_aide_tts_wav_url: str = ""
+    learning_aide_model: str
+    learning_aide_voice: str = ""
     processing: bool = False
     new_prompt: str = "可愛いウサギが好きですか?" if USE_QUICK_PROMPT else ""
     non_profile_voice: str = get_random_voice(True)
@@ -95,6 +107,9 @@ class State(rx.State):  # type: ignore
     @rx.var  # type: ignore
     def i_am(self) -> str:
         return self.profile.render("私")
+
+    ####################################################################################
+    # TODO Classify And Order Better
 
     def change_profile(self) -> None:
         self.profile.new()
@@ -192,12 +207,21 @@ class State(rx.State):  # type: ignore
     def cancel_control(self, _text: str = "") -> None:
         self.control_down = False
 
-    def set_system_instruction(self, system_instruction: str) -> None:
-        self.system_instruction = system_instruction
-        self.change_profile()
+    @rx.background  # type: ignore
+    async def set_system_instruction(self, system_instruction: str) -> Any:
+        async with self:
+            self.system_instruction = system_instruction
+            self.change_profile()
+        # This needs to run in the background so that when this ultimately runs
+        # it is after the UI has updated and shown the buttons that it will
+        # disable.
+        return State.trigger_clear_learning_aide_prompt
+
+    ####################################################################################
+    # ChatGPT
 
     @rx.background  # type: ignore
-    async def chatgpt(self) -> AsyncGenerator[None, None]:
+    async def chatgpt(self) -> Any:
         try:
             async with self:
                 assert self.new_prompt != ""
@@ -272,7 +296,7 @@ class State(rx.State):  # type: ignore
             session = OpenAI(
                 timeout=10.0,
             ).chat.completions.create(
-                model=os.getenv("OPENAI_MODEL", model),
+                model=model,
                 messages=messages,  # type: ignore
                 stream=True,  # Enable streaming
             )
@@ -294,7 +318,7 @@ class State(rx.State):  # type: ignore
                         )
                     if not self.processing:
                         # It's been cancelled.
-                        self.prompts_responses[-1].response += " (cancelled)"
+                        self.prompts_responses[-1].response += " (キャンセル）"
                         break
 
         except Exception as ex:  # pylint: disable=broad-exception-caught
@@ -326,17 +350,23 @@ class State(rx.State):  # type: ignore
     def cancel_chatgpt(self) -> None:
         self.processing = False
 
-    def clear_chat(self) -> None:
+    def clear_chat(self) -> Any:
         self.prompts_responses = []
         self.change_profile()
         # self.invariant()
+        return self.trigger_clear_learning_aide_prompt()
+
+    ####################################################################################
+    # Text To Speech
 
     @rx.background  # type: ignore
-    async def speak(self, index: int, text: str) -> AsyncGenerator[None, None]:
+    async def speak(self, index: int, text: str) -> Any:
         async with self:
-            assert -1 <= index < len(self.prompts_responses)
+            assert -2 <= index < len(self.prompts_responses)
             if index == -1:
                 self.profile.tts_in_progress = True
+            elif index == -2:
+                self.learning_aide_tts_in_progress = True
             else:
                 self.prompts_responses[index].tts_in_progress = True
         yield
@@ -347,6 +377,8 @@ class State(rx.State):  # type: ignore
                 async with self:
                     if index == -1:
                         self.profile.tts_in_progress = False
+                    if index == -2:
+                        self.learning_aide_tts_in_progress = False
                     else:
                         self.prompts_responses[index].tts_in_progress = False
 
@@ -355,10 +387,10 @@ class State(rx.State):  # type: ignore
         Non-async version to call from the async rx.background handlers.
         """
         assert self.non_profile_voice != ""
-        assert -1 <= index < len(self.prompts_responses)
+        assert -2 <= index < len(self.prompts_responses)
         try:
             print(f"Speaking: {text}")
-            if self.using_profile:  # pylint: disable=using-constant-test
+            if index == -1:  # pylint: disable=using-constant-test
                 voice = self.profile.voice
                 speaking_rate = self.profile.speaking_rate
                 pitch = self.profile.pitch
@@ -390,6 +422,12 @@ class State(rx.State):  # type: ignore
                             # This causes the rx.audio to be rendered, at which
                             # point we know for sure it has a working url.
                             self.profile.has_tts = True
+                        elif index == -2:
+                            self.learning_aide_tts_wav_url = tts_wav_url
+                            self.learning_aide_voice = self.non_profile_voice
+                            # This causes the rx.audio to be rendered, at which
+                            # point we know for sure it has a working url.
+                            self.learning_aide_has_tts = True
                         else:
                             self.prompts_responses[index].tts_wav_url = tts_wav_url
                             self.prompts_responses[index].voice = self.non_profile_voice
@@ -412,6 +450,146 @@ class State(rx.State):  # type: ignore
                 "Some problem prevented the audio from being available to play."
             )
             print(self.warning)
+
+    ####################################################################################
+    # Learning Aide
+
+    @rx.var  # type: ignore
+    def learning_aide_response_contains_japanese(self) -> Any:
+        return contains_japanese(self.learning_aide_response)
+
+    def trigger_set_learning_aide_prompt(self) -> Any:
+        return rx.call_script(
+            "get_selected_text_and_clear()",
+            callback=State.set_learning_aide_prompt,
+        )
+
+    def trigger_clear_learning_aide_prompt(self, _: Any = None) -> Any:
+        return rx.call_script(
+            "get_selected_text_and_clear()",
+            callback=State.clear_learning_aide_prompt,
+        )
+
+    @rx.background  # type: ignore
+    async def set_learning_aide_prompt(self, text) -> Any:
+        async with self:
+            self.learning_aide_prompt = text
+        return State.chatgpt_learning_aide
+
+    def clear_learning_aide_prompt(self, _: Any = None) -> None:
+        self.learning_aide_system_instruction = ""
+        self.learning_aide_prompt = ""
+        self.learning_aide_response = ""
+        self.learning_aide_tts_in_progress = False
+        self.learning_aide_has_tts = False
+        self.learning_aide_tts_wav_url = ""
+        self.learning_aide_model = ""
+        self.learning_aide_voice = ""
+
+    def explain_grammer(self) -> Any:
+        return self.do_learning_aide(
+            GPT4_MODEL, SYSTEM_INSTRUCTIONS["Explain Grammar"][0]
+        )
+
+    def explain_usage(self) -> Any:
+        return self.do_learning_aide(
+            GPT3_MODEL, SYSTEM_INSTRUCTIONS["Explain Usage"][0]
+        )
+
+    def give_examples_of_same_meaning(self) -> Any:
+        return self.do_learning_aide(
+            GPT3_MODEL,
+            SYSTEM_INSTRUCTIONS[
+                "日本語: Give varied ways of expressing the given meaning."
+            ][0],
+        )
+
+    def give_examples_of_opposite_meaning(self) -> Any:
+        return self.do_learning_aide(
+            GPT3_MODEL,
+            SYSTEM_INSTRUCTIONS[
+                (
+                    "日本語: Give varied ways of expressing "
+                    + "the opposite of the given meaning."
+                )
+            ][0],
+        )
+
+    def translate(self) -> Any:
+        return self.do_learning_aide(
+            GPT3_MODEL,
+            (
+                "Translate the given Japanese text into English. "
+                + "NEVER give pronunciation. NEVER give romaji."
+            ),
+        )
+
+    def do_learning_aide(self, model: str, system_instruction: str) -> Any:
+        self.learning_aide_model = model
+        self.learning_aide_system_instruction = system_instruction
+        return self.trigger_set_learning_aide_prompt()
+
+    @rx.background  # type: ignore
+    async def chatgpt_learning_aide(self) -> Any:
+
+        try:
+            async with self:
+                learning_aide_system_instruction = self.learning_aide_system_instruction
+                learning_aid_prompt = self.learning_aide_prompt
+                model = self.learning_aide_model
+
+                if learning_aid_prompt != "":
+                    self.processing = True
+                    self.warning = ""
+                    self.learning_aide_response = ""
+                    self.learning_aide_has_tts = False
+                    self.learning_aide_tts_wav_url = ""
+
+            if learning_aid_prompt != "":
+                messages = [
+                    {
+                        "role": "system",
+                        "content": learning_aide_system_instruction,
+                    },
+                    {"role": "user", "content": learning_aid_prompt},
+                ]
+
+                session = OpenAI(
+                    timeout=10.0,
+                ).chat.completions.create(
+                    model=model,
+                    messages=messages,  # type: ignore
+                    stream=True,  # Enable streaming
+                )
+
+                # pylint error: https://github.com/openai/openai-python/issues/870
+                for item in session:  # pylint: disable=not-an-iterable
+                    async with self:
+                        response = item.choices[0].delta.content  # type: ignore
+                        if response:
+                            self.learning_aide_response += response
+                        if not self.processing:
+                            # It's been cancelled.
+                            self.learning_aide_response += " (キャンセル）"
+                            break
+
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            async with self:
+                self.warning = str(ex)
+                print(self.warning)
+        finally:
+            async with self:
+                self.processing = False
+
+    @rx.var  # type: ignore
+    def has_learning_aide_response(self) -> bool:
+        return self.learning_aide_response != ""
+
+    def clear_learning_aide_response(self) -> Any:
+        return self.trigger_clear_learning_aide_prompt()
+
+    ####################################################################################
+    # Built-In Test
 
     # TODO: Review and add what is missing.
     def invariant(self) -> None:
