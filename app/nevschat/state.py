@@ -375,7 +375,7 @@ class State(rx.State):  # type: ignore
                 async with self:
                     if index == -1:
                         self.profile.tts_in_progress = False
-                    if index == -2:
+                    elif index == -2:
                         self.learning_aide_tts_in_progress = False
                     else:
                         self.prompts_responses[index].tts_in_progress = False
@@ -388,14 +388,17 @@ class State(rx.State):  # type: ignore
         assert -2 <= index < len(self.prompts_responses)
         try:
             print(f"Speaking: {text}")
-            if index == -1:  # pylint: disable=using-constant-test
+            if (
+                not self.using_profile  # pylint: disable=using-constant-test
+                or index == -2
+            ):
+                voice = self.non_profile_voice
+                speaking_rate = float(1)
+                pitch = float(0)
+            else:
                 voice = self.profile.voice
                 speaking_rate = self.profile.speaking_rate
                 pitch = self.profile.pitch
-            else:
-                voice = self.non_profile_voice
-                speaking_rate = 1
-                pitch = 0
             tts_wav_filename = text_to_wav(
                 text,
                 voice,
