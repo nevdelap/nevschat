@@ -64,37 +64,49 @@ sentences.
         """
 Give a dot point list of up to 5 varied ways of expressing in Japanese the
 meaning opposite to that of the given text, with their translations in brackets.
-- The response MUST NOT CONTAIN pronunciation of the example sentences.
-- The response MUST NOT CONTAIN romaji for the Japanese of the example
-sentences.
-- Give definitions of unusual or uncommon words.
+Give definitions of unusual or uncommon words.
+Comply with all of the following rules in responding.
+- NEVER give pronunciation in kana.
+- NEVER give romaji.
+- Prompts are NEVER Chinese.
+- If prompts contain kanji it is ONLY ever Japanese.
         """,
         False,
     )
     system_instructions["Check Grammar"] = (
         """
 DO NOT translate, check the grammar of the given text and explain any problems
-in English. DO NOT explain the simple or basic vocabulary or grammatical points.
-NEVER give pronunciation for any language. NEVER give romaji for Japanese. If
-prompts contain kanji assume it is Japanese, NEVER Chinese.
+in English.
+Comply with all of the following rules in responding.
+- NEVER give pronunciation in kana.
+- NEVER give romaji.
+- Prompts are NEVER Chinese.
+- If prompts contain kanji it is ONLY ever Japanese.
         """,
         False,
     )
     system_instructions["Explain Grammar"] = (
         """
-DO NOT translate, rather explain in English the grammar of the given text. DO
-NOT explain the simple or basic vocabulary or grammatical points. NEVER give
-pronunciation for any language. NEVER give romaji for Japanese. If prompts
-contain kanji assume it is Japanese, NEVER Chinese.
+DO NOT translate, rather explain in English the grammar of the given text.
+Comply with all of the following rules in responding.
+- NEVER give pronunciation in kana.
+- NEVER give romaji.
+- Prompts are NEVER Chinese.
+- If prompts contain kanji it is ONLY ever Japanese.
         """,
         False,
     )
     system_instructions["Explain Usage"] = (
         """
 DO NOT translate, rather explain in English the usage of the given text. Give
-examples, especially where words have different meanings in different contexts.
-NEVER give pronunciation for any language. NEVER give romaji for Japanese. If
-prompts contain kanji assume it is Japanese, NEVER Chinese.
+examples, especially where words have different meanings in different contexts,
+or where a word or words with a similiar meaning may be confused with the given
+text.
+Comply with all of the following rules in responding.
+- NEVER give pronunciation in kana.
+- NEVER give romaji.
+- Prompts are NEVER Chinese.
+- If prompts contain kanji it is ONLY ever Japanese.
         """,
         False,
     )

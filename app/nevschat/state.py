@@ -247,12 +247,10 @@ class State(rx.State):  # type: ignore
                     self.system_instruction
                 ]
 
-                print(system_instruction)
-
                 if self.using_profile:  # pylint: disable=using-constant-test
-                    system_instruction = re.sub(
-                        r"\s+", " ", system_instruction.format(you_are=self.you_are)
-                    ).strip()
+                    system_instruction = system_instruction.format(you_are=self.you_are)
+
+                system_instruction = re.sub(r"\s+", " ", system_instruction).strip()
 
                 messages.append({"role": "system", "content": system_instruction})
                 if code_related:
@@ -538,6 +536,10 @@ class State(rx.State):  # type: ignore
                 learning_aid_prompt = self.learning_aide_prompt
                 model = self.learning_aide_model
 
+                learning_aide_system_instruction = re.sub(
+                    r"\s+", " ", learning_aide_system_instruction
+                ).strip()
+
                 if learning_aid_prompt != "":
                     self.processing = True
                     self.warning = ""
@@ -553,6 +555,8 @@ class State(rx.State):  # type: ignore
                     },
                     {"role": "user", "content": learning_aid_prompt},
                 ]
+
+                print(f"Model: {model}\nMessages: {messages}")
 
                 session = OpenAI(
                     timeout=10.0,
