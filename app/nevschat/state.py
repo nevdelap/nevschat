@@ -7,7 +7,6 @@ from typing import Any
 from urllib.parse import urljoin
 
 import requests
-from nevschat.helpers import Profile
 from nevschat.helpers import contains_japanese
 from nevschat.helpers import delete_old_wav_assets
 from nevschat.helpers import get_random_voice
@@ -15,6 +14,7 @@ from nevschat.helpers import strip_non_japanese_and_split_sentences
 from nevschat.helpers import text_to_wav
 from nevschat.system_instructions import get_system_instructions
 from openai import OpenAI
+from .profile import Profile
 from rxconfig import config
 from rxconfig import site_runtime_assets_url
 

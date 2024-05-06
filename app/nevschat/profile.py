@@ -3,17 +3,17 @@ import time
 
 import reflex as rx
 
-from .japanese_text import age_to_kanji
-from .random_things import get_pitch
-from .random_things import get_random_age
-from .random_things import get_random_city
-from .random_things import get_random_foods_and_drinks
-from .random_things import get_random_hobbies
-from .random_things import get_random_mood
-from .random_things import get_random_name
-from .random_things import get_random_profession
-from .random_things import get_random_speaking_rate
-from .tts import get_random_voice
+from nevschat.helpers import age_to_kanji
+from nevschat.helpers import get_pitch
+from nevschat.helpers import get_random_age
+from nevschat.helpers import get_random_city
+from nevschat.helpers import get_random_foods_and_drinks
+from nevschat.helpers import get_random_hobbies
+from nevschat.helpers import get_random_mood
+from nevschat.helpers import get_random_name
+from nevschat.helpers import get_random_profession
+from nevschat.helpers import get_random_speaking_rate
+from nevschat.helpers import get_random_voice
 
 random.seed(time.time())
 
