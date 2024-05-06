@@ -5,7 +5,7 @@ from nevschat.state import State
 
 import reflex as rx
 
-VERSION = "0.0.95"
+VERSION = "0.0.96"
 TITLE = f"ネヴの素晴らしいチャットジーピーティー v{VERSION}"
 
 
@@ -36,38 +36,45 @@ def index() -> rx.Component:
                     ),
                     rx.flex(
                         rx.button(
+                            "辞書",
+                            color_scheme="jade",
+                            height="2.25em",
+                            id="lookup_definition",
+                            on_click=State.lookup_definition,
+                        ),
+                        rx.button(
                             "文法",
                             color_scheme="jade",
                             height="2.25em",
-                            id="explain_grammar_button",
+                            id="explain_grammar",
                             on_click=State.explain_grammer,
                         ),
                         rx.button(
                             "使い方",
                             color_scheme="jade",
                             height="2.25em",
-                            id="explain_usage_button",
+                            id="explain_usage",
                             on_click=State.explain_usage,
                         ),
                         rx.button(
                             "同じ意味",
                             color_scheme="jade",
                             height="2.25em",
-                            id="give_examples_of_same_meaning_button",
+                            id="give_examples_of_same_meaning",
                             on_click=State.give_examples_of_same_meaning,
                         ),
                         rx.button(
                             "反対の意味",
                             color_scheme="jade",
                             height="2.25em",
-                            id="give_examples_of_opposite_meaning_button",
+                            id="give_examples_of_opposite_meaning",
                             on_click=State.give_examples_of_opposite_meaning,
                         ),
                         rx.button(
                             "訳す",
                             color_scheme="jade",
                             height="2.25em",
-                            id="translate_button",
+                            id="translate",
                             on_click=State.translate,
                         ),
                         spacing="2",
@@ -80,7 +87,6 @@ def index() -> rx.Component:
                                     rx.box(
                                         rx.markdown(
                                             State.learning_aide_response,
-                                            width="100%",
                                         ),
                                         rx.box(
                                             rx.text(State.learning_aide_model),
@@ -116,6 +122,7 @@ def index() -> rx.Component:
                                     ),
                                 ),
                                 spacing="2",
+                                width="100%",
                             ),
                             rx.cond(
                                 State.processing,
@@ -205,11 +212,12 @@ def index() -> rx.Component:
                     var update_selection_state = function() {
                         const has_selection = window.getSelection().toString() != '';
                         var ids = [
-                            'explain_grammar_button',
-                            'explain_usage_button',
-                            'give_examples_of_same_meaning_button',
-                            'give_examples_of_opposite_meaning_button',
-                            'translate_button'
+                            'lookup_definition',
+                            'explain_grammar',
+                            'explain_usage',
+                            'give_examples_of_same_meaning',
+                            'give_examples_of_opposite_meaning',
+                            'translate'
                         ];
                         ids.forEach(function(id) {
                             var element = document.getElementById(id);

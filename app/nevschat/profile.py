@@ -1,8 +1,6 @@
 import random
 import time
 
-import reflex as rx
-
 from nevschat.helpers import age_to_kanji
 from nevschat.helpers import get_pitch
 from nevschat.helpers import get_random_age
@@ -14,6 +12,8 @@ from nevschat.helpers import get_random_name
 from nevschat.helpers import get_random_profession
 from nevschat.helpers import get_random_speaking_rate
 from nevschat.helpers import get_random_voice
+
+import reflex as rx
 
 random.seed(time.time())
 

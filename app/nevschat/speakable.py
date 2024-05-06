@@ -1,16 +1,16 @@
 import os
 import time
-
-import reflex as rx
+from urllib.parse import urljoin
 
 import requests
+from nevschat.helpers import Warnable
 from nevschat.helpers import delete_old_wav_assets
 from nevschat.helpers import get_default_voice
 from nevschat.helpers import text_to_wav as tts_text_to_wav
-from nevschat.state import State
 from rxconfig import config
 from rxconfig import site_runtime_assets_url
-from urllib.parse import urljoin
+
+import reflex as rx
 
 
 class Speakable(rx.Base):  # type: ignore
@@ -28,7 +28,7 @@ class Speakable(rx.Base):  # type: ignore
     def reset(self) -> None:
         self.tts_wav_url = ""
 
-    def text_to_wav(self, state: State) -> None:
+    def text_to_wav(self, warnable: Warnable) -> None:
         """
         For calling from asynchronous handlers so that the UI watching its state
         updates as this runs. Sets tts_in_progress = True while it is running,
@@ -62,17 +62,17 @@ class Speakable(rx.Base):  # type: ignore
                             return
                     except Exception as ex:  # pylint: disable=broad-exception-caught
                         print(ex)
-                        state.warning = str(ex)
+                        warnable.warning = str(ex)
                     time.sleep(0.25)
             except Exception as ex:  # pylint: disable=broad-exception-caught
                 print(ex)
-                state.warning = str(ex)
+                warnable.warning = str(ex)
             else:
                 print(" NOT OK")
                 warning = (
                     "Some problem prevented the audio from being available to play."
                 )
                 print(warning)
-                state.warning = warning
+                warnable.warning = warning
         finally:
             self.tts_in_progress = False

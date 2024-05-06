@@ -28,6 +28,8 @@ conda install -yq \
 	pyupgrade \
 	types-requests==2.31.0.*
 pip install -U \
+    jamdict==0.1a11.post2 \
+    jamdict-data==1.5 \
 	google-cloud-texttospeech==2.16.3 \
 	openai==1.23.2
 [ -d reflex ] ||

@@ -9,6 +9,7 @@ from urllib.parse import urljoin
 import requests
 from nevschat.helpers import contains_japanese
 from nevschat.helpers import delete_old_wav_assets
+from nevschat.helpers import get_definition
 from nevschat.helpers import get_random_voice
 from nevschat.helpers import strip_non_japanese_and_split_sentences
 from nevschat.helpers import text_to_wav
@@ -459,24 +460,6 @@ class State(rx.State):  # type: ignore
     def learning_aide_response_contains_japanese(self) -> Any:
         return contains_japanese(self.learning_aide_response)
 
-    def trigger_set_learning_aide_prompt(self) -> Any:
-        return rx.call_script(
-            "get_selected_text_and_clear()",
-            callback=State.set_learning_aide_prompt,
-        )
-
-    def trigger_clear_learning_aide_prompt(self, _: Any = None) -> Any:
-        return rx.call_script(
-            "get_selected_text_and_clear()",
-            callback=State.clear_learning_aide_prompt,
-        )
-
-    @rx.background  # type: ignore
-    async def set_learning_aide_prompt(self, text) -> Any:
-        async with self:
-            self.learning_aide_prompt = text
-        return State.chatgpt_learning_aide
-
     def clear_learning_aide_prompt(self, _: Any = None) -> None:
         self.learning_aide_system_instruction = ""
         self.learning_aide_prompt = ""
@@ -487,18 +470,21 @@ class State(rx.State):  # type: ignore
         self.learning_aide_model = ""
         self.learning_aide_voice = ""
 
+    def lookup_definition(self) -> Any:
+        return self.do_dictionary_learning_aide()
+
     def explain_grammer(self) -> Any:
-        return self.do_learning_aide(
+        return self.do_chatgpt_learning_aide(
             GPT4_MODEL, SYSTEM_INSTRUCTIONS["Explain Grammar"][0]
         )
 
     def explain_usage(self) -> Any:
-        return self.do_learning_aide(
+        return self.do_chatgpt_learning_aide(
             GPT3_MODEL, SYSTEM_INSTRUCTIONS["Explain Usage"][0]
         )
 
     def give_examples_of_same_meaning(self) -> Any:
-        return self.do_learning_aide(
+        return self.do_chatgpt_learning_aide(
             GPT3_MODEL,
             SYSTEM_INSTRUCTIONS[
                 "日本語: Give varied ways of expressing the given meaning."
@@ -506,7 +492,7 @@ class State(rx.State):  # type: ignore
         )
 
     def give_examples_of_opposite_meaning(self) -> Any:
-        return self.do_learning_aide(
+        return self.do_chatgpt_learning_aide(
             GPT3_MODEL,
             SYSTEM_INSTRUCTIONS[
                 (
@@ -517,7 +503,7 @@ class State(rx.State):  # type: ignore
         )
 
     def translate(self) -> Any:
-        return self.do_learning_aide(
+        return self.do_chatgpt_learning_aide(
             GPT3_MODEL,
             (
                 "Translate the given Japanese text into English. "
@@ -525,14 +511,40 @@ class State(rx.State):  # type: ignore
             ),
         )
 
-    def do_learning_aide(self, model: str, system_instruction: str) -> Any:
+    def do_chatgpt_learning_aide(self, model: str, system_instruction: str) -> Any:
         self.learning_aide_model = model
         self.learning_aide_system_instruction = system_instruction
-        return self.trigger_set_learning_aide_prompt()
+        return self.trigger_set_chatgpt_learning_aide_prompt()
+
+    def trigger_set_chatgpt_learning_aide_prompt(self) -> Any:
+        return rx.call_script(
+            "get_selected_text_and_clear()",
+            callback=State.set_chatgpt_learning_aide_prompt,
+        )
+
+    @rx.background  # type: ignore
+    async def set_chatgpt_learning_aide_prompt(self, text) -> Any:
+        async with self:
+            self.learning_aide_prompt = text
+        return State.chatgpt_learning_aide
+
+    def do_dictionary_learning_aide(self) -> Any:
+        return self.trigger_set_dictionary_learning_aide_prompt()
+
+    def trigger_set_dictionary_learning_aide_prompt(self) -> Any:
+        return rx.call_script(
+            "get_selected_text_and_clear()",
+            callback=State.set_dictionary_learning_aide_prompt,
+        )
+
+    @rx.background  # type: ignore
+    async def set_dictionary_learning_aide_prompt(self, text) -> Any:
+        async with self:
+            self.learning_aide_prompt = text
+        return State.dictionary_learning_aide
 
     @rx.background  # type: ignore
     async def chatgpt_learning_aide(self) -> Any:
-
         try:
             async with self:
                 learning_aide_system_instruction = self.learning_aide_system_instruction
@@ -588,12 +600,39 @@ class State(rx.State):  # type: ignore
             async with self:
                 self.processing = False
 
+    @rx.background  # type: ignore
+    async def dictionary_learning_aide(self) -> Any:
+        try:
+            async with self:
+                if self.learning_aide_prompt != "":
+                    self.processing = True
+                    self.warning = ""
+                    self.learning_aide_response = ""
+                    self.learning_aide_has_tts = False
+                    self.learning_aide_tts_wav_url = ""
+                    definition = get_definition(self.learning_aide_prompt)
+                    if definition is not None:
+                        self.learning_aide_response = definition
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            async with self:
+                self.warning = str(ex)
+                print(self.warning)
+        finally:
+            async with self:
+                self.processing = False
+
     @rx.var  # type: ignore
     def has_learning_aide_response(self) -> bool:
         return self.learning_aide_response != ""
 
     def clear_learning_aide_response(self) -> Any:
         return self.trigger_clear_learning_aide_prompt()
+
+    def trigger_clear_learning_aide_prompt(self, _: Any = None) -> Any:
+        return rx.call_script(
+            "get_selected_text_and_clear()",
+            callback=State.clear_learning_aide_prompt,
+        )
 
     ####################################################################################
     # Built-In Test
