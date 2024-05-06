@@ -11,6 +11,7 @@ from .random_things import get_random_mood
 from .random_things import get_random_name
 from .random_things import get_random_profession
 from .random_things import get_random_speaking_rate
+from .tts import get_default_voice
 from .tts import get_random_voice
 from .tts import text_to_wav
 
@@ -27,6 +28,7 @@ __all__ = [
     "get_random_name",
     "get_random_profession",
     "get_random_speaking_rate",
+    "get_default_voice",
     "get_random_voice",
     "strip_non_japanese_and_split_sentences",
     "text_to_wav",

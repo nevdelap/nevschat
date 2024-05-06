@@ -12,9 +12,9 @@ from nevschat.helpers import delete_old_wav_assets
 from nevschat.helpers import get_random_voice
 from nevschat.helpers import strip_non_japanese_and_split_sentences
 from nevschat.helpers import text_to_wav
+from nevschat.profile import Profile
 from nevschat.system_instructions import get_system_instructions
 from openai import OpenAI
-from .profile import Profile
 from rxconfig import config
 from rxconfig import site_runtime_assets_url
 

@@ -10,6 +10,10 @@ import google.cloud.texttospeech as tts
 random.seed(time.time())
 
 
+def get_default_voice() -> str:
+    return "ja-JP-Neural2-C"
+
+
 def get_random_voice(male: bool) -> str:
     if male:
         return random.choice(
