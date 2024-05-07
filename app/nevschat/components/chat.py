@@ -74,6 +74,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     rx.spacer(
                         width="100%",
                     ),
+                    spacing="2",
                     width="100%",
                 ),
                 rx.button(
@@ -136,6 +137,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                                     padding="0 1em 0 1em",
                                 ),
                             ),
+                            spacing="2",
                             width="100%",
                         ),
                         rx.hstack(

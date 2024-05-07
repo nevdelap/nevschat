@@ -78,6 +78,8 @@ def index() -> rx.Component:
                             on_click=State.translate,
                         ),
                         spacing="2",
+                        width="100%",
+                        wrap="wrap",
                     ),
                     rx.cond(
                         State.has_learning_aide_response,
@@ -109,7 +111,9 @@ def index() -> rx.Component:
                                     rx.spacer(
                                         width="100%",
                                     ),
+                                    spacing="2",
                                     width="100%",
+                                    wrap="wrap",
                                 ),
                                 rx.cond(
                                     State.learning_aide_tts_in_progress,
