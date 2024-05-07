@@ -993,7 +993,7 @@ def get_random_profession(age: int) -> str:
         case age if 12 <= age < 15:
             return "中学生"
         case age if 15 <= age < 18:
-            return "高等学生"
+            return "高校生"
         case age if 18 <= age < 21:
             if random.choice([True, False, False]):  # nosec
                 return "大学生"
