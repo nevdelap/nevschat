@@ -1,5 +1,7 @@
 import os
 import time
+from abc import ABC
+from abc import abstractmethod
 from urllib.parse import urljoin
 
 import requests
@@ -13,20 +15,31 @@ from rxconfig import site_runtime_assets_url
 import reflex as rx
 
 
-class Speakable(rx.Base):  # type: ignore
+class Speakable(rx.Base, ABC):  # type: ignore
     """
     Base class for things that can be spoken aloud with TTS.
     """
 
-    text: str = ""
     pitch: float = 0
     speaking_rate: float = 1
     tts_in_progress = False
     tts_wav_url = ""
     voice: str = get_default_voice()
 
+    @rx.var
+    def has_tts(self) -> bool:
+        return self.tts_wav_url != ""
+
+    @rx.var
+    def text(self) -> str:
+        return self._text()
+
     def reset(self) -> None:
+        self.pitch: float = 0
+        self.speaking_rate: float = 1
+        self.tts_in_progress = False
         self.tts_wav_url = ""
+        self.voice: str = get_default_voice()
 
     def text_to_wav(self, warnable: Warnable) -> None:
         """
@@ -76,3 +89,7 @@ class Speakable(rx.Base):  # type: ignore
                 warnable.warning = warning
         finally:
             self.tts_in_progress = False
+
+    @abstractmethod
+    def _text(self) -> str:
+        pass

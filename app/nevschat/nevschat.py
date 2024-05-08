@@ -82,16 +82,16 @@ def index() -> rx.Component:
                         wrap="wrap",
                     ),
                     rx.cond(
-                        State.has_learning_aide_response,
+                        State.learning_aide.has_response,
                         rx.hstack(
                             rx.vstack(
                                 rx.flex(
                                     rx.box(
                                         rx.markdown(
-                                            State.learning_aide_response,
+                                            State.learning_aide.response,
                                         ),
                                         rx.box(
-                                            rx.text(State.learning_aide_model),
+                                            rx.text(State.learning_aide.model),
                                             color="rgba(0, 0, 0, 0.4)",
                                             font_size="0.4em",
                                             padding_bottom="1em",
@@ -116,7 +116,7 @@ def index() -> rx.Component:
                                     wrap="wrap",
                                 ),
                                 rx.cond(
-                                    State.learning_aide_tts_in_progress,
+                                    State.learning_aide.tts_in_progress,
                                     rx.center(
                                         rx.chakra.spinner(
                                             color="#888",
@@ -142,7 +142,7 @@ def index() -> rx.Component:
                                 ),
                                 rx.hstack(
                                     rx.cond(
-                                        State.learning_aide_response_contains_japanese,
+                                        State.learning_aide.response_contains_japanese,
                                         rx.button(
                                             rx.icon(
                                                 tag="volume-2",
@@ -151,13 +151,13 @@ def index() -> rx.Component:
                                             ),
                                             color_scheme="blue",
                                             disabled=(
-                                                State.learning_aide_tts_in_progress
-                                                | State.learning_aide_has_tts
+                                                State.learning_aide.tts_in_progress
+                                                | State.learning_aide.has_tts
                                             ),
                                             margin_top="0.5em",
                                             on_click=lambda: State.speak(  # pylint: disable=no-value-for-parameter
                                                 -2,
-                                                State.learning_aide_response,
+                                                State.learning_aide.response,
                                             ),
                                         ),
                                     ),
@@ -170,7 +170,7 @@ def index() -> rx.Component:
                                         color_scheme="gray",
                                         margin_top="0.5em",
                                         on_click=rx.set_clipboard(
-                                            State.learning_aide_response
+                                            State.learning_aide.response
                                         ),
                                     ),
                                     rx.button(
@@ -187,13 +187,14 @@ def index() -> rx.Component:
                             ),
                             width="100%",
                         ),
+                        rx.text("Nope"),
                     ),
                     rx.cond(
-                        State.has_learning_aide_response & State.learning_aide_has_tts,
+                        State.learning_aide.has_response & State.learning_aide.has_tts,
                         rx.audio(
                             height="32px",
                             playing=True,
-                            url=State.learning_aide_tts_wav_url,
+                            url=State.learning_aide.tts_wav_url,
                             width="100%",
                         ),
                     ),
