@@ -10,97 +10,144 @@ import reflex as rx
 
 def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Component:
     return rx.vstack(
-        rx.cond(
-            prompt_response.is_editing,
-            rx.hstack(
-                rx.text_area(
-                    border_color="#C2A499",
-                    border_style="solid",
-                    border_width="3px",
-                    on_blur=State.cancel_control,
-                    on_change=State.update_edited_prompt,
-                    on_key_down=State.handle_key_down,
-                    on_key_up=State.handle_key_up,
-                    value=State.edited_prompt,
-                    width="100%",
-                ),
-                rx.button(
-                    rx.icon(
-                        tag="eraser",
-                        size=20,
-                        stroke_width=1.5,
-                    ),
-                    color_scheme="red",
-                    disabled=State.cannot_clear_or_chatgpt_with_edited_prompt,
-                    margin_top="0.5em",
-                    on_click=lambda: State.clear_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
-                ),
-                rx.button(
-                    rx.icon(
-                        tag="send-horizontal",
-                        size=20,
-                        stroke_width=1.5,
-                    ),
-                    color_scheme="jade",
-                    disabled=State.cannot_clear_or_chatgpt_with_edited_prompt,
-                    margin_top="0.5em",
-                    on_click=lambda: State.chatgpt_with_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
-                ),
-                rx.button(
-                    rx.icon(
-                        tag="x",
-                        size=20,
-                        stroke_width=1.5,
-                    ),
-                    color_scheme="tomato",
-                    margin_top="0.5em",
-                    on_click=lambda: State.cancel_edit_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
-                ),
-                width="100%",
-            ),
-            rx.hstack(
-                rx.flex(
-                    rx.box(
-                        rx.markdown(
-                            prompt_response.prompt,
-                            width="100%",
-                        ),
-                        background_color="#ffefd6",
-                        border_color="#c2a499",
+        rx.vstack(
+            rx.cond(
+                prompt_response.is_editing,
+                rx.hstack(
+                    rx.text_area(
+                        border_color="#C2A499",
                         border_style="solid",
                         border_width="3px",
-                        padding="0 1em 0 1em",
-                    ),
-                    rx.spacer(
+                        on_blur=State.cancel_control,
+                        on_change=State.update_edited_prompt,
+                        on_key_down=State.handle_key_down,
+                        on_key_up=State.handle_key_up,
+                        value=State.edited_prompt,
                         width="100%",
                     ),
-                    spacing="2",
+                    rx.button(
+                        rx.icon(
+                            tag="eraser",
+                            size=20,
+                            stroke_width=1.5,
+                        ),
+                        color_scheme="red",
+                        disabled=State.cannot_clear_or_chatgpt_with_edited_prompt,
+                        margin_top="0.5em",
+                        on_click=lambda: State.clear_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
+                    ),
+                    rx.button(
+                        rx.icon(
+                            tag="send-horizontal",
+                            size=20,
+                            stroke_width=1.5,
+                        ),
+                        color_scheme="jade",
+                        disabled=State.cannot_clear_or_chatgpt_with_edited_prompt,
+                        margin_top="0.5em",
+                        on_click=lambda: State.chatgpt_with_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
+                    ),
+                    rx.button(
+                        rx.icon(
+                            tag="x",
+                            size=20,
+                            stroke_width=1.5,
+                        ),
+                        color_scheme="tomato",
+                        margin_top="0.5em",
+                        on_click=lambda: State.cancel_edit_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
+                    ),
                     width="100%",
                 ),
-                rx.button(
-                    rx.icon(
-                        tag="square-pen",
-                        size=20,
-                        stroke_width=1.5,
+                rx.hstack(
+                    rx.vstack(
+                        rx.flex(
+                            rx.box(
+                                rx.markdown(
+                                    prompt_response.prompt.text,
+                                    width="100%",
+                                ),
+                                background_color="#ffefd6",
+                                border_color="#c2a499",
+                                border_style="solid",
+                                border_width="3px",
+                                padding="0 1em 0 1em",
+                            ),
+                            rx.spacer(
+                                width="100%",
+                            ),
+                            spacing="2",
+                            width="100%",
+                        ),
+                        rx.cond(
+                            prompt_response.prompt.tts_in_progress,
+                            rx.center(
+                                rx.chakra.spinner(
+                                    color="#888",
+                                    size="md",
+                                ),
+                                width="100%",
+                            ),
+                        ),
+                        spacing="2",
+                        width="100%",
                     ),
-                    color_scheme="jade",
-                    disabled=State.cannot_enter_new_prompt_or_edit,
-                    is_loading=State.processing,
-                    margin_top="0.5em",
-                    on_click=lambda: State.edit_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
-                ),
-                rx.button(
-                    rx.icon(
-                        tag="copy",
-                        size=20,
-                        stroke_width=1.5,
+                    rx.button(
+                        rx.icon(
+                            tag="square-pen",
+                            size=20,
+                            stroke_width=1.5,
+                        ),
+                        color_scheme="jade",
+                        disabled=State.cannot_enter_new_prompt_or_edit,
+                        is_loading=State.processing,
+                        margin_top="0.5em",
+                        on_click=lambda: State.edit_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                     ),
-                    color_scheme="gray",
-                    margin_top="0.5em",
-                    on_click=rx.set_clipboard(prompt_response.prompt),
+                    rx.cond(
+                        ~State.processing & prompt_response.prompt.contains_japanese,
+                        rx.button(
+                            rx.icon(
+                                tag="volume-2",
+                                size=20,
+                                stroke_width=1.5,
+                            ),
+                            color_scheme="blue",
+                            disabled=(
+                                prompt_response.prompt.tts_in_progress
+                                | (prompt_response.prompt.tts_wav_url != "")
+                            ),
+                            margin_top="0.5em",
+                            on_click=lambda: State.speak_prompt(  # pylint: disable=no-value-for-parameter
+                                index,
+                                prompt_response.prompt,
+                            ),
+                        ),
+                    ),
+                    rx.button(
+                        rx.icon(
+                            tag="copy",
+                            size=20,
+                            stroke_width=1.5,
+                        ),
+                        color_scheme="gray",
+                        margin_top="0.5em",
+                        on_click=rx.set_clipboard(prompt_response.prompt.text),
+                    ),
+                    width="100%",
                 ),
-                width="100%",
             ),
+            rx.cond(
+                prompt_response.prompt.tts_wav_url != "",
+                rx.audio(
+                    height="32px",
+                    playing=True,
+                    url=prompt_response.prompt.tts_wav_url,
+                    width="100%",
+                ),
+            ),
+            spacing="2",
+            width="100%",
         ),
         rx.vstack(
             rx.hstack(
@@ -115,7 +162,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                                 | State.profile.male,
                                 rx.box(
                                     rx.markdown(
-                                        prompt_response.response,
+                                        prompt_response.response.text,
                                     ),
                                     background_color="#e1f6fd",
                                     border_color="#60b3d7",
@@ -126,7 +173,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                                 ),
                                 rx.box(
                                     rx.markdown(
-                                        prompt_response.response,
+                                        prompt_response.response.text,
                                     ),
                                     background_color="#fee9f5",
                                     border_color="#dd93c2",
@@ -141,10 +188,10 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                             width="100%",
                         ),
                         rx.hstack(
-                            rx.text(prompt_response.model),
+                            rx.text(prompt_response.response.model),
                             rx.cond(
-                                prompt_response.has_tts,
-                                rx.text(prompt_response.voice),
+                                prompt_response.response.tts_wav_url != "",
+                                rx.text(prompt_response.response.voice),
                             ),
                             color="rgba(0, 0, 0, 0.4)",
                             font_size="0.4em",
@@ -158,7 +205,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         width="100%",
                     ),
                     rx.cond(
-                        prompt_response.tts_in_progress,
+                        prompt_response.response.tts_in_progress,
                         rx.center(
                             rx.chakra.spinner(
                                 color="#888",
@@ -185,7 +232,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                 ),
                 rx.hstack(
                     rx.cond(
-                        ~State.processing & prompt_response.contains_japanese,
+                        ~State.processing & prompt_response.response.contains_japanese,
                         rx.button(
                             rx.icon(
                                 tag="volume-2",
@@ -194,11 +241,11 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                             ),
                             color_scheme="blue",
                             disabled=(
-                                prompt_response.tts_in_progress
-                                | prompt_response.has_tts
+                                prompt_response.response.tts_in_progress
+                                | (prompt_response.response.tts_wav_url != "")
                             ),
                             margin_top="0.5em",
-                            on_click=lambda: State.speak(  # pylint: disable=no-value-for-parameter
+                            on_click=lambda: State.speak_response(  # pylint: disable=no-value-for-parameter
                                 index,
                                 prompt_response.response,
                             ),
@@ -218,11 +265,11 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                 width="100%",
             ),
             rx.cond(
-                prompt_response.has_tts,
+                prompt_response.response.tts_wav_url != "",
                 rx.audio(
                     height="32px",
                     playing=True,
-                    url=prompt_response.tts_wav_url,
+                    url=prompt_response.response.tts_wav_url,
                     width="100%",
                 ),
             ),
@@ -279,7 +326,7 @@ def chat() -> rx.Component:
                                 | State.profile.male,
                                 rx.box(
                                     rx.markdown(
-                                        State.i_am,
+                                        State.profile.text,
                                         width="100%",
                                     ),
                                     background_color="#e1f6fd",
@@ -292,7 +339,7 @@ def chat() -> rx.Component:
                                 ),
                                 rx.box(
                                     rx.markdown(
-                                        State.i_am,
+                                        State.profile.text,
                                         width="100%",
                                     ),
                                     background_color="#fee9f5",
@@ -306,7 +353,7 @@ def chat() -> rx.Component:
                                 ),
                             ),
                             rx.cond(
-                                State.profile.has_tts,
+                                State.profile.tts_wav_url != "",
                                 rx.box(
                                     rx.text(State.profile.voice),
                                     color="rgba(0, 0, 0, 0.4)",
@@ -353,12 +400,9 @@ def chat() -> rx.Component:
                                 color_scheme="blue",
                                 disabled=(
                                     State.profile.tts_in_progress
-                                    | State.profile.has_tts
+                                    | (State.profile.tts_wav_url != "")
                                 ),
-                                on_click=lambda: State.speak(  # pylint: disable=no-value-for-parameter
-                                    -1,
-                                    State.i_am,
-                                ),
+                                on_click=State.speak_profile,  # pylint: disable=no-value-for-parameter
                             ),
                             rx.button(
                                 rx.icon(
@@ -368,7 +412,7 @@ def chat() -> rx.Component:
                                 ),
                                 color_scheme="gray",
                                 on_click=rx.set_clipboard(
-                                    State.i_am,
+                                    State.profile.text,
                                 ),
                             ),
                             width="100%",
@@ -377,7 +421,7 @@ def chat() -> rx.Component:
                     ),
                 ),
                 rx.cond(
-                    State.profile.has_tts,
+                    State.profile.tts_wav_url != "",
                     rx.audio(
                         height="32px",
                         playing=True,

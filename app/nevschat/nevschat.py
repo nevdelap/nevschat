@@ -5,7 +5,7 @@ from nevschat.state import State
 
 import reflex as rx
 
-VERSION = "0.0.98"
+VERSION = "0.0.99"
 TITLE = f"ネヴの素晴らしいチャットジーピーティー v{VERSION}"
 
 
@@ -82,13 +82,13 @@ def index() -> rx.Component:
                         wrap="wrap",
                     ),
                     rx.cond(
-                        State.learning_aide.has_response,
+                        State.learning_aide.text,
                         rx.hstack(
                             rx.vstack(
                                 rx.flex(
                                     rx.box(
                                         rx.markdown(
-                                            State.learning_aide.response,
+                                            State.learning_aide.text,
                                         ),
                                         rx.box(
                                             rx.text(State.learning_aide.model),
@@ -142,7 +142,7 @@ def index() -> rx.Component:
                                 ),
                                 rx.hstack(
                                     rx.cond(
-                                        State.learning_aide.response_contains_japanese,
+                                        State.learning_aide.contains_japanese,
                                         rx.button(
                                             rx.icon(
                                                 tag="volume-2",
@@ -152,13 +152,13 @@ def index() -> rx.Component:
                                             color_scheme="blue",
                                             disabled=(
                                                 State.learning_aide.tts_in_progress
-                                                | State.learning_aide.has_tts
+                                                | (
+                                                    State.learning_aide.tts_wav_url
+                                                    != ""
+                                                )
                                             ),
                                             margin_top="0.5em",
-                                            on_click=lambda: State.speak(  # pylint: disable=no-value-for-parameter
-                                                -2,
-                                                State.learning_aide.response,
-                                            ),
+                                            on_click=State.speak_learning_aide,  # pylint: disable=no-value-for-parameter
                                         ),
                                     ),
                                     rx.button(
@@ -170,7 +170,7 @@ def index() -> rx.Component:
                                         color_scheme="gray",
                                         margin_top="0.5em",
                                         on_click=rx.set_clipboard(
-                                            State.learning_aide.response
+                                            State.learning_aide.text
                                         ),
                                     ),
                                     rx.button(
@@ -187,10 +187,12 @@ def index() -> rx.Component:
                             ),
                             width="100%",
                         ),
-                        rx.text("Nope"),
                     ),
                     rx.cond(
-                        State.learning_aide.has_response & State.learning_aide.has_tts,
+                        (
+                            (State.learning_aide.text != "")
+                            & (State.learning_aide.tts_wav_url != "")
+                        ),
                         rx.audio(
                             height="32px",
                             playing=True,

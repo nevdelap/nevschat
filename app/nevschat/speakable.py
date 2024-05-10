@@ -1,7 +1,6 @@
 import os
 import time
 from abc import ABC
-from abc import abstractmethod
 from urllib.parse import urljoin
 
 import requests
@@ -22,24 +21,18 @@ class Speakable(rx.Base, ABC):  # type: ignore
 
     pitch: float = 0
     speaking_rate: float = 1
+    text: str = ""
     tts_in_progress = False
     tts_wav_url = ""
     voice: str = get_default_voice()
 
-    @rx.var
-    def has_tts(self) -> bool:
-        return self.tts_wav_url != ""
-
-    @rx.var
-    def text(self) -> str:
-        return self._text()
-
-    def reset(self) -> None:
-        self.pitch: float = 0
-        self.speaking_rate: float = 1
+    def clear(self) -> None:
+        self.pitch = 0
+        self.speaking_rate = 1
+        self.text = ""
         self.tts_in_progress = False
         self.tts_wav_url = ""
-        self.voice: str = get_default_voice()
+        self.voice = get_default_voice()
 
     def text_to_wav(self, warnable: Warnable) -> None:
         """
@@ -47,7 +40,7 @@ class Speakable(rx.Base, ABC):  # type: ignore
         updates as this runs. Sets tts_in_progress = True while it is running,
         and sets it to False when it is complete and tts_wav_url is set.
         """
-        if self.text == "":
+        if self.text == "":  # pylint: disable=comparison-with-callable
             return
         try:
             print(f"Creating .wav for: {self.text}")
@@ -89,7 +82,3 @@ class Speakable(rx.Base, ABC):  # type: ignore
                 warnable.warning = warning
         finally:
             self.tts_in_progress = False
-
-    @abstractmethod
-    def _text(self) -> str:
-        pass

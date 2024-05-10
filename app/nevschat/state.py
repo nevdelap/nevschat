@@ -15,6 +15,9 @@ from nevschat.helpers import strip_non_japanese_and_split_sentences
 from nevschat.helpers import text_to_wav
 from nevschat.learning_aide import LearningAide
 from nevschat.profile import Profile
+from nevschat.prompt import Prompt
+from nevschat.response import Response
+from nevschat.speakable import Speakable
 from nevschat.system_instructions import get_system_instructions
 from openai import OpenAI
 from rxconfig import config
@@ -33,15 +36,9 @@ USE_CANNED_RESPONSE = False  # True to add a profile and first response, for tes
 
 
 class PromptResponse(rx.Base):  # type: ignore
-    prompt: str
-    response: str
+    prompt: Prompt = Prompt()
+    response: Response = Speakable()
     is_editing: bool
-    contains_japanese: bool
-    tts_in_progress: bool
-    has_tts: bool
-    tts_wav_url: str
-    model: str
-    voice: str
 
 
 class State(rx.State):  # type: ignore
@@ -90,33 +87,33 @@ class State(rx.State):  # type: ignore
     terse: bool = False
     warning: str
 
+    # These @rx.vars that just call a method on a property or do an operation
+    # with a property that is an rx.Base are because @rx.vars in those classes
+    # do no propagate, at least as of Reflex v0.4.9 as far as I've been able to
+    # discover. When I discover otherwise hopefully these can be moved onto
+    # methods on those classes marked @rx.var.
+
     @rx.var  # type: ignore
     def using_profile(self) -> bool:
         return self.system_instruction == "ランダムな人"
 
     @rx.var  # type: ignore
     def you_are(self) -> str:
-        return f"あなたは{self.profile.text}"
-
-    @rx.var  # type: ignore
-    def i_am(self) -> str:
-        return f"私は{self.profile.text}"
+        return self.profile.text.replace("私は", "あなたは")
 
     ####################################################################################
     # TODO Classify And Order Better
 
     def change_profile(self) -> None:
-        self.profile.reset()
+        self.profile.clear()
         # TODO: Investigate if this indicates a bug in Reflex or not. It used to
         # be that these assignments were necessary to trigger UI state changes
         # but I thought it wasn't the case anymore. It might be because it is
         # two levels deep.
-        self.profile.male = self.profile.male
+        self.profile.text = self.profile.text
         for prompt_response in self.prompts_responses:
-            prompt_response.tts_in_progress = False
-            prompt_response.has_tts = False
-            prompt_response.tts_wav_url = ""
-            prompt_response.voice = ""
+            prompt_response.response.tts_wav_url = ""
+            prompt_response.response.voice = self.profile.voice
 
     @rx.var  # type: ignore
     def has_prompts_responses(self) -> bool:
@@ -259,22 +256,26 @@ class State(rx.State):  # type: ignore
                     )
 
                 for prompt_response in self.prompts_responses:
-                    messages.append({"role": "user", "content": prompt_response.prompt})
                     messages.append(
-                        {"role": "assistant", "content": prompt_response.response}
+                        {"role": "user", "content": prompt_response.prompt.text}
+                    )
+                    messages.append(
+                        {"role": "assistant", "content": prompt_response.response.text}
                     )
                 messages.append({"role": "user", "content": self.new_prompt})
 
                 prompt_response = PromptResponse(
-                    prompt=self.new_prompt,
-                    response="\u00A0",  # Non-breaking space.
+                    prompt=Speakable(
+                        text=self.new_prompt,
+                        contains_japanese=contains_japanese(self.new_prompt),
+                    ),
+                    response=Response(
+                        pitch=self.profile.pitch,
+                        speaking_rate=self.profile.speaking_rate,
+                        voice=self.profile.voice,
+                        text="\u00A0",  # Non-breaking space.
+                    ),
                     is_editing=False,
-                    contains_japanese=False,
-                    tts_in_progress=False,
-                    has_tts=False,
-                    tts_wav_url="",
-                    model=model,
-                    voice="",
                 )
                 self.prompts_responses.append(prompt_response)
                 self.new_prompt = ""
@@ -298,15 +299,15 @@ class State(rx.State):  # type: ignore
                 async with self:
                     response = item.choices[0].delta.content  # type: ignore
                     if response:
+                        print("R", response)
                         # The non-breaking space is used to make the markdown
                         # component render as if it had something in it, until
                         # it does, without being visible to the user.
-                        if self.prompts_responses[-1].response == "\u00A0":
-                            self.prompts_responses[-1].response = response
-                        else:
-                            self.prompts_responses[-1].response += response
-                        self.prompts_responses[-1].contains_japanese = (
-                            contains_japanese(self.prompts_responses[-1].response)
+                        if self.prompts_responses[-1].response.text == "\u00A0":
+                            self.prompts_responses[-1].response.text = ""
+                        self.prompts_responses[-1].response.text += response
+                        self.prompts_responses[-1].response.contains_japanese = (
+                            contains_japanese(self.prompts_responses[-1].response.text)
                         )
                     if not self.processing:
                         # It's been cancelled.
@@ -322,17 +323,23 @@ class State(rx.State):  # type: ignore
                 self.processing = False
 
         async with self:
-            if self.prompts_responses[-1].contains_japanese and self.auto_speak:
-                self.prompts_responses[-1].tts_in_progress = True
+            if (
+                self.prompts_responses[-1].response.contains_japanese
+                and self.auto_speak
+            ):
+                self.prompts_responses[-1].response.tts_in_progress = True
             yield
             async with self:
-                if self.prompts_responses[-1].contains_japanese and self.auto_speak:
+                if (
+                    self.prompts_responses[-1].response.contains_japanese
+                    and self.auto_speak
+                ):
                     try:
                         index = len(self.prompts_responses) - 1
                         self.do_speak(
                             index,
                             strip_non_japanese_and_split_sentences(
-                                self.prompts_responses[index].response
+                                self.prompts_responses[index].response.text
                             ),
                         )
                     finally:
@@ -352,33 +359,24 @@ class State(rx.State):  # type: ignore
     # Text To Speech
 
     @rx.background  # type: ignore
-    async def speak(self, index: int, text: str) -> Any:
+    async def speak_learning_aide(self) -> Any:
         async with self:
-            # In the process of being refactored.
-            if index == -2:
-                # New world.
-                Speakable.text_to_wav(self.learning_aide, self)
-            else:
-                # Old world.
-                assert -1 <= index < len(self.prompts_responses)
-                if index == -1:
-                    self.profile.tts_in_progress = True
-                elif index == -2:
-                    self.learning_aide.tts_in_progress = True
-                else:
-                    self.prompts_responses[index].tts_in_progress = True
-            yield
-            async with self:
-                try:
-                    self.do_speak(index, strip_non_japanese_and_split_sentences(text))
-                finally:
-                    async with self:
-                        if index == -1:
-                            self.profile.tts_in_progress = False
-                        elif index == -2:
-                            self.learning_aide.tts_in_progress = False
-                        else:
-                            self.prompts_responses[index].tts_in_progress = False
+            Speakable.text_to_wav(self.learning_aide, self)
+
+    @rx.background  # type: ignore
+    async def speak_prompt(self, index: int) -> Any:
+        async with self:
+            Speakable.text_to_wav(self.prompts_responses[index].prompt, self)
+
+    @rx.background  # type: ignore
+    async def speak_response(self, index: int) -> Any:
+        async with self:
+            Speakable.text_to_wav(self.prompts_responses[index].response, self)
+
+    @rx.background  # type: ignore
+    async def speak_profile(self) -> Any:
+        async with self:
+            Speakable.text_to_wav(self.profile, self)
 
     def do_speak(self, index: int, text: str) -> None:
         """
@@ -447,15 +445,10 @@ class State(rx.State):  # type: ignore
     ####################################################################################
     # Learning Aide
 
-    @rx.var  # type: ignore
-    def learning_aide_response_contains_japanese(self) -> Any:
-        return contains_japanese(self.learning_aide.response)
-
     def clear_learning_aide_prompt(self, _: Any = None) -> None:
-        self.learning_aide.reset()
+        self.learning_aide.clear()
 
     def lookup_definition(self) -> Any:
-        print(1)
         return self.do_dictionary_learning_aide()
 
     def explain_grammer(self) -> Any:
@@ -514,11 +507,9 @@ class State(rx.State):  # type: ignore
         return State.chatgpt_learning_aide
 
     def do_dictionary_learning_aide(self) -> Any:
-        print(2)
         return self.trigger_set_dictionary_learning_aide_prompt()
 
     def trigger_set_dictionary_learning_aide_prompt(self) -> Any:
-        print(3)
         return rx.call_script(
             "get_selected_text_and_clear()",
             callback=State.set_dictionary_learning_aide_prompt,
@@ -526,7 +517,6 @@ class State(rx.State):  # type: ignore
 
     @rx.background  # type: ignore
     async def set_dictionary_learning_aide_prompt(self, text) -> Any:
-        print(4)
         async with self:
             self.learning_aide.prompt = text
         return State.dictionary_learning_aide
@@ -535,18 +525,18 @@ class State(rx.State):  # type: ignore
     async def chatgpt_learning_aide(self) -> Any:
         try:
             async with self:
-                learning_aide.system_instruction = self.learning_aide.system_instruction
+                learning_aide_system_instruction = self.learning_aide.system_instruction
                 learning_aid_prompt = self.learning_aide.prompt
                 model = self.learning_aide.model
 
-                learning_aide.system_instruction = re.sub(
-                    r"\s+", " ", learning_aide.system_instruction
+                learning_aide_system_instruction = re.sub(
+                    r"\s+", " ", learning_aide_system_instruction
                 ).strip()
 
                 if learning_aid_prompt != "":
                     self.processing = True
                     self.warning = ""
-                    self.learning_aide.response = ""
+                    self.learning_aide.text = ""
                     self.learning_aide.has_tts = False
                     self.learning_aide.tts_wav_url = ""
 
@@ -554,7 +544,7 @@ class State(rx.State):  # type: ignore
                 messages = [
                     {
                         "role": "system",
-                        "content": learning_aide.system_instruction,
+                        "content": learning_aide_system_instruction,
                     },
                     {"role": "user", "content": learning_aid_prompt},
                 ]
@@ -574,10 +564,13 @@ class State(rx.State):  # type: ignore
                     async with self:
                         response = item.choices[0].delta.content  # type: ignore
                         if response:
-                            self.learning_aide.response += response
+                            self.learning_aide.text += response
+                            self.learning_aide.contains_japanese = contains_japanese(
+                                self.learning_aide.text
+                            )
                         if not self.processing:
                             # It's been cancelled.
-                            self.learning_aide.response += " (キャンセル）"
+                            self.learning_aide.text += " (キャンセル）"
                             break
 
         except Exception as ex:  # pylint: disable=broad-exception-caught
@@ -590,21 +583,20 @@ class State(rx.State):  # type: ignore
 
     @rx.background  # type: ignore
     async def dictionary_learning_aide(self) -> Any:
-        print(5)
         try:
             async with self:
                 if self.learning_aide.prompt != "":
                     self.processing = True
                     self.warning = ""
-                    self.learning_aide.response = ""
+                    self.learning_aide.text = ""
                     self.learning_aide.has_tts = False
                     self.learning_aide.tts_wav_url = ""
                     definition = get_definition(self.learning_aide.prompt)
-                    print(6)
                     if definition is not None:
-                        print(7)
-                        self.learning_aide.response = definition
-                        print(self.learning_aide.has_response)
+                        self.learning_aide.text = definition
+                        self.learning_aide.contains_japanese = contains_japanese(
+                            definition
+                        )
         except Exception as ex:  # pylint: disable=broad-exception-caught
             async with self:
                 self.warning = str(ex)
@@ -612,10 +604,6 @@ class State(rx.State):  # type: ignore
         finally:
             async with self:
                 self.processing = False
-
-    @rx.var  # type: ignore
-    def has_learning_aide_response(self) -> bool:
-        return self.learning_aide.response != ""
 
     def clear_learning_aide_response(self) -> Any:
         return self.trigger_clear_learning_aide_prompt()
