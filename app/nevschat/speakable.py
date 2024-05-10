@@ -7,6 +7,7 @@ import requests
 from nevschat.helpers import Warnable
 from nevschat.helpers import delete_old_wav_assets
 from nevschat.helpers import get_default_voice
+from nevschat.helpers import strip_non_japanese_and_split_sentences
 from nevschat.helpers import text_to_wav as tts_text_to_wav
 from rxconfig import config
 from rxconfig import site_runtime_assets_url
@@ -47,7 +48,7 @@ class Speakable(rx.Base, ABC):  # type: ignore
             self.tts_in_progress = True
             try:
                 tts_wav_filename = tts_text_to_wav(
-                    self.text,
+                    strip_non_japanese_and_split_sentences(self.text),
                     self.voice,
                     self.speaking_rate,
                     self.pitch,

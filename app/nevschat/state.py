@@ -1,18 +1,11 @@
 # mypy: disable-error-code="attr-defined,name-defined"
 
-import os
 import re
-import time
 from typing import Any
-from urllib.parse import urljoin
 
-import requests
 from nevschat.helpers import contains_japanese
-from nevschat.helpers import delete_old_wav_assets
 from nevschat.helpers import get_definition
 from nevschat.helpers import get_random_voice
-from nevschat.helpers import strip_non_japanese_and_split_sentences
-from nevschat.helpers import text_to_wav
 from nevschat.learning_aide import LearningAide
 from nevschat.profile import Profile
 from nevschat.prompt import Prompt
@@ -20,8 +13,6 @@ from nevschat.response import Response
 from nevschat.speakable import Speakable
 from nevschat.system_instructions import get_system_instructions
 from openai import OpenAI
-from rxconfig import config
-from rxconfig import site_runtime_assets_url
 
 import reflex as rx
 
@@ -149,7 +140,7 @@ class State(rx.State):  # type: ignore
 
     def edit_prompt(self, index: int) -> None:
         assert index < len(self.prompts_responses)
-        self.edited_prompt = self.prompts_responses[index].prompt
+        self.edited_prompt = self.prompts_responses[index].prompt.text
         self.prompts_responses[index].is_editing = True
         self.is_editing = True
         # self.issue1675()
@@ -327,24 +318,7 @@ class State(rx.State):  # type: ignore
                 self.prompts_responses[-1].response.contains_japanese
                 and self.auto_speak
             ):
-                self.prompts_responses[-1].response.tts_in_progress = True
-            yield
-            async with self:
-                if (
-                    self.prompts_responses[-1].response.contains_japanese
-                    and self.auto_speak
-                ):
-                    try:
-                        index = len(self.prompts_responses) - 1
-                        self.do_speak(
-                            index,
-                            strip_non_japanese_and_split_sentences(
-                                self.prompts_responses[index].response.text
-                            ),
-                        )
-                    finally:
-                        async with self:
-                            self.prompts_responses[-1].tts_in_progress = False
+                return State.speak_last_response
 
     def cancel_chatgpt(self) -> None:
         self.processing = False
@@ -374,73 +348,14 @@ class State(rx.State):  # type: ignore
             Speakable.text_to_wav(self.prompts_responses[index].response, self)
 
     @rx.background  # type: ignore
+    async def speak_last_response(self) -> None:
+        async with self:
+            Speakable.text_to_wav(self.prompts_responses[-1].response, self)
+
+    @rx.background  # type: ignore
     async def speak_profile(self) -> Any:
         async with self:
             Speakable.text_to_wav(self.profile, self)
-
-    def do_speak(self, index: int, text: str) -> None:
-        """
-        Non-async version to call from the async rx.background handlers.
-        """
-        assert self.non_profile_voice != ""
-        assert -1 <= index < len(self.prompts_responses)
-        try:
-            print(f"Speaking: {text}")
-            if not self.using_profile:  # pylint: disable=using-constant-test
-                voice = self.non_profile_voice
-                speaking_rate = float(1)
-                pitch = float(0)
-            else:
-                voice = self.profile.voice
-                speaking_rate = self.profile.speaking_rate
-                pitch = self.profile.pitch
-            # In the process of being refactored.
-            tts_wav_filename = text_to_wav(
-                text,
-                voice,
-                speaking_rate,
-                pitch,
-            )
-            # Take advantage of a moment for the Nginx to make the wav available
-            # by doing some housekeeping.
-            delete_old_wav_assets()
-            tts_wav_url = os.path.join(
-                config.frontend_path, f"{tts_wav_filename[len('assets/'):]}"
-            )
-            full_tts_wav_url = urljoin(site_runtime_assets_url, tts_wav_url)
-            print(f"Checking that {full_tts_wav_url} is being served...", end="")
-            for _ in range(0, 10):
-                try:
-                    response = requests.head(full_tts_wav_url, timeout=10.0)
-                    if response.status_code >= 200 and response.status_code < 400:
-                        print(" OK")
-                        if index == -1:
-                            self.profile.tts_wav_url = tts_wav_url
-                            # This causes the rx.audio to be rendered, at which
-                            # point we know for sure it has a working url.
-                            self.profile.has_tts = True
-                        else:
-                            self.prompts_responses[index].tts_wav_url = tts_wav_url
-                            self.prompts_responses[index].voice = self.non_profile_voice
-                            # This causes the rx.audio to be rendered, at which
-                            # point we know for sure it has a working url.
-                            self.prompts_responses[index].has_tts = True
-                        return
-                except Exception as ex:  # pylint: disable=broad-exception-caught
-                    self.warning = str(ex)
-                    print(self.warning)
-                else:
-                    self.warning = ""
-                time.sleep(0.25)
-        except Exception as ex:  # pylint: disable=broad-exception-caught
-            self.warning = str(ex)
-            print(self.warning)
-        else:
-            print(" NOT OK")
-            self.warning = (
-                "Some problem prevented the audio from being available to play."
-            )
-            print(self.warning)
 
     ####################################################################################
     # Learning Aide
