@@ -5,7 +5,7 @@ from nevschat.state import State
 
 import reflex as rx
 
-VERSION = "0.0.100"
+VERSION = "0.0.101"
 TITLE = f"ネヴの素晴らしいチャットジーピーティー v{VERSION}"
 
 
@@ -82,7 +82,7 @@ def index() -> rx.Component:
                         wrap="wrap",
                     ),
                     rx.cond(
-                        State.learning_aide.text,
+                        State.learning_aide.text != "",
                         rx.hstack(
                             rx.vstack(
                                 rx.flex(

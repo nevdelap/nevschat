@@ -290,7 +290,6 @@ class State(rx.State):  # type: ignore
                 async with self:
                     response = item.choices[0].delta.content  # type: ignore
                     if response:
-                        print("R", response)
                         # The non-breaking space is used to make the markdown
                         # component render as if it had something in it, until
                         # it does, without being visible to the user.
