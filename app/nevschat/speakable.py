@@ -41,11 +41,12 @@ class Speakable(rx.Base, ABC):  # type: ignore
         updates as this runs. Sets tts_in_progress = True while it is running,
         and sets it to False when it is complete and tts_wav_url is set.
         """
-        if self.text == "":  # pylint: disable=comparison-with-callable
-            return
+        # Set before calling text_to_wav and yield to allow UI update.
+        assert self.tts_in_progress
         try:
+            if self.text == "":  # pylint: disable=comparison-with-callable
+                return
             print(f"Creating .wav for: {self.text}")
-            self.tts_in_progress = True
             try:
                 tts_wav_filename = tts_text_to_wav(
                     strip_non_japanese_and_split_sentences(self.text),

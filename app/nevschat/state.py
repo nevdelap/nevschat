@@ -196,9 +196,7 @@ class State(rx.State):  # type: ignore
             if self.editing:
                 index = self.editing_index()
                 if index is None:
-                    raise RuntimeError(
-                        "If editing, the editing_index cannot be None."
-                    )
+                    raise RuntimeError("If editing, the editing_index cannot be None.")
                 return self.chatgpt_with_edited_prompt(index)
             return State.chatgpt
         return None
@@ -339,25 +337,40 @@ class State(rx.State):  # type: ignore
     @rx.background  # type: ignore
     async def speak_profile(self) -> Any:
         async with self:
+            self.profile.tts_in_progress = True
+            yield
+        async with self:
             Speakable.text_to_wav(self.profile, self)
 
     @rx.background  # type: ignore
     async def speak_prompt(self, index: int) -> Any:
+        async with self:
+            self.prompts_responses[index].prompt.tts_in_progress = True
+            yield
         async with self:
             Speakable.text_to_wav(self.prompts_responses[index].prompt, self)
 
     @rx.background  # type: ignore
     async def speak_response(self, index: int) -> Any:
         async with self:
+            self.prompts_responses[index].response.tts_in_progress = True
+            yield
+        async with self:
             Speakable.text_to_wav(self.prompts_responses[index].response, self)
 
     @rx.background  # type: ignore
-    async def speak_last_response(self) -> None:
+    async def speak_last_response(self) -> Any:
+        async with self:
+            self.prompts_responses[-1].response.tts_in_progress = True
+            yield
         async with self:
             Speakable.text_to_wav(self.prompts_responses[-1].response, self)
 
     @rx.background  # type: ignore
     async def speak_learning_aide(self) -> Any:
+        async with self:
+            self.learning_aide.tts_in_progress = True
+            yield
         async with self:
             Speakable.text_to_wav(self.learning_aide, self)
 
@@ -499,7 +512,6 @@ class State(rx.State):  # type: ignore
         async with self:
             self.learning_aide.prompt = text
         return State.dictionary_learning_aide
-
 
     @rx.background  # type: ignore
     async def dictionary_learning_aide(self) -> Any:
