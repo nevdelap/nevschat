@@ -2,7 +2,6 @@ from nevschat.speakable import Speakable
 
 
 class Prompt(Speakable):
-
     contains_japanese: bool = False
 
     def clear(self) -> None:

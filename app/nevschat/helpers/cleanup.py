@@ -4,7 +4,7 @@ import time
 
 
 def delete_old_wav_assets() -> None:
-    files = glob.glob("assets/wav/tts_*.wav")
+    files = glob.glob('assets/wav/tts_*.wav')
     current_time = time.time()
     age_seconds = 60 * 60 * 24
     for file in files:

@@ -11,18 +11,18 @@ random.seed(time.time())
 
 
 def get_default_voice() -> str:
-    return "ja-JP-Neural2-C"
+    return 'ja-JP-Neural2-C'
 
 
 def get_random_voice(male: bool) -> str:
     if male:
         return random.choice(
             [  # nosec
-                "ja-JP-Neural2-C",
-                "ja-JP-Neural2-D",
+                'ja-JP-Neural2-C',
+                'ja-JP-Neural2-D',
             ]
         )
-    return "ja-JP-Neural2-B"  # nosec
+    return 'ja-JP-Neural2-B'  # nosec
 
 
 def text_to_wav(text: str, voice: str, speaking_rate: float, pitch: float) -> str:
@@ -30,24 +30,24 @@ def text_to_wav(text: str, voice: str, speaking_rate: float, pitch: float) -> st
     Write a wave file into assets/wav, if it doesn't already exist.
     """
     try:
-        hash_ = hashlib.md5(text.encode(encoding="utf-8")).hexdigest()  # nosec
-        tts_wav_filename = f"assets/wav/tts_{voice}_{speaking_rate}_{pitch}_{hash_}.wav"
+        hash_ = hashlib.md5(text.encode(encoding='utf-8')).hexdigest()  # nosec
+        tts_wav_filename = f'assets/wav/tts_{voice}_{speaking_rate}_{pitch}_{hash_}.wav'
         if os.path.isfile(tts_wav_filename):
-            print("Skipping tts.")
+            print('Skipping tts.')
             return tts_wav_filename
     except Exception as ex:  # pylint: disable=broad-exception-caught
         print(ex)
 
-    print("Doing tts.")
+    print('Doing tts.')
     client = tts.TextToSpeechClient(
         client_options={
-            "api_key": os.environ["GOOGLE_TTS_KEY"],
-            "quota_project_id": "nevs-chat",
+            'api_key': os.environ['GOOGLE_TTS_KEY'],
+            'quota_project_id': 'nevs-chat',
         }
     )
     text_input = tts.SynthesisInput(text=text)
     voice_params = tts.VoiceSelectionParams(
-        language_code="ja-JP",
+        language_code='ja-JP',
         name=voice,
     )
     audio_config = tts.AudioConfig(
@@ -60,7 +60,7 @@ def text_to_wav(text: str, voice: str, speaking_rate: float, pitch: float) -> st
         voice=voice_params,
         audio_config=audio_config,
     )
-    with open(tts_wav_filename, "wb") as f:
+    with open(tts_wav_filename, 'wb') as f:
         f.write(response.audio_content)
-    print("Done tts.")
+    print('Done tts.')
     return tts_wav_filename

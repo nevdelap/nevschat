@@ -5,12 +5,12 @@ PROJECT_DIR="$(cd -- "$(dirname -- "$0")/.." && pwd)"
 cd "$PROJECT_DIR"
 
 mypy --strict app
-pylint --recursive=y --ignore=.web app
+ruff check --fix --exclude=.web app
 bandit --recursive --skip B101 --exclude=.web --quiet app
 PYVERSION=py312
 pyupgrade --$PYVERSION-plus -- app/**/*.py
 isort --force-single-line-imports --profile black -- app/**/*.py
-black --target-version=$PYVERSION -- app/**/*.py
+ruff format --target-version=$PYVERSION -- app/**/*.py
 git diff --exit-code '*.py'
 
 echo 'Lint is happy.'

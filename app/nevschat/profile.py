@@ -19,7 +19,6 @@ random.seed(time.time())
 
 
 class Profile(Speakable):
-
     male: bool = True
 
     def __init__(self, **data: Any) -> None:
@@ -42,12 +41,12 @@ class Profile(Speakable):
         self.pitch = get_pitch(self.male, age)
         self.speaking_rate = get_random_speaking_rate()
         self.text = (
-            f"私は{name}、"
-            f"{age_to_kanji(age)}歳で、"
-            f"{city}に住んでいます。"
-            f"{profession}で、"
-            f"趣味は{hobbies}です。"
-            f"{foods_and_drinks}が好きです。"
-            f"今私は{mood}"
+            f'私は{name}、'
+            f'{age_to_kanji(age)}歳で、'
+            f'{city}に住んでいます。'
+            f'{profession}で、'
+            f'趣味は{hobbies}です。'
+            f'{foods_and_drinks}が好きです。'
+            f'今私は{mood}'
         )
         self.voice = get_random_voice(self.male)

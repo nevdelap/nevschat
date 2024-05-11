@@ -3,6 +3,9 @@
 import re
 from typing import Any
 
+from openai import OpenAI
+
+import reflex as rx
 from nevschat.helpers import contains_japanese
 from nevschat.helpers import get_definition
 from nevschat.helpers import get_random_voice
@@ -12,15 +15,12 @@ from nevschat.prompt import Prompt
 from nevschat.response import Response
 from nevschat.speakable import Speakable
 from nevschat.system_instructions import get_system_instructions
-from openai import OpenAI
-
-import reflex as rx
 
 SYSTEM_INSTRUCTIONS = get_system_instructions()
 DEFAULT_SYSTEM_INSTRUCTION = list(SYSTEM_INSTRUCTIONS.keys())[1]
 
-GPT4_MODEL = "gpt-4-turbo"
-GPT3_MODEL = "gpt-3.5-turbo"
+GPT4_MODEL = 'gpt-4-turbo'
+GPT3_MODEL = 'gpt-3.5-turbo'
 
 USE_QUICK_PROMPT = False  # True to add a first prompt, for testing.
 USE_CANNED_RESPONSE = False  # True to add a profile and first response, for testing.
@@ -33,33 +33,32 @@ class PromptResponse(rx.Base):  # type: ignore
 
 
 class State(rx.State):  # type: ignore
-
     ####################################################################################
     # State
 
     prompts_responses: list[PromptResponse] = (
         [
             PromptResponse(
-                prompt="そうですか？",
-                response="はい、そうです。",
+                prompt='そうですか？',
+                response='はい、そうです。',
                 editing=False,
                 contains_japanese=True,
                 tts_in_progress=False,
                 has_tts=False,
-                tts_wav_url="",
-                model="gpt-canned",
-                voice="",
+                tts_wav_url='',
+                model='gpt-canned',
+                voice='',
             ),
             PromptResponse(
-                prompt="いいです？",
-                response="はい、いいですよ！",
+                prompt='いいです？',
+                response='はい、いいですよ！',
                 editing=False,
                 contains_japanese=True,
                 tts_in_progress=False,
                 has_tts=False,
-                tts_wav_url="",
-                model="gpt-canned",
-                voice="",
+                tts_wav_url='',
+                model='gpt-canned',
+                voice='',
             ),
         ]
         if USE_CANNED_RESPONSE
@@ -71,7 +70,7 @@ class State(rx.State):  # type: ignore
     gpt_4: bool = False
     learning_aide: LearningAide = LearningAide()
     processing: bool = False
-    new_prompt: str = "可愛いウサギが好きですか?" if USE_QUICK_PROMPT else ""
+    new_prompt: str = '可愛いウサギが好きですか?' if USE_QUICK_PROMPT else ''
     non_profile_voice: str = get_random_voice(True)
     profile: Profile = Profile()
     system_instruction: str = DEFAULT_SYSTEM_INSTRUCTION
@@ -118,11 +117,11 @@ class State(rx.State):  # type: ignore
 
     @rx.var  # type: ignore
     def using_profile(self) -> bool:
-        return self.system_instruction == "ランダムな人"
+        return self.system_instruction == 'ランダムな人'
 
     @rx.var  # type: ignore
     def you_are(self) -> str:
-        return self.profile.text.replace("私は", "あなたは")
+        return self.profile.text.replace('私は', 'あなたは')
 
     ####################################################################################
     # Profile
@@ -135,7 +134,7 @@ class State(rx.State):  # type: ignore
         # two levels deep.
         self.profile.text = self.profile.text
         for prompt_response in self.prompts_responses:
-            prompt_response.response.tts_wav_url = ""
+            prompt_response.response.tts_wav_url = ''
             prompt_response.response.voice = self.profile.voice
 
     ####################################################################################
@@ -170,10 +169,10 @@ class State(rx.State):  # type: ignore
         return self.trigger_clear_learning_aide_prompt()
 
     def clear_edited_prompt(self) -> None:
-        self.edited_prompt = ""
+        self.edited_prompt = ''
 
     def clear_new_prompt(self) -> None:
-        self.new_prompt = ""
+        self.new_prompt = ''
 
     def chatgpt_with_edited_prompt(self, index: int) -> Any:
         assert index < len(self.prompts_responses)
@@ -185,27 +184,27 @@ class State(rx.State):  # type: ignore
 
     def cancel_edit_prompt(self, index: int) -> None:
         assert index < len(self.prompts_responses)
-        self.edited_prompt = ""
+        self.edited_prompt = ''
         self.prompts_responses[index].editing = False
         self.editing = False
 
     def handle_key_down(self, key: str) -> Any:
-        if key == "Control":
+        if key == 'Control':
             self.control_down = True
-        elif key == "Enter" and self.control_down:
+        elif key == 'Enter' and self.control_down:
             if self.editing:
                 index = self.editing_index()
                 if index is None:
-                    raise RuntimeError("If editing, the editing_index cannot be None.")
+                    raise RuntimeError('If editing, the editing_index cannot be None.')
                 return self.chatgpt_with_edited_prompt(index)
             return State.chatgpt
         return None
 
     def handle_key_up(self, key: str) -> None:
-        if key == "Control":
+        if key == 'Control':
             self.control_down = False
 
-    def cancel_control(self, _text: str = "") -> None:
+    def cancel_control(self, _text: str = '') -> None:
         self.control_down = False
 
     ####################################################################################
@@ -215,11 +214,11 @@ class State(rx.State):  # type: ignore
     async def chatgpt(self) -> Any:
         try:
             async with self:
-                assert self.new_prompt != ""
+                assert self.new_prompt != ''
 
                 self.cancel_control()
                 self.processing = True
-                self.warning = ""
+                self.warning = ''
 
                 model = GPT4_MODEL if self.gpt_4 else GPT3_MODEL
                 messages = []
@@ -227,9 +226,9 @@ class State(rx.State):  # type: ignore
                 if self.terse:
                     messages.append(
                         {
-                            "role": "system",
-                            "content": (
-                                "Give terse responses without extra explanation."
+                            'role': 'system',
+                            'content': (
+                                'Give terse responses without extra explanation.'
                             ),
                         }
                     )
@@ -241,28 +240,28 @@ class State(rx.State):  # type: ignore
                 if self.using_profile:  # pylint: disable=using-constant-test
                     system_instruction = system_instruction.format(you_are=self.you_are)
 
-                system_instruction = re.sub(r"\s+", " ", system_instruction).strip()
+                system_instruction = re.sub(r'\s+', ' ', system_instruction).strip()
 
-                messages.append({"role": "system", "content": system_instruction})
+                messages.append({'role': 'system', 'content': system_instruction})
                 if code_related:
                     messages.append(
                         {
-                            "role": "system",
-                            "content": (
-                                "All responses with code examples MUST "
-                                + "wrap the code examples in triple backticks."
+                            'role': 'system',
+                            'content': (
+                                'All responses with code examples MUST '
+                                + 'wrap the code examples in triple backticks.'
                             ),
                         }
                     )
 
                 for prompt_response in self.prompts_responses:
                     messages.append(
-                        {"role": "user", "content": prompt_response.prompt.text}
+                        {'role': 'user', 'content': prompt_response.prompt.text}
                     )
                     messages.append(
-                        {"role": "assistant", "content": prompt_response.response.text}
+                        {'role': 'assistant', 'content': prompt_response.response.text}
                     )
-                messages.append({"role": "user", "content": self.new_prompt})
+                messages.append({'role': 'user', 'content': self.new_prompt})
 
                 prompt_response = PromptResponse(
                     prompt=Speakable(
@@ -273,17 +272,17 @@ class State(rx.State):  # type: ignore
                         pitch=self.profile.pitch,
                         speaking_rate=self.profile.speaking_rate,
                         voice=self.profile.voice,
-                        text="\u00A0",  # Non-breaking space.
+                        text='\u00a0',  # Non-breaking space.
                     ),
                     editing=False,
                 )
                 self.prompts_responses.append(prompt_response)
-                self.new_prompt = ""
+                self.new_prompt = ''
 
                 print(
-                    f"GPT4? {self.gpt_4}\n"
-                    f"Terse? {self.terse}\n"
-                    f"Messages: {messages}"
+                    f'GPT4? {self.gpt_4}\n'
+                    f'Terse? {self.terse}\n'
+                    f'Messages: {messages}'
                 )
 
             session = OpenAI(
@@ -302,15 +301,17 @@ class State(rx.State):  # type: ignore
                         # The non-breaking space is used to make the markdown
                         # component render as if it had something in it, until
                         # it does, without being visible to the user.
-                        if self.prompts_responses[-1].response.text == "\u00A0":
-                            self.prompts_responses[-1].response.text = ""
+                        if self.prompts_responses[-1].response.text == '\u00a0':
+                            self.prompts_responses[-1].response.text = ''
                         self.prompts_responses[-1].response.text += response
-                        self.prompts_responses[-1].response.contains_japanese = (
-                            contains_japanese(self.prompts_responses[-1].response.text)
+                        self.prompts_responses[
+                            -1
+                        ].response.contains_japanese = contains_japanese(
+                            self.prompts_responses[-1].response.text
                         )
                     if not self.processing:
                         # It's been cancelled.
-                        self.prompts_responses[-1].response += " (キャンセル）"
+                        self.prompts_responses[-1].response += ' (キャンセル）'
                         break
 
         except Exception as ex:  # pylint: disable=broad-exception-caught
@@ -385,19 +386,19 @@ class State(rx.State):  # type: ignore
 
     def explain_grammer(self) -> Any:
         return self.do_chatgpt_learning_aide(
-            GPT4_MODEL, SYSTEM_INSTRUCTIONS["Explain Grammar"][0]
+            GPT4_MODEL, SYSTEM_INSTRUCTIONS['Explain Grammar'][0]
         )
 
     def explain_usage(self) -> Any:
         return self.do_chatgpt_learning_aide(
-            GPT3_MODEL, SYSTEM_INSTRUCTIONS["Explain Usage"][0]
+            GPT3_MODEL, SYSTEM_INSTRUCTIONS['Explain Usage'][0]
         )
 
     def give_examples_of_same_meaning(self) -> Any:
         return self.do_chatgpt_learning_aide(
             GPT3_MODEL,
             SYSTEM_INSTRUCTIONS[
-                "日本語: Give varied ways of expressing the given meaning."
+                '日本語: Give varied ways of expressing the given meaning.'
             ][0],
         )
 
@@ -406,8 +407,8 @@ class State(rx.State):  # type: ignore
             GPT3_MODEL,
             SYSTEM_INSTRUCTIONS[
                 (
-                    "日本語: Give varied ways of expressing "
-                    + "the opposite of the given meaning."
+                    '日本語: Give varied ways of expressing '
+                    + 'the opposite of the given meaning.'
                 )
             ][0],
         )
@@ -416,8 +417,8 @@ class State(rx.State):  # type: ignore
         return self.do_chatgpt_learning_aide(
             GPT3_MODEL,
             (
-                "Translate the given Japanese text into English. "
-                + "NEVER give pronunciation. NEVER give romaji."
+                'Translate the given Japanese text into English. '
+                + 'NEVER give pronunciation. NEVER give romaji.'
             ),
         )
 
@@ -428,7 +429,7 @@ class State(rx.State):  # type: ignore
 
     def trigger_set_chatgpt_learning_aide_prompt(self) -> Any:
         return rx.call_script(
-            "get_selected_text_and_clear()",
+            'get_selected_text_and_clear()',
             callback=State.set_chatgpt_learning_aide_prompt,
         )
 
@@ -447,26 +448,26 @@ class State(rx.State):  # type: ignore
                 model = self.learning_aide.model
 
                 learning_aide_system_instruction = re.sub(
-                    r"\s+", " ", learning_aide_system_instruction
+                    r'\s+', ' ', learning_aide_system_instruction
                 ).strip()
 
-                if learning_aid_prompt != "":
+                if learning_aid_prompt != '':
                     self.processing = True
-                    self.warning = ""
-                    self.learning_aide.text = ""
+                    self.warning = ''
+                    self.learning_aide.text = ''
                     self.learning_aide.contains_japanese = False
-                    self.learning_aide.tts_wav_url = ""
+                    self.learning_aide.tts_wav_url = ''
 
-            if learning_aid_prompt != "":
+            if learning_aid_prompt != '':
                 messages = [
                     {
-                        "role": "system",
-                        "content": learning_aide_system_instruction,
+                        'role': 'system',
+                        'content': learning_aide_system_instruction,
                     },
-                    {"role": "user", "content": learning_aid_prompt},
+                    {'role': 'user', 'content': learning_aid_prompt},
                 ]
 
-                print(f"Model: {model}\nMessages: {messages}")
+                print(f'Model: {model}\nMessages: {messages}')
 
                 session = OpenAI(
                     timeout=10.0,
@@ -487,7 +488,7 @@ class State(rx.State):  # type: ignore
                             )
                         if not self.processing:
                             # It's been cancelled.
-                            self.learning_aide.text += " (キャンセル）"
+                            self.learning_aide.text += ' (キャンセル）'
                             break
 
         except Exception as ex:  # pylint: disable=broad-exception-caught
@@ -503,7 +504,7 @@ class State(rx.State):  # type: ignore
 
     def trigger_set_dictionary_learning_aide_prompt(self) -> Any:
         return rx.call_script(
-            "get_selected_text_and_clear()",
+            'get_selected_text_and_clear()',
             callback=State.set_dictionary_learning_aide_prompt,
         )
 
@@ -517,12 +518,12 @@ class State(rx.State):  # type: ignore
     async def dictionary_learning_aide(self) -> Any:
         try:
             async with self:
-                if self.learning_aide.prompt != "":
+                if self.learning_aide.prompt != '':
                     self.processing = True
-                    self.warning = ""
-                    self.learning_aide.text = ""
+                    self.warning = ''
+                    self.learning_aide.text = ''
                     self.learning_aide.has_tts = False
-                    self.learning_aide.tts_wav_url = ""
+                    self.learning_aide.tts_wav_url = ''
                     definition = get_definition(self.learning_aide.prompt)
                     if definition is not None:
                         self.learning_aide.text = definition
@@ -542,6 +543,6 @@ class State(rx.State):  # type: ignore
 
     def trigger_clear_learning_aide_prompt(self, _: Any = None) -> Any:
         return rx.call_script(
-            "get_selected_text_and_clear()",
+            'get_selected_text_and_clear()',
             callback=State.clear_learning_aide_prompt,
         )

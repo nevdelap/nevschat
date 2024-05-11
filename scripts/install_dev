@@ -19,13 +19,13 @@ conda install -yq \
 	requests==2.31.0 \
 	`# dev` \
 	bandit \
-	black \
 	coverage \
 	isort \
 	mypy \
 	pylint \
 	pytest \
 	pyupgrade \
+	ruff \
 	types-requests==2.31.0.*
 pip install -U \
     jamdict==0.1a11.post2 \
