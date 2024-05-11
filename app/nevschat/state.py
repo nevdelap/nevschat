@@ -28,8 +28,8 @@ USE_CANNED_RESPONSE = False  # True to add a profile and first response, for tes
 
 class PromptResponse(rx.Base):  # type: ignore
     prompt: Prompt = Prompt()
-    response: Response = Speakable()
-    is_editing: bool
+    response: Response = Response()
+    editing: bool
 
 
 class State(rx.State):  # type: ignore
@@ -42,7 +42,7 @@ class State(rx.State):  # type: ignore
             PromptResponse(
                 prompt="そうですか？",
                 response="はい、そうです。",
-                is_editing=False,
+                editing=False,
                 contains_japanese=True,
                 tts_in_progress=False,
                 has_tts=False,
@@ -53,7 +53,7 @@ class State(rx.State):  # type: ignore
             PromptResponse(
                 prompt="いいです？",
                 response="はい、いいですよ！",
-                is_editing=False,
+                editing=False,
                 contains_japanese=True,
                 tts_in_progress=False,
                 has_tts=False,
@@ -81,8 +81,40 @@ class State(rx.State):  # type: ignore
     # These @rx.vars that just call a method on a property or do an operation
     # with a property that is an rx.Base are because @rx.vars in those classes
     # do no propagate, at least as of Reflex v0.4.9 as far as I've been able to
-    # discover. When I discover otherwise hopefully these can be moved onto
-    # methods on those classes marked @rx.var.
+    # discover. When I discover otherwise hopefully these can be moved into
+    # methods in those classes marked @rx.var.
+
+    @rx.var  # type: ignore
+    def cannot_chatgpt_with_new_prompt(self) -> bool:
+        return self.editing or len(self.new_prompt.strip()) == 0
+
+    @rx.var  # type: ignore
+    def cannot_clear_chat(self) -> bool:
+        return len(self.prompts_responses) == 0
+
+    @rx.var  # type: ignore
+    def cannot_clear_or_chatgpt_with_edited_prompt(self) -> bool:
+        return len(self.edited_prompt.strip()) == 0
+
+    @rx.var  # type: ignore
+    def cannot_enter_new_prompt_or_edit(self) -> bool:
+        return self.editing or self.processing
+
+    @rx.var  # type: ignore
+    def editing(self) -> bool:
+        return any(
+            prompt_response.editing for prompt_response in self.prompts_responses
+        )
+
+    def editing_index(self) -> int | None:
+        for index, prompt_response in enumerate(self.prompts_responses):
+            if prompt_response.editing:
+                return index
+        return None
+
+    @rx.var  # type: ignore
+    def has_prompts_responses(self) -> bool:
+        return len(self.prompts_responses) > 0
 
     @rx.var  # type: ignore
     def using_profile(self) -> bool:
@@ -93,7 +125,7 @@ class State(rx.State):  # type: ignore
         return self.profile.text.replace("私は", "あなたは")
 
     ####################################################################################
-    # TODO Classify And Order Better
+    # Profile
 
     def change_profile(self) -> None:
         self.profile.clear()
@@ -106,47 +138,36 @@ class State(rx.State):  # type: ignore
             prompt_response.response.tts_wav_url = ""
             prompt_response.response.voice = self.profile.voice
 
-    @rx.var  # type: ignore
-    def has_prompts_responses(self) -> bool:
-        return len(self.prompts_responses) > 0
+    ####################################################################################
+    # System Instruction
 
-    @rx.var  # type: ignore
-    def cannot_clear_chat(self) -> bool:
-        return len(self.prompts_responses) == 0
+    @rx.background  # type: ignore
+    async def set_system_instruction(self, system_instruction: str) -> Any:
+        async with self:
+            self.system_instruction = system_instruction
+            self.change_profile()
+        # This needs to run in the background so that when this ultimately runs
+        # it is after the UI has updated and shown the buttons that it will
+        # disable.
+        return State.trigger_clear_learning_aide_prompt
 
-    @rx.var  # type: ignore
-    def cannot_clear_or_chatgpt_with_edited_prompt(self) -> bool:
-        return len(self.edited_prompt.strip()) == 0
-
-    @rx.var  # type: ignore
-    def cannot_enter_new_prompt_or_edit(self) -> bool:
-        return self.is_editing or self.processing
-
-    @rx.var  # type: ignore
-    def cannot_chatgpt_with_new_prompt(self) -> bool:
-        return self.is_editing or len(self.new_prompt.strip()) == 0
-
-    @rx.var  # type: ignore
-    def is_editing(self) -> bool:
-        return any(
-            prompt_response.is_editing for prompt_response in self.prompts_responses
-        )
-
-    def editing_index(self) -> int | None:
-        for index, prompt_response in enumerate(self.prompts_responses):
-            if prompt_response.is_editing:
-                return index
-        return None
+    ####################################################################################
+    # Prompt Editing
 
     def edit_prompt(self, index: int) -> None:
         assert index < len(self.prompts_responses)
         self.edited_prompt = self.prompts_responses[index].prompt.text
-        self.prompts_responses[index].is_editing = True
-        self.is_editing = True
+        self.prompts_responses[index].editing = True
+        self.editing = True
         # self.issue1675()
 
     def update_edited_prompt(self, prompt: str) -> None:
         self.edited_prompt = prompt
+
+    def clear_chat(self) -> Any:
+        self.prompts_responses = []
+        self.change_profile()
+        return self.trigger_clear_learning_aide_prompt()
 
     def clear_edited_prompt(self) -> None:
         self.edited_prompt = ""
@@ -159,24 +180,24 @@ class State(rx.State):  # type: ignore
         assert len(self.edited_prompt.strip()) > 0
         self.new_prompt = self.edited_prompt
         self.prompts_responses = self.prompts_responses[:index]
-        self.is_editing = False
+        self.editing = False
         return State.chatgpt
 
     def cancel_edit_prompt(self, index: int) -> None:
         assert index < len(self.prompts_responses)
         self.edited_prompt = ""
-        self.prompts_responses[index].is_editing = False
-        self.is_editing = False
+        self.prompts_responses[index].editing = False
+        self.editing = False
 
     def handle_key_down(self, key: str) -> Any:
         if key == "Control":
             self.control_down = True
         elif key == "Enter" and self.control_down:
-            if self.is_editing:
+            if self.editing:
                 index = self.editing_index()
                 if index is None:
                     raise RuntimeError(
-                        "If is_editing, the editing_index cannot be None."
+                        "If editing, the editing_index cannot be None."
                     )
                 return self.chatgpt_with_edited_prompt(index)
             return State.chatgpt
@@ -188,16 +209,6 @@ class State(rx.State):  # type: ignore
 
     def cancel_control(self, _text: str = "") -> None:
         self.control_down = False
-
-    @rx.background  # type: ignore
-    async def set_system_instruction(self, system_instruction: str) -> Any:
-        async with self:
-            self.system_instruction = system_instruction
-            self.change_profile()
-        # This needs to run in the background so that when this ultimately runs
-        # it is after the UI has updated and shown the buttons that it will
-        # disable.
-        return State.trigger_clear_learning_aide_prompt
 
     ####################################################################################
     # ChatGPT
@@ -266,7 +277,7 @@ class State(rx.State):  # type: ignore
                         voice=self.profile.voice,
                         text="\u00A0",  # Non-breaking space.
                     ),
-                    is_editing=False,
+                    editing=False,
                 )
                 self.prompts_responses.append(prompt_response)
                 self.new_prompt = ""
@@ -322,19 +333,13 @@ class State(rx.State):  # type: ignore
     def cancel_chatgpt(self) -> None:
         self.processing = False
 
-    def clear_chat(self) -> Any:
-        self.prompts_responses = []
-        self.change_profile()
-        # self.invariant()
-        return self.trigger_clear_learning_aide_prompt()
-
     ####################################################################################
     # Text To Speech
 
     @rx.background  # type: ignore
-    async def speak_learning_aide(self) -> Any:
+    async def speak_profile(self) -> Any:
         async with self:
-            Speakable.text_to_wav(self.learning_aide, self)
+            Speakable.text_to_wav(self.profile, self)
 
     @rx.background  # type: ignore
     async def speak_prompt(self, index: int) -> Any:
@@ -352,9 +357,9 @@ class State(rx.State):  # type: ignore
             Speakable.text_to_wav(self.prompts_responses[-1].response, self)
 
     @rx.background  # type: ignore
-    async def speak_profile(self) -> Any:
+    async def speak_learning_aide(self) -> Any:
         async with self:
-            Speakable.text_to_wav(self.profile, self)
+            Speakable.text_to_wav(self.learning_aide, self)
 
     ####################################################################################
     # Learning Aide
@@ -420,21 +425,6 @@ class State(rx.State):  # type: ignore
             self.learning_aide.prompt = text
         return State.chatgpt_learning_aide
 
-    def do_dictionary_learning_aide(self) -> Any:
-        return self.trigger_set_dictionary_learning_aide_prompt()
-
-    def trigger_set_dictionary_learning_aide_prompt(self) -> Any:
-        return rx.call_script(
-            "get_selected_text_and_clear()",
-            callback=State.set_dictionary_learning_aide_prompt,
-        )
-
-    @rx.background  # type: ignore
-    async def set_dictionary_learning_aide_prompt(self, text) -> Any:
-        async with self:
-            self.learning_aide.prompt = text
-        return State.dictionary_learning_aide
-
     @rx.background  # type: ignore
     async def chatgpt_learning_aide(self) -> Any:
         try:
@@ -451,7 +441,7 @@ class State(rx.State):  # type: ignore
                     self.processing = True
                     self.warning = ""
                     self.learning_aide.text = ""
-                    self.learning_aide.has_tts = False
+                    self.learning_aide.contains_japanese = False
                     self.learning_aide.tts_wav_url = ""
 
             if learning_aid_prompt != "":
@@ -475,8 +465,8 @@ class State(rx.State):  # type: ignore
 
                 # pylint error: https://github.com/openai/openai-python/issues/870
                 for item in session:  # pylint: disable=not-an-iterable
+                    response = item.choices[0].delta.content  # type: ignore
                     async with self:
-                        response = item.choices[0].delta.content  # type: ignore
                         if response:
                             self.learning_aide.text += response
                             self.learning_aide.contains_japanese = contains_japanese(
@@ -494,6 +484,22 @@ class State(rx.State):  # type: ignore
         finally:
             async with self:
                 self.processing = False
+
+    def do_dictionary_learning_aide(self) -> Any:
+        return self.trigger_set_dictionary_learning_aide_prompt()
+
+    def trigger_set_dictionary_learning_aide_prompt(self) -> Any:
+        return rx.call_script(
+            "get_selected_text_and_clear()",
+            callback=State.set_dictionary_learning_aide_prompt,
+        )
+
+    @rx.background  # type: ignore
+    async def set_dictionary_learning_aide_prompt(self, text) -> Any:
+        async with self:
+            self.learning_aide.prompt = text
+        return State.dictionary_learning_aide
+
 
     @rx.background  # type: ignore
     async def dictionary_learning_aide(self) -> Any:
@@ -526,24 +532,4 @@ class State(rx.State):  # type: ignore
         return rx.call_script(
             "get_selected_text_and_clear()",
             callback=State.clear_learning_aide_prompt,
-        )
-
-    ####################################################################################
-    # Built-In Test
-
-    # TODO: Review and add what is missing.
-    def invariant(self) -> None:
-        number_of_prompts_being_edited = sum(
-            int(prompt_response.is_editing)
-            for prompt_response in self.prompts_responses
-        )
-        assert number_of_prompts_being_edited in [0, 1]
-        assert self.is_editing == (number_of_prompts_being_edited == 1)
-        assert not (
-            self.cannot_chatgpt_with_new_prompt and self.cannot_enter_new_prompt_or_edit
-        )
-        assert not (
-            self.cannot_clear_or_chatgpt_with_edited_prompt
-            and self.is_editing
-            and len(str(self.edited_prompt).strip()) > 0
         )

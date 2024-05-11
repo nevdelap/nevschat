@@ -12,7 +12,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
     return rx.vstack(
         rx.vstack(
             rx.cond(
-                prompt_response.is_editing,
+                prompt_response.editing,
                 rx.hstack(
                     rx.text_area(
                         border_color="#C2A499",
