@@ -44,7 +44,7 @@ class Profile(Speakable):
             f'私は{name}、'
             f'{age_to_kanji(age)}歳で、'
             f'{city}に住んでいます。'
-            f'{profession}で、'
+            f'{profession}です。'
             f'趣味は{hobbies}です。'
             f'{foods_and_drinks}が好きです。'
             f'今私は{mood}'

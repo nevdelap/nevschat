@@ -4,7 +4,7 @@ import reflex as rx
 from nevschat.components import chat
 from nevschat.state import State
 
-VERSION = '0.0.103'
+VERSION = '0.0.104'
 TITLE = f'ネヴの素晴らしいチャットジーピーティー v{VERSION}'
 
 

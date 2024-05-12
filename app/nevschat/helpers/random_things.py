@@ -1017,7 +1017,7 @@ def get_random_hobbies(age: int) -> str:
 def get_random_foods_and_drinks() -> str:
     foods = random.sample(FOODS, random.randint(1, 2))  # nosec
     drinks = random.sample(DRINKS, random.randint(1, 2))  # nosec
-    return 'と'.join(foods + drinks)
+    return 'や'.join(foods + drinks)
 
 
 def get_random_mood() -> str:
