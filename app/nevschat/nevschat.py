@@ -3,6 +3,8 @@
 import reflex as rx
 from nevschat.components import chat
 from nevschat.state import State
+from reflex.style import color_mode
+from reflex.style import toggle_color_mode
 
 VERSION = '0.0.104'
 TITLE = f'ネヴの素晴らしいチャットジーピーティー v{VERSION}'
@@ -11,10 +13,30 @@ TITLE = f'ネヴの素晴らしいチャットジーピーティー v{VERSION}'
 def index() -> rx.Component:
     return rx.center(
         rx.vstack(
-            rx.heading(TITLE),
+            rx.flex(
+                rx.heading(TITLE),
+                rx.spacer(
+                    width="100%",
+                ),
+                rx.button(
+                    rx.cond(
+                        color_mode == 'light',
+                        rx.icon(
+                            tag='moon',
+                        ),
+                        rx.icon(
+                            tag='sun',
+                        ),
+                    ),
+                    color=rx.color('gray', 12),
+                    background_color='rgba(0, 0, 0, 0)',
+                    on_click=toggle_color_mode
+                ),
+                width="100%",
+            ),
             rx.text(
                 f'リフレックス v{rx.constants.Reflex.VERSION}',
-                color='rgba(0, 0, 0, 0.4)',
+                color=rx.color('gray', 8),
             ),
             chat(),
             rx.button(
@@ -91,7 +113,7 @@ def index() -> rx.Component:
                                         ),
                                         rx.box(
                                             rx.text(State.learning_aide.model),
-                                            color='rgba(0, 0, 0, 0.4)',
+                                            color=rx.color('gray', 8),
                                             font_size='0.4em',
                                             padding_bottom='1em',
                                             padding_right='1.5em',
@@ -99,8 +121,8 @@ def index() -> rx.Component:
                                             bottom='0',
                                             right='0',
                                         ),
-                                        background_color='#e6f7ed',
-                                        border_color='#56ba9f',
+                                        background_color=rx.color('jade', 3),
+                                        border_color=rx.color('jade', 8),
                                         border_style='solid',
                                         border_width='3px',
                                         min_width='10em',
@@ -118,7 +140,7 @@ def index() -> rx.Component:
                                     State.learning_aide.tts_in_progress,
                                     rx.center(
                                         rx.chakra.spinner(
-                                            color='#888',
+                                            color=rx.color('gray', 8),
                                             size='md',
                                         ),
                                         width='100%',

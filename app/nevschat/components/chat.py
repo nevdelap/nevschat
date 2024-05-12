@@ -14,7 +14,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                 prompt_response.editing,
                 rx.hstack(
                     rx.text_area(
-                        border_color='#C2A499',
+                        border_color=rx.color('bronze', 3),
                         border_style='solid',
                         border_width='3px',
                         on_blur=State.cancel_control,
@@ -66,8 +66,8 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                                     prompt_response.prompt.text,
                                     width='100%',
                                 ),
-                                background_color='#ffefd6',
-                                border_color='#c2a499',
+                                background_color=rx.color('bronze', 3),
+                                border_color=rx.color('bronze', 8),
                                 border_style='solid',
                                 border_width='3px',
                                 padding='0 1em 0 1em',
@@ -82,7 +82,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                             prompt_response.prompt.tts_in_progress,
                             rx.center(
                                 rx.chakra.spinner(
-                                    color='#888',
+                                    color=rx.color('gray', 8),
                                     size='md',
                                 ),
                                 width='100%',
@@ -163,8 +163,8 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                                     rx.markdown(
                                         prompt_response.response.text,
                                     ),
-                                    background_color='#e1f6fd',
-                                    border_color='#60b3d7',
+                                    background_color=rx.color('sky', 3),
+                                    border_color=rx.color('sky', 8),
                                     border_style='solid',
                                     border_width='3px',
                                     min_width='10em',
@@ -174,8 +174,8 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                                     rx.markdown(
                                         prompt_response.response.text,
                                     ),
-                                    background_color='#fee9f5',
-                                    border_color='#dd93c2',
+                                    background_color=rx.color('pink', 3),
+                                    border_color=rx.color('pink', 8),
                                     border_radius='10px',
                                     border_style='solid',
                                     border_width='3px',
@@ -192,7 +192,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                                 prompt_response.response.tts_wav_url != '',
                                 rx.text(prompt_response.response.voice),
                             ),
-                            color='rgba(0, 0, 0, 0.4)',
+                            color=rx.color('gray', 8),
                             font_size='0.4em',
                             padding_bottom='1em',
                             padding_right='1.5em',
@@ -207,7 +207,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         prompt_response.response.tts_in_progress,
                         rx.center(
                             rx.chakra.spinner(
-                                color='#888',
+                                color=rx.color('gray', 8),
                                 size='md',
                             ),
                             width='100%',
@@ -287,13 +287,11 @@ def chat() -> rx.Component:
             rx.checkbox(
                 'GPT4',
                 checked=State.gpt_4,
-                color='#333',
                 on_change=State.set_gpt_4,
             ),
             rx.checkbox(
                 '簡潔な返答',
                 checked=State.terse,
-                color='#333',
                 on_change=State.set_terse,
             ),
             rx.select(
@@ -306,7 +304,6 @@ def chat() -> rx.Component:
             rx.checkbox(
                 '日本語のオートスピーク',
                 checked=State.auto_speak,
-                color='#333',
                 on_change=State.set_auto_speak,
             ),
             align='center',
@@ -328,8 +325,8 @@ def chat() -> rx.Component:
                                         State.profile.text,
                                         width='100%',
                                     ),
-                                    background_color='#e1f6fd',
-                                    border_color='#60b3d7',
+                                    background_color=rx.color('sky', 3),
+                                    border_color=rx.color('sky', 8),
                                     border_style='solid',
                                     border_width='3px',
                                     min_width='10em',
@@ -341,8 +338,8 @@ def chat() -> rx.Component:
                                         State.profile.text,
                                         width='100%',
                                     ),
-                                    background_color='#fee9f5',
-                                    border_color='#dd93c2',
+                                    background_color=rx.color('pink', 3),
+                                    border_color=rx.color('pink', 8),
                                     border_radius='10px',
                                     border_style='solid',
                                     border_width='3px',
@@ -355,7 +352,7 @@ def chat() -> rx.Component:
                                 State.profile.tts_wav_url != '',
                                 rx.box(
                                     rx.text(State.profile.voice),
-                                    color='rgba(0, 0, 0, 0.4)',
+                                    color=rx.color('gray', 8),
                                     font_size='0.4em',
                                     padding_bottom='1em',
                                     padding_right='1.5em',
@@ -370,7 +367,7 @@ def chat() -> rx.Component:
                             State.profile.tts_in_progress,
                             rx.center(
                                 rx.chakra.spinner(
-                                    color='#888',
+                                    color=rx.color('gray', 8),
                                     size='md',
                                 ),
                                 width='100%',
@@ -441,7 +438,7 @@ def chat() -> rx.Component:
         ),
         rx.hstack(
             rx.text_area(
-                border_color='#C2A499',
+                border_color=rx.color('bronze', 8),
                 border_style='solid',
                 border_width='3px',
                 disabled=State.cannot_enter_new_prompt_or_edit,
