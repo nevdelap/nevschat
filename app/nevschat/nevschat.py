@@ -6,7 +6,7 @@ from nevschat.state import State
 from reflex.style import color_mode  # type: ignore
 from reflex.style import toggle_color_mode
 
-VERSION = '0.0.105'
+VERSION = '0.0.106'
 TITLE = f'ネヴの素晴らしいチャットジーピーティー v{VERSION}'
 
 
@@ -104,6 +104,9 @@ def index() -> rx.Component:
                     rx.cond(
                         State.learning_aide.text != '',
                         rx.flex(
+                            rx.spacer(
+                                width='100%',
+                            ),
                             rx.vstack(
                                 rx.box(
                                     rx.markdown(
@@ -139,20 +142,7 @@ def index() -> rx.Component:
                                     ),
                                 ),
                             ),
-                            rx.spacer(
-                                width='100%',
-                            ),
                             rx.vstack(
-                                rx.button(
-                                    rx.icon(
-                                        tag='x',
-                                        size=20,
-                                        stroke_width=1.5,
-                                    ),
-                                    color_scheme='tomato',
-                                    margin_top='0.5em',
-                                    on_click=State.clear_learning_aide_response,
-                                ),
                                 rx.hstack(
                                     rx.cond(
                                         State.processing,
@@ -201,6 +191,16 @@ def index() -> rx.Component:
                                             ),
                                         ),
                                     ),
+                                ),
+                                rx.button(
+                                    rx.icon(
+                                        tag='x',
+                                        size=20,
+                                        stroke_width=1.5,
+                                    ),
+                                    color_scheme='tomato',
+                                    margin_top='0.5em',
+                                    on_click=State.clear_learning_aide_response,
                                 ),
                             ),
                             spacing='2',

@@ -24,37 +24,41 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         value=State.edited_prompt,
                         width='100%',
                     ),
-                    rx.button(
-                        rx.icon(
-                            tag='eraser',
-                            size=20,
-                            stroke_width=1.5,
+                    rx.vstack(
+                        rx.hstack(
+                            rx.button(
+                                rx.icon(
+                                    tag='eraser',
+                                    size=20,
+                                    stroke_width=1.5,
+                                ),
+                                color_scheme='red',
+                                disabled=State.cannot_clear_or_chatgpt_with_edited_prompt,
+                                margin_top='0.5em',
+                                on_click=lambda: State.clear_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
+                            ),
+                            rx.button(
+                                rx.icon(
+                                    tag='send-horizontal',
+                                    size=20,
+                                    stroke_width=1.5,
+                                ),
+                                color_scheme='jade',
+                                disabled=State.cannot_clear_or_chatgpt_with_edited_prompt,
+                                margin_top='0.5em',
+                                on_click=lambda: State.chatgpt_with_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
+                            ),
                         ),
-                        color_scheme='red',
-                        disabled=State.cannot_clear_or_chatgpt_with_edited_prompt,
-                        margin_top='0.5em',
-                        on_click=lambda: State.clear_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
-                    ),
-                    rx.button(
-                        rx.icon(
-                            tag='send-horizontal',
-                            size=20,
-                            stroke_width=1.5,
+                        rx.button(
+                            rx.icon(
+                                tag='x',
+                                size=20,
+                                stroke_width=1.5,
+                            ),
+                            color_scheme='tomato',
+                            margin_top='0.5em',
+                            on_click=lambda: State.cancel_edit_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                         ),
-                        color_scheme='jade',
-                        disabled=State.cannot_clear_or_chatgpt_with_edited_prompt,
-                        margin_top='0.5em',
-                        on_click=lambda: State.chatgpt_with_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
-                    ),
-                    rx.button(
-                        rx.icon(
-                            tag='x',
-                            size=20,
-                            stroke_width=1.5,
-                        ),
-                        color_scheme='tomato',
-                        margin_top='0.5em',
-                        on_click=lambda: State.cancel_edit_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                     ),
                     width='100%',
                 ),
