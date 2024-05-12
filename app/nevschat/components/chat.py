@@ -46,7 +46,9 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                                 color_scheme='jade',
                                 disabled=State.cannot_clear_or_chatgpt_with_edited_prompt,
                                 margin_top='0.5em',
-                                on_click=lambda: State.chatgpt_with_edited_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
+                                on_click=lambda: State.chatgpt_with_edited_prompt(
+                                    index  # type: ignore  # pylint: disable=no-value-for-parameter
+                                ),
                             ),
                         ),
                         rx.button(
