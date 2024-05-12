@@ -88,7 +88,6 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                                 width='100%',
                             ),
                         ),
-                        spacing='2',
                         width='100%',
                     ),
                     rx.button(
@@ -145,7 +144,6 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     width='100%',
                 ),
             ),
-            spacing='2',
             width='100%',
         ),
         rx.vstack(
@@ -213,7 +211,6 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                             width='100%',
                         ),
                     ),
-                    spacing='2',
                     width='100%',
                 ),
                 rx.cond(
@@ -272,10 +269,8 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     width='100%',
                 ),
             ),
-            spacing='2',
             width='100%',
         ),
-        spacing='2',
         width='100%',
     )
 
@@ -307,8 +302,8 @@ def chat() -> rx.Component:
                 on_change=State.set_auto_speak,
             ),
             align='center',
-            spacing='2',
             width='100%',
+            spacing='2',
             wrap='wrap',
         ),
         rx.cond(
@@ -373,7 +368,6 @@ def chat() -> rx.Component:
                                 width='100%',
                             ),
                         ),
-                        spacing='2',
                     ),
                     rx.vstack(
                         rx.button(
@@ -411,7 +405,6 @@ def chat() -> rx.Component:
                             ),
                             width='100%',
                         ),
-                        spacing='2',
                     ),
                 ),
                 rx.cond(
@@ -423,6 +416,7 @@ def chat() -> rx.Component:
                         width='100%',
                     ),
                 ),
+                width='100%',
             ),
         ),
         rx.cond(
@@ -432,7 +426,6 @@ def chat() -> rx.Component:
                     State.prompts_responses,
                     prompt_response_box,
                 ),
-                spacing='2',
                 width='100%',
             ),
         ),
@@ -473,9 +466,7 @@ def chat() -> rx.Component:
                 margin_top='0.5em',
                 on_click=State.chatgpt,
             ),
-            spacing='2',
             width='100%',
         ),
-        spacing='2',
         width='100%',
     )

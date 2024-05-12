@@ -3,10 +3,10 @@
 import reflex as rx
 from nevschat.components import chat
 from nevschat.state import State
-from reflex.style import color_mode
+from reflex.style import color_mode  # type: ignore
 from reflex.style import toggle_color_mode
 
-VERSION = '0.0.104'
+VERSION = '0.0.105'
 TITLE = f'ネヴの素晴らしいチャットジーピーティー v{VERSION}'
 
 
@@ -16,7 +16,7 @@ def index() -> rx.Component:
             rx.flex(
                 rx.heading(TITLE),
                 rx.spacer(
-                    width="100%",
+                    width='100%',
                 ),
                 rx.button(
                     rx.cond(
@@ -30,9 +30,10 @@ def index() -> rx.Component:
                     ),
                     color=rx.color('gray', 12),
                     background_color='rgba(0, 0, 0, 0)',
-                    on_click=toggle_color_mode
+                    on_click=toggle_color_mode,
                 ),
-                width="100%",
+                spacing='2',
+                width='100%',
             ),
             rx.text(
                 f'リフレックス v{rx.constants.Reflex.VERSION}',
@@ -52,9 +53,7 @@ def index() -> rx.Component:
             rx.cond(
                 State.using_profile,
                 rx.vstack(
-                    rx.divider(
-                        margin='1em 0 1em 0',
-                    ),
+                    rx.divider(),
                     rx.flex(
                         rx.button(
                             '辞書',
@@ -104,37 +103,30 @@ def index() -> rx.Component:
                     ),
                     rx.cond(
                         State.learning_aide.text != '',
-                        rx.hstack(
+                        rx.flex(
                             rx.vstack(
-                                rx.flex(
+                                rx.box(
+                                    rx.markdown(
+                                        State.learning_aide.text,
+                                    ),
                                     rx.box(
-                                        rx.markdown(
-                                            State.learning_aide.text,
-                                        ),
-                                        rx.box(
-                                            rx.text(State.learning_aide.model),
-                                            color=rx.color('gray', 8),
-                                            font_size='0.4em',
-                                            padding_bottom='1em',
-                                            padding_right='1.5em',
-                                            position='absolute',
-                                            bottom='0',
-                                            right='0',
-                                        ),
-                                        background_color=rx.color('jade', 3),
-                                        border_color=rx.color('jade', 8),
-                                        border_style='solid',
-                                        border_width='3px',
-                                        min_width='10em',
-                                        padding='0 1em 0 1em',
-                                        position='relative',
+                                        rx.text(State.learning_aide.model),
+                                        color=rx.color('gray', 8),
+                                        font_size='0.4em',
+                                        padding_bottom='1em',
+                                        padding_right='1.5em',
+                                        position='absolute',
+                                        bottom='0',
+                                        right='0',
                                     ),
-                                    rx.spacer(
-                                        width='100%',
-                                    ),
-                                    spacing='2',
+                                    background_color=rx.color('jade', 3),
+                                    border_color=rx.color('jade', 8),
+                                    border_style='solid',
+                                    border_width='3px',
+                                    min_width='10em',
+                                    padding='0 1em 0 1em',
+                                    position='relative',
                                     width='100%',
-                                    wrap='wrap',
                                 ),
                                 rx.cond(
                                     State.learning_aide.tts_in_progress,
@@ -146,11 +138,11 @@ def index() -> rx.Component:
                                         width='100%',
                                     ),
                                 ),
-                                spacing='2',
+                            ),
+                            rx.spacer(
                                 width='100%',
                             ),
-                            rx.cond(
-                                State.processing,
+                            rx.vstack(
                                 rx.button(
                                     rx.icon(
                                         tag='x',
@@ -159,53 +151,59 @@ def index() -> rx.Component:
                                     ),
                                     color_scheme='tomato',
                                     margin_top='0.5em',
-                                    on_click=State.cancel_chatgpt,
+                                    on_click=State.clear_learning_aide_response,
                                 ),
                                 rx.hstack(
                                     rx.cond(
-                                        State.learning_aide.contains_japanese,
+                                        State.processing,
                                         rx.button(
                                             rx.icon(
-                                                tag='volume-2',
+                                                tag='x',
                                                 size=20,
                                                 stroke_width=1.5,
                                             ),
-                                            color_scheme='blue',
-                                            disabled=(
-                                                State.learning_aide.tts_in_progress
-                                                | (
-                                                    State.learning_aide.tts_wav_url
-                                                    != ''
-                                                )
-                                            ),
+                                            color_scheme='tomato',
                                             margin_top='0.5em',
-                                            on_click=State.speak_learning_aide,  # pylint: disable=no-value-for-parameter
+                                            on_click=State.cancel_chatgpt,
                                         ),
-                                    ),
-                                    rx.button(
-                                        rx.icon(
-                                            tag='copy',
-                                            size=20,
-                                            stroke_width=1.5,
+                                        rx.hstack(
+                                            rx.cond(
+                                                State.learning_aide.contains_japanese,
+                                                rx.button(
+                                                    rx.icon(
+                                                        tag='volume-2',
+                                                        size=20,
+                                                        stroke_width=1.5,
+                                                    ),
+                                                    color_scheme='blue',
+                                                    disabled=(
+                                                        State.learning_aide.tts_in_progress
+                                                        | (
+                                                            State.learning_aide.tts_wav_url
+                                                            != ''
+                                                        )
+                                                    ),
+                                                    margin_top='0.5em',
+                                                    on_click=State.speak_learning_aide,  # pylint: disable=no-value-for-parameter
+                                                ),
+                                            ),
+                                            rx.button(
+                                                rx.icon(
+                                                    tag='copy',
+                                                    size=20,
+                                                    stroke_width=1.5,
+                                                ),
+                                                color_scheme='gray',
+                                                margin_top='0.5em',
+                                                on_click=rx.set_clipboard(
+                                                    State.learning_aide.text
+                                                ),
+                                            ),
                                         ),
-                                        color_scheme='gray',
-                                        margin_top='0.5em',
-                                        on_click=rx.set_clipboard(
-                                            State.learning_aide.text
-                                        ),
-                                    ),
-                                    rx.button(
-                                        rx.icon(
-                                            tag='x',
-                                            size=20,
-                                            stroke_width=1.5,
-                                        ),
-                                        color_scheme='tomato',
-                                        margin_top='0.5em',
-                                        on_click=State.clear_learning_aide_response,
                                     ),
                                 ),
                             ),
+                            spacing='2',
                             width='100%',
                         ),
                     ),
@@ -221,7 +219,6 @@ def index() -> rx.Component:
                             width='100%',
                         ),
                     ),
-                    spacing='2',
                     width='100%',
                 ),
             ),
@@ -275,7 +272,6 @@ def index() -> rx.Component:
                     update_selection_state();
                 """
             ),
-            spacing='2',
             width='100%',
         ),
         align='center',
@@ -283,6 +279,7 @@ def index() -> rx.Component:
         justify='start',
         max_width='800px',
         margin='2em 1em 5em 1em',
+        spacing='2',
     )
 
 
