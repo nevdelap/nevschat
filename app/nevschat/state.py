@@ -1,6 +1,7 @@
 # mypy: disable-error-code="attr-defined,name-defined"
 
 import re
+import time
 from typing import Any
 
 from openai import OpenAI
@@ -122,6 +123,9 @@ class State(rx.State):  # type: ignore
     @rx.var  # type: ignore
     def you_are(self) -> str:
         return self.profile.text.replace('私は', 'あなたは')
+
+    def cancel_processing(self) -> None:
+        self.processing = False
 
     ####################################################################################
     # Profile
@@ -329,9 +333,6 @@ class State(rx.State):  # type: ignore
             ):
                 return State.speak_last_response
 
-    def cancel_chatgpt(self) -> None:
-        self.processing = False
-
     ####################################################################################
     # Text To Speech
 
@@ -516,20 +517,39 @@ class State(rx.State):  # type: ignore
 
     @rx.background  # type: ignore
     async def dictionary_learning_aide(self) -> Any:
+        if self.learning_aide.prompt == '':
+            return
         try:
             async with self:
-                if self.learning_aide.prompt != '':
-                    self.processing = True
-                    self.warning = ''
-                    self.learning_aide.text = ''
-                    self.learning_aide.has_tts = False
-                    self.learning_aide.tts_wav_url = ''
-                    definition = get_definition(self.learning_aide.prompt)
-                    if definition is not None:
-                        self.learning_aide.text = definition
+                self.processing = True
+                self.warning = ''
+                self.learning_aide.text = '見つけ中…'
+                self.learning_aide.has_tts = False
+                self.learning_aide.tts_wav_url = ''
+
+            yield
+
+            definition = get_definition(self.learning_aide.prompt)
+            async with self:
+                self.learning_aide.text = ''
+
+            if definition is not None:
+                for ch in definition:
+                    async with self:
+                        self.learning_aide.text += ch
                         self.learning_aide.contains_japanese = contains_japanese(
                             definition
                         )
+
+                    yield
+                    time.sleep(0.0025)
+
+                    async with self:
+                        if not self.processing:
+                            # It's been cancelled.
+                            self.learning_aide.text += ' (キャンセル）'
+                            break
+
         except Exception as ex:  # pylint: disable=broad-exception-caught
             async with self:
                 self.warning = str(ex)

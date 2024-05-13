@@ -238,7 +238,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         ),
                         color_scheme='tomato',
                         margin_top='0.5em',
-                        on_click=State.cancel_chatgpt,
+                        on_click=State.cancel_processing,
                     ),
                 ),
                 rx.hstack(

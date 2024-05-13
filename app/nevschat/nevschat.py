@@ -6,7 +6,7 @@ from nevschat.state import State
 from reflex.style import color_mode  # type: ignore
 from reflex.style import toggle_color_mode
 
-VERSION = '0.0.107'
+VERSION = '0.0.108'
 TITLE = f'ネヴの素晴らしいチャットジーピーティー v{VERSION}'
 
 
@@ -154,7 +154,7 @@ def index() -> rx.Component:
                                         ),
                                         color_scheme='tomato',
                                         margin_top='0.5em',
-                                        on_click=State.cancel_chatgpt,
+                                        on_click=State.cancel_processing,
                                     ),
                                     rx.hstack(
                                         rx.cond(
@@ -192,15 +192,18 @@ def index() -> rx.Component:
                                     ),
                                 ),
                             ),
-                            rx.button(
-                                rx.icon(
-                                    tag='x',
-                                    size=20,
-                                    stroke_width=1.5,
+                            rx.cond(
+                                ~State.processing,
+                                rx.button(
+                                    rx.icon(
+                                        tag='x',
+                                        size=20,
+                                        stroke_width=1.5,
+                                    ),
+                                    color_scheme='tomato',
+                                    margin_top='0.5em',
+                                    on_click=State.clear_learning_aide_response,
                                 ),
-                                color_scheme='tomato',
-                                margin_top='0.5em',
-                                on_click=State.clear_learning_aide_response,
                             ),
                         ),
                         spacing='2',
