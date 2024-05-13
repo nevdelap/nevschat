@@ -110,6 +110,7 @@ def index() -> rx.Component:
                             rx.box(
                                 rx.markdown(
                                     State.learning_aide.text,
+                                    margin='-0.5em 0em -0.5em 0em',
                                 ),
                                 rx.box(
                                     rx.text(State.learning_aide.model),

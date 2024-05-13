@@ -74,6 +74,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                             rx.box(
                                 rx.markdown(
                                     prompt_response.prompt.text,
+                                    margin='-0.5em 0em -0.5em 0em',
                                     width='100%',
                                 ),
                                 background_color=rx.color('bronze', 3),
@@ -170,6 +171,8 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                                 rx.box(
                                     rx.markdown(
                                         prompt_response.response.text,
+                                        margin='-0.5em 0em -0.5em 0em',
+                                        width='100%',
                                     ),
                                     background_color=rx.color('sky', 3),
                                     border_color=rx.color('sky', 8),
@@ -181,6 +184,8 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                                 rx.box(
                                     rx.markdown(
                                         prompt_response.response.text,
+                                        margin='-0.5em 0em -0.5em 0em',
+                                        width='100%',
                                     ),
                                     background_color=rx.color('pink', 3),
                                     border_color=rx.color('pink', 8),
@@ -328,6 +333,7 @@ def chat() -> rx.Component:
                                 rx.box(
                                     rx.markdown(
                                         State.profile.text,
+                                        margin='-0.5em 0em -0.5em 0em',
                                         width='100%',
                                     ),
                                     background_color=rx.color('sky', 3),
@@ -335,12 +341,13 @@ def chat() -> rx.Component:
                                     border_style='solid',
                                     border_width='3px',
                                     min_width='10em',
-                                    padding='0 1em 0 1em',
+                                    padding='0em 1em 0 1em',
                                     width='100%',
                                 ),
                                 rx.box(
                                     rx.markdown(
                                         State.profile.text,
+                                        margin='-0.5em 0em -0.5em 0em',
                                         width='100%',
                                     ),
                                     background_color=rx.color('pink', 3),
