@@ -273,6 +273,7 @@ class State(rx.State):  # type: ignore
                         contains_japanese=contains_japanese(self.new_prompt),
                     ),
                     response=Response(
+                        model=model,
                         pitch=self.profile.pitch,
                         speaking_rate=self.profile.speaking_rate,
                         voice=self.profile.voice,

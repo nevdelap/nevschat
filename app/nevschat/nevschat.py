@@ -6,7 +6,7 @@ from nevschat.state import State
 from reflex.style import color_mode  # type: ignore
 from reflex.style import toggle_color_mode
 
-VERSION = '0.0.108'
+VERSION = '0.0.109'
 TITLE = f'ネヴの素晴らしいチャットジーピーティー v{VERSION}'
 
 
