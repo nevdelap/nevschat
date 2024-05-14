@@ -294,8 +294,8 @@ def chat() -> rx.Component:
         rx.flex(
             rx.checkbox(
                 'GPT4',
-                checked=State.gpt_4,
-                on_change=State.set_gpt_4,
+                checked=State.gpt_best,
+                on_change=State.set_gpt_best,
             ),
             rx.checkbox(
                 '簡潔な返答',

@@ -21,8 +21,8 @@ from nevschat.system_instructions import get_system_instructions
 SYSTEM_INSTRUCTIONS = get_system_instructions()
 DEFAULT_SYSTEM_INSTRUCTION = list(SYSTEM_INSTRUCTIONS.keys())[1]
 
-GPT4_MODEL = 'gpt-4-turbo'
-GPT3_MODEL = 'gpt-3.5-turbo'
+GPT_BEST_MODEL = 'gpt-4o'
+GTP_CHEAP_MODEL = 'gpt-3.5-turbo'
 
 USE_QUICK_PROMPT = False  # True to add a first prompt, for testing.
 USE_CANNED_RESPONSE = False  # True to add a profile and first response, for testing.
@@ -69,7 +69,7 @@ class State(rx.State):  # type: ignore
     auto_speak: bool = False
     control_down: bool = False
     edited_prompt: str
-    gpt_4: bool = False
+    gpt_best: bool = False
     learning_aide: LearningAide = LearningAide()
     processing: bool = False
     new_prompt: str = '可愛いウサギが好きですか?' if USE_QUICK_PROMPT else ''
@@ -227,7 +227,7 @@ class State(rx.State):  # type: ignore
                 self.processing = True
                 self.warning = ''
 
-                model = GPT4_MODEL if self.gpt_4 else GPT3_MODEL
+                model = GPT_BEST_MODEL if self.gpt_best else GTP_CHEAP_MODEL
                 messages = []
 
                 if self.terse:
@@ -288,7 +288,7 @@ class State(rx.State):  # type: ignore
                 self.new_prompt = ''
 
                 print(
-                    f'GPT4? {self.gpt_4}\n'
+                    f'GPT Best Model? {self.gpt_best}\n'
                     f'Terse? {self.terse}\n'
                     f'Messages: {messages}'
                 )
@@ -396,7 +396,7 @@ class State(rx.State):  # type: ignore
             self.warning = str(ex)
             print(self.warning)
             return self.do_chatgpt_learning_aide(
-                GPT3_MODEL,
+                GTP_CHEAP_MODEL,
                 (
                     'Translate the given Japanese text into English. '
                     + 'NEVER give pronunciation. NEVER give romaji.'
@@ -405,17 +405,17 @@ class State(rx.State):  # type: ignore
 
     def explain_grammer(self) -> Any:
         return self.do_chatgpt_learning_aide(
-            GPT4_MODEL, SYSTEM_INSTRUCTIONS['Explain Grammar'][0]
+            GPT_BEST_MODEL, SYSTEM_INSTRUCTIONS['Explain Grammar'][0]
         )
 
     def explain_usage(self) -> Any:
         return self.do_chatgpt_learning_aide(
-            GPT3_MODEL, SYSTEM_INSTRUCTIONS['Explain Usage'][0]
+            GTP_CHEAP_MODEL, SYSTEM_INSTRUCTIONS['Explain Usage'][0]
         )
 
     def give_examples_of_same_meaning(self) -> Any:
         return self.do_chatgpt_learning_aide(
-            GPT3_MODEL,
+            GTP_CHEAP_MODEL,
             SYSTEM_INSTRUCTIONS[
                 '日本語: Give varied ways of expressing the given meaning.'
             ][0],
@@ -423,7 +423,7 @@ class State(rx.State):  # type: ignore
 
     def give_examples_of_opposite_meaning(self) -> Any:
         return self.do_chatgpt_learning_aide(
-            GPT3_MODEL,
+            GTP_CHEAP_MODEL,
             SYSTEM_INSTRUCTIONS[
                 (
                     '日本語: Give varied ways of expressing '
