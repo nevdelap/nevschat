@@ -139,6 +139,8 @@ class State(rx.State):  # type: ignore
         self.profile.text = self.profile.text
         for prompt_response in self.prompts_responses:
             prompt_response.response.tts_wav_url = ''
+            prompt_response.response.pitch = self.profile.pitch
+            prompt_response.response.speaking_rate = self.profile.speaking_rate
             prompt_response.response.voice = self.profile.voice
 
     ####################################################################################
