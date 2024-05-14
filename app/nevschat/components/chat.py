@@ -92,9 +92,8 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         rx.cond(
                             prompt_response.prompt.tts_in_progress,
                             rx.center(
-                                rx.chakra.spinner(
+                                rx.spinner(
                                     color=rx.color('gray', 8),
-                                    size='md',
                                 ),
                                 width='100%',
                             ),
@@ -219,9 +218,8 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     rx.cond(
                         prompt_response.response.tts_in_progress,
                         rx.center(
-                            rx.chakra.spinner(
+                            rx.spinner(
                                 color=rx.color('gray', 8),
-                                size='md',
                             ),
                             width='100%',
                         ),
@@ -378,9 +376,8 @@ def chat() -> rx.Component:
                         rx.cond(
                             State.profile.tts_in_progress,
                             rx.center(
-                                rx.chakra.spinner(
+                                rx.spinner(
                                     color=rx.color('gray', 8),
-                                    size='md',
                                 ),
                                 width='100%',
                             ),

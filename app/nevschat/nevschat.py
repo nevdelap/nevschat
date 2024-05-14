@@ -6,7 +6,7 @@ from nevschat.state import State
 from reflex.style import color_mode  # type: ignore
 from reflex.style import toggle_color_mode
 
-VERSION = '0.0.109'
+VERSION = '0.0.110'
 TITLE = f'ネヴの素晴らしいチャットジーピーティー v{VERSION}'
 
 
@@ -134,9 +134,8 @@ def index() -> rx.Component:
                             rx.cond(
                                 State.learning_aide.tts_in_progress,
                                 rx.center(
-                                    rx.chakra.spinner(
+                                    rx.spinner(
                                         color=rx.color('gray', 8),
-                                        size='md',
                                     ),
                                     width='100%',
                                 ),
