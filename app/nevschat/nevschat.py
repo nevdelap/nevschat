@@ -6,8 +6,8 @@ from nevschat.state import State
 from reflex.style import color_mode  # type: ignore
 from reflex.style import toggle_color_mode
 
-VERSION = '0.0.114'
-TITLE = f'ネヴの素晴らしいチャットジーピーティー v{VERSION}'
+VERSION = '0.0.115'
+TITLE = f'ネヴのすごいチャットジーピーティー v{VERSION}'
 
 
 def index() -> rx.Component:
@@ -108,9 +108,18 @@ def index() -> rx.Component:
                         ),
                         rx.vstack(
                             rx.box(
-                                rx.markdown(
-                                    State.learning_aide.text,
-                                    margin='-0.5em 0em -0.5em 0em',
+                                rx.box(
+                                    rx.markdown(
+                                        State.learning_aide.text,
+                                        margin='-0.5em 0em -0.5em 0em',
+                                        width='100%',
+                                    ),
+                                    background_color=rx.color('jade', 3),
+                                    border_color=rx.color('jade', 8),
+                                    border_style='solid',
+                                    border_width='3px',
+                                    min_width='10em',
+                                    padding='0 1em 0 1em',
                                 ),
                                 rx.box(
                                     rx.text(State.learning_aide.model),
@@ -122,12 +131,6 @@ def index() -> rx.Component:
                                     bottom='0',
                                     right='0',
                                 ),
-                                background_color=rx.color('jade', 3),
-                                border_color=rx.color('jade', 8),
-                                border_style='solid',
-                                border_width='3px',
-                                min_width='10em',
-                                padding='0 1em 0 1em',
                                 position='relative',
                                 width='100%',
                             ),

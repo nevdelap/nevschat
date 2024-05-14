@@ -293,7 +293,7 @@ def chat() -> rx.Component:
     return rx.vstack(
         rx.flex(
             rx.checkbox(
-                'GPT4',
+                'GPT-4o',
                 checked=State.gpt_best,
                 on_change=State.set_gpt_best,
             ),
