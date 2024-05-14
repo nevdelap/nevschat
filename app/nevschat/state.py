@@ -458,6 +458,7 @@ class State(rx.State):  # type: ignore
             async with self:
                 self.processing = True
                 self.warning = ''
+                self.learning_aide.model = 'jmdict'
                 self.learning_aide.text = '見つけ中…'
                 self.learning_aide.has_tts = False
                 self.learning_aide.tts_wav_url = ''
@@ -519,6 +520,7 @@ class State(rx.State):  # type: ignore
             async with self:
                 self.processing = True
                 self.warning = ''
+                self.learning_aide.model = 'deepl'
                 self.learning_aide.text = '翻訳中…'
                 self.learning_aide.has_tts = False
                 self.learning_aide.tts_wav_url = ''
