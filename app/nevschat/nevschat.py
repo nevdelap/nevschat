@@ -6,7 +6,7 @@ from nevschat.state import State
 from reflex.style import color_mode  # type: ignore
 from reflex.style import toggle_color_mode
 
-VERSION = '0.0.113'
+VERSION = '0.0.114'
 TITLE = f'ネヴの素晴らしいチャットジーピーティー v{VERSION}'
 
 
@@ -116,7 +116,7 @@ def index() -> rx.Component:
                                     rx.text(State.learning_aide.model),
                                     color=rx.color('gray', 8),
                                     font_size='0.4em',
-                                    padding_bottom='1em',
+                                    padding_bottom='0.55em',
                                     padding_right='1.5em',
                                     position='absolute',
                                     bottom='0',
