@@ -478,7 +478,7 @@ class State(rx.State):  # type: ignore
                         )
 
                     yield
-                    time.sleep(0.0025)
+                    time.sleep(0.0005)
 
                     async with self:
                         if not self.processing:
@@ -540,7 +540,7 @@ class State(rx.State):  # type: ignore
                         )
 
                     yield
-                    time.sleep(0.0025)
+                    time.sleep(0.0005)
 
                     async with self:
                         if not self.processing:
