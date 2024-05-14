@@ -10,6 +10,7 @@ from nevschat.helpers import get_random_foods_and_drinks
 from nevschat.helpers import get_random_hobbies
 from nevschat.helpers import get_random_mood
 from nevschat.helpers import get_random_name
+from nevschat.helpers import get_random_personal_feature
 from nevschat.helpers import get_random_profession
 from nevschat.helpers import get_random_speaking_rate
 from nevschat.helpers import get_random_voice
@@ -36,6 +37,7 @@ class Profile(Speakable):
         profession = get_random_profession(age)
         hobbies = get_random_hobbies(age)
         foods_and_drinks = get_random_foods_and_drinks()
+        personal_feature = get_random_personal_feature(age)
         mood = get_random_mood()
 
         self.pitch = get_pitch(self.male, age)
@@ -47,6 +49,7 @@ class Profile(Speakable):
             f'{profession}です。'
             f'趣味は{hobbies}です。'
             f'{foods_and_drinks}が好きです。'
-            f'今私は{mood}'
+            f'私は{personal_feature}'
+            f'今{mood}'
         )
         self.voice = get_random_voice(self.male)

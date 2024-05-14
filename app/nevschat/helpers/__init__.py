@@ -10,6 +10,7 @@ from .random_things import get_random_foods_and_drinks
 from .random_things import get_random_hobbies
 from .random_things import get_random_mood
 from .random_things import get_random_name
+from .random_things import get_random_personal_feature
 from .random_things import get_random_profession
 from .random_things import get_random_speaking_rate
 from .translation import get_translation
@@ -30,6 +31,7 @@ __all__ = [
     'get_random_hobbies',
     'get_random_mood',
     'get_random_name',
+    'get_random_personal_feature',
     'get_random_profession',
     'get_random_speaking_rate',
     'get_default_voice',
