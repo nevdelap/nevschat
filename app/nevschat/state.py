@@ -426,6 +426,70 @@ class State(rx.State):  # type: ignore
             ),
         )
 
+    ####################################################################################
+    # Dictionary Learning Aide
+
+    def do_dictionary_learning_aide(self) -> Any:
+        return self.trigger_set_dictionary_learning_aide_prompt()
+
+    def trigger_set_dictionary_learning_aide_prompt(self) -> Any:
+        return rx.call_script(
+            'get_selected_text_and_clear()',
+            callback=State.set_dictionary_learning_aide_prompt,
+        )
+
+    @rx.background  # type: ignore
+    async def set_dictionary_learning_aide_prompt(self, text) -> Any:
+        async with self:
+            self.learning_aide.prompt = text
+        return State.dictionary_learning_aide
+
+    @rx.background  # type: ignore
+    async def dictionary_learning_aide(self) -> Any:
+        if self.learning_aide.prompt == '':
+            return
+        try:
+            async with self:
+                self.processing = True
+                self.warning = ''
+                self.learning_aide.text = '見つけ中…'
+                self.learning_aide.has_tts = False
+                self.learning_aide.tts_wav_url = ''
+
+            yield
+
+            definition = get_definition(self.learning_aide.prompt)
+            async with self:
+                self.learning_aide.text = ''
+
+            if definition is not None:
+                for ch in definition:
+                    async with self:
+                        self.learning_aide.text += ch
+                        self.learning_aide.contains_japanese = contains_japanese(
+                            definition
+                        )
+
+                    yield
+                    time.sleep(0.0025)
+
+                    async with self:
+                        if not self.processing:
+                            # It's been cancelled.
+                            self.learning_aide.text += ' (キャンセル）'
+                            break
+
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            async with self:
+                self.warning = str(ex)
+                print(self.warning)
+        finally:
+            async with self:
+                self.processing = False
+
+    ####################################################################################
+    # ChatGPT Learning Aide
+
     def do_chatgpt_learning_aide(self, model: str, system_instruction: str) -> Any:
         self.learning_aide.model = model
         self.learning_aide.system_instruction = system_instruction
@@ -490,64 +554,6 @@ class State(rx.State):  # type: ignore
                             self.learning_aide.contains_japanese = contains_japanese(
                                 self.learning_aide.text
                             )
-                        if not self.processing:
-                            # It's been cancelled.
-                            self.learning_aide.text += ' (キャンセル）'
-                            break
-
-        except Exception as ex:  # pylint: disable=broad-exception-caught
-            async with self:
-                self.warning = str(ex)
-                print(self.warning)
-        finally:
-            async with self:
-                self.processing = False
-
-    def do_dictionary_learning_aide(self) -> Any:
-        return self.trigger_set_dictionary_learning_aide_prompt()
-
-    def trigger_set_dictionary_learning_aide_prompt(self) -> Any:
-        return rx.call_script(
-            'get_selected_text_and_clear()',
-            callback=State.set_dictionary_learning_aide_prompt,
-        )
-
-    @rx.background  # type: ignore
-    async def set_dictionary_learning_aide_prompt(self, text) -> Any:
-        async with self:
-            self.learning_aide.prompt = text
-        return State.dictionary_learning_aide
-
-    @rx.background  # type: ignore
-    async def dictionary_learning_aide(self) -> Any:
-        if self.learning_aide.prompt == '':
-            return
-        try:
-            async with self:
-                self.processing = True
-                self.warning = ''
-                self.learning_aide.text = '見つけ中…'
-                self.learning_aide.has_tts = False
-                self.learning_aide.tts_wav_url = ''
-
-            yield
-
-            definition = get_definition(self.learning_aide.prompt)
-            async with self:
-                self.learning_aide.text = ''
-
-            if definition is not None:
-                for ch in definition:
-                    async with self:
-                        self.learning_aide.text += ch
-                        self.learning_aide.contains_japanese = contains_japanese(
-                            definition
-                        )
-
-                    yield
-                    time.sleep(0.0025)
-
-                    async with self:
                         if not self.processing:
                             # It's been cancelled.
                             self.learning_aide.text += ' (キャンセル）'
