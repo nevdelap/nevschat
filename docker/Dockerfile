@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 RUN pip install --upgrade pip --root-user-action=ignore && \
     pip install --root-user-action=ignore \
+    deepl==1.18.0 \
     jamdict==0.1a11.post2 \
     jamdict-data==1.5 \
     google-cloud-texttospeech==2.16.3 \

@@ -10,6 +10,7 @@ import reflex as rx
 from nevschat.helpers import contains_japanese
 from nevschat.helpers import get_definition
 from nevschat.helpers import get_random_voice
+from nevschat.helpers import get_translation
 from nevschat.learning_aide import LearningAide
 from nevschat.profile import Profile
 from nevschat.prompt import Prompt
@@ -388,6 +389,20 @@ class State(rx.State):  # type: ignore
     def lookup_definition(self) -> Any:
         return self.do_dictionary_learning_aide()
 
+    def translate(self) -> Any:
+        try:
+            return self.do_deepl_learning_aide()
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            self.warning = str(ex)
+            print(self.warning)
+            return self.do_chatgpt_learning_aide(
+                GPT3_MODEL,
+                (
+                    'Translate the given Japanese text into English. '
+                    + 'NEVER give pronunciation. NEVER give romaji.'
+                ),
+            )
+
     def explain_grammer(self) -> Any:
         return self.do_chatgpt_learning_aide(
             GPT4_MODEL, SYSTEM_INSTRUCTIONS['Explain Grammar'][0]
@@ -415,15 +430,6 @@ class State(rx.State):  # type: ignore
                     + 'the opposite of the given meaning.'
                 )
             ][0],
-        )
-
-    def translate(self) -> Any:
-        return self.do_chatgpt_learning_aide(
-            GPT3_MODEL,
-            (
-                'Translate the given Japanese text into English. '
-                + 'NEVER give pronunciation. NEVER give romaji.'
-            ),
         )
 
     ####################################################################################
@@ -468,6 +474,67 @@ class State(rx.State):  # type: ignore
                         self.learning_aide.text += ch
                         self.learning_aide.contains_japanese = contains_japanese(
                             definition
+                        )
+
+                    yield
+                    time.sleep(0.0025)
+
+                    async with self:
+                        if not self.processing:
+                            # It's been cancelled.
+                            self.learning_aide.text += ' (キャンセル）'
+                            break
+
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            async with self:
+                self.warning = str(ex)
+                print(self.warning)
+        finally:
+            async with self:
+                self.processing = False
+
+    ####################################################################################
+    # DeepL Learning Aide
+
+    def do_deepl_learning_aide(self) -> Any:
+        return self.trigger_set_deepl_learning_aide_prompt()
+
+    def trigger_set_deepl_learning_aide_prompt(self) -> Any:
+        return rx.call_script(
+            'get_selected_text_and_clear()',
+            callback=State.set_deepl_learning_aide_prompt,
+        )
+
+    @rx.background  # type: ignore
+    async def set_deepl_learning_aide_prompt(self, text) -> Any:
+        async with self:
+            self.learning_aide.prompt = text
+        return State.deepl_learning_aide
+
+    @rx.background  # type: ignore
+    async def deepl_learning_aide(self) -> Any:
+        if self.learning_aide.prompt == '':
+            return
+        try:
+            async with self:
+                self.processing = True
+                self.warning = ''
+                self.learning_aide.text = '翻訳中…'
+                self.learning_aide.has_tts = False
+                self.learning_aide.tts_wav_url = ''
+
+            yield
+
+            translation = get_translation(self.learning_aide.prompt)
+            async with self:
+                self.learning_aide.text = ''
+
+            if translation is not None:
+                for ch in translation:
+                    async with self:
+                        self.learning_aide.text += ch
+                        self.learning_aide.contains_japanese = contains_japanese(
+                            translation
                         )
 
                     yield

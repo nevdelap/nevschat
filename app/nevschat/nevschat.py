@@ -6,7 +6,7 @@ from nevschat.state import State
 from reflex.style import color_mode  # type: ignore
 from reflex.style import toggle_color_mode
 
-VERSION = '0.0.110'
+VERSION = '0.0.111'
 TITLE = f'ネヴの素晴らしいチャットジーピーティー v{VERSION}'
 
 
@@ -62,6 +62,13 @@ def index() -> rx.Component:
                         on_click=State.lookup_definition,
                     ),
                     rx.button(
+                        '訳す',
+                        color_scheme='jade',
+                        height='2.25em',
+                        id='translate',
+                        on_click=State.translate,
+                    ),
+                    rx.button(
                         '文法',
                         color_scheme='jade',
                         height='2.25em',
@@ -88,13 +95,6 @@ def index() -> rx.Component:
                         height='2.25em',
                         id='give_examples_of_opposite_meaning',
                         on_click=State.give_examples_of_opposite_meaning,
-                    ),
-                    rx.button(
-                        '訳す',
-                        color_scheme='jade',
-                        height='2.25em',
-                        id='translate',
-                        on_click=State.translate,
                     ),
                     spacing='2',
                     width='100%',

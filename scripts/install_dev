@@ -28,6 +28,7 @@ conda install -yq \
 	ruff \
 	types-requests==2.31.0.*
 pip install -U \
+	deepl==1.18.0 \
     jamdict==0.1a11.post2 \
     jamdict-data==1.5 \
 	google-cloud-texttospeech==2.16.3 \
