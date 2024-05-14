@@ -1672,4 +1672,4 @@ test_get_pitch(male, 60, -20)
 
 
 def get_random_speaking_rate() -> float:
-    return random.uniform(0.6, 1.0)  # nosec
+    return random.uniform(0.7, 1.0)  # nosec

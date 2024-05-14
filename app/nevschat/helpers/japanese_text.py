@@ -2,24 +2,28 @@ import re
 import unicodedata
 
 
-def is_japanese_char(ch: str, log: bool = False) -> bool:
+def is_japanese_char(
+    ch: str, *, include_numbers: bool = True, log: bool = False
+) -> bool:
     """
     Return True if the character is a Japanese character.
     """
     assert len(ch) == 1
+    included_blocks = [
+        'CJK',
+        'FULLWIDTH',
+        'HIRAGANA',
+        'IDEOGRAPHIC',
+        'KATAKANA',
+        'KATAKANA-HIRAGANA',
+        'LEFT',
+        'RIGHT',
+    ]
+    if include_numbers:
+        included_blocks.append('DIGIT')
     try:
         block = unicodedata.name(ch).split()[0]
-        is_japanese = block in [
-            'CJK',
-            'DIGIT',
-            'FULLWIDTH',
-            'HIRAGANA',
-            'IDEOGRAPHIC',
-            'KATAKANA',
-            'KATAKANA-HIRAGANA',
-            'LEFT',
-            'RIGHT',
-        ]
+        is_japanese = block in included_blocks
         if log:
             print(ch, block, 'J' if is_japanese else '')
         return is_japanese
@@ -44,11 +48,11 @@ def is_latin_char(ch: str, log: bool = False) -> bool:
         return False
 
 
-def contains_japanese(text: str, log: bool = False) -> bool:
+def contains_japanese(text: str, *, log: bool = False) -> bool:
     """
     Return True if the text contains any Japanese at all.
     """
-    return any(is_japanese_char(ch, log) for ch in text)
+    return any(is_japanese_char(ch, include_numbers=False, log=log) for ch in text)
 
 
 def contains_latin(text: str, log: bool = False) -> bool:
@@ -69,7 +73,11 @@ def strip_non_japanese_and_split_sentences(text: str) -> str:
         text = re.sub(
             r'。+',
             '。',
-            ''.join(ch if is_japanese_char(ch, True) else '。' for ch in text) + '。',
+            ''.join(
+                ch if is_japanese_char(ch, include_numbers=True) else '。'
+                for ch in text
+            )
+            + '。',
         ).lstrip('。')
         while True:
             old_len = len(text)
