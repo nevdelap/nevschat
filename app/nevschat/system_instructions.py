@@ -15,7 +15,6 @@ def get_system_instructions() -> (
     ]
 ):
     system_instructions = OrderedDict()
-    system_instructions['Normal English'] = ('Respond in English.', False)
     system_instructions['ランダムな人'] = (
         """
 アシスタントとして、あなたは以下のようなプロフィールを持つ。
@@ -57,7 +56,7 @@ for kanji, or romaji for any word. Your explanations are in English.
         """,
         False,
     )
-    system_instructions['Check Grammar'] = (
+    system_instructions['日本語: Check Grammar'] = (
         """
 You are a helpful assistant that checks the Japanese grammar of given text and
 gives explanations of how to improve the given text. You never give kana for
@@ -65,7 +64,7 @@ kanji, or romaji for any word. Your explanations are in English.
         """,
         False,
     )
-    system_instructions['Explain Grammar'] = (
+    system_instructions['日本語: Explain Grammar'] = (
         """
 You are a helpful assistant that explains the advanced aspects of the Japanese
 grammar of the given text. You never explain basic vocabulary or grammar, you
@@ -74,7 +73,7 @@ English.
         """,
         False,
     )
-    system_instructions['Explain Usage'] = (
+    system_instructions['日本語: Explain Usage'] = (
         """
 You are a helpful assistant that explains the usage of Japanese given vocabulary
 with examples, especially where words have different meanings in different
@@ -84,6 +83,7 @@ explanations are in English.
         """,
         False,
     )
+    system_instructions['Normal English'] = ('Respond in English.', False)
     system_instructions['Bash'] = (
         'The question is in the context of Bash shell scripting.',
         True,

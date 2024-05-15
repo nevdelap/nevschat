@@ -19,7 +19,7 @@ from nevschat.speakable import Speakable
 from nevschat.system_instructions import get_system_instructions
 
 SYSTEM_INSTRUCTIONS = get_system_instructions()
-DEFAULT_SYSTEM_INSTRUCTION = list(SYSTEM_INSTRUCTIONS.keys())[1]
+DEFAULT_SYSTEM_INSTRUCTION = list(SYSTEM_INSTRUCTIONS.keys())[0]
 
 GPT_BEST_MODEL = 'gpt-4o'
 GTP_CHEAP_MODEL = 'gpt-3.5-turbo'
@@ -66,7 +66,7 @@ class State(rx.State):  # type: ignore
         if USE_CANNED_RESPONSE
         else []
     )
-    auto_speak: bool = False
+    auto_speak: bool = True
     control_down: bool = False
     edited_prompt: str
     gpt_best: bool = False
@@ -76,7 +76,7 @@ class State(rx.State):  # type: ignore
     non_profile_voice: str = get_random_voice(True)
     profile: Profile = Profile()
     system_instruction: str = DEFAULT_SYSTEM_INSTRUCTION
-    terse: bool = False
+    terse: bool = True
     warning: str
 
     # These @rx.vars that just call a method on a property or do an operation
