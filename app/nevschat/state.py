@@ -465,7 +465,7 @@ class State(rx.State):  # type: ignore
 
             yield
 
-            definition, model = get_definition(self.learning_aide.prompt, self)
+            definition, model = get_definition(self.learning_aide.prompt)
             async with self:
                 self.learning_aide.model = model
                 self.learning_aide.text = ''
