@@ -7,13 +7,15 @@ from typing import Any
 from openai import OpenAI
 
 import reflex as rx
+from nevschat.canned_chat import get_canned_chat
 from nevschat.helpers import contains_japanese
+from nevschat.helpers import get_default_voice
 from nevschat.helpers import get_definition
-from nevschat.helpers import get_random_voice
 from nevschat.helpers import get_translation
 from nevschat.learning_aide import LearningAide
 from nevschat.profile import Profile
 from nevschat.prompt import Prompt
+from nevschat.prompt_response import PromptResponse
 from nevschat.response import Response
 from nevschat.speakable import Speakable
 from nevschat.system_instructions import CHECK_GRAMMAR
@@ -30,14 +32,9 @@ DEFAULT_SYSTEM_INSTRUCTION = list(SYSTEM_INSTRUCTIONS.keys())[0]
 GPT_BEST_MODEL = 'gpt-4o'
 GTP_CHEAP_MODEL = 'gpt-3.5-turbo'
 
-USE_QUICK_PROMPT = False  # True to add a first prompt, for testing.
-USE_CANNED_RESPONSE = False  # True to add a profile and first response, for testing.
-
-
-class PromptResponse(rx.Base):  # type: ignore
-    prompt: Prompt = Prompt()
-    response: Response = Response()
-    editing: bool
+# Requires a restart when changing.
+USE_CANNED_PROFILE_AND_CHAT = True  # For testing.
+USE_QUICK_PROMPT = True  # For testing.
 
 
 class State(rx.State):  # type: ignore
@@ -45,32 +42,7 @@ class State(rx.State):  # type: ignore
     # State
 
     prompts_responses: list[PromptResponse] = (
-        [
-            PromptResponse(
-                prompt='そうですか？',
-                response='はい、そうです。',
-                editing=False,
-                contains_japanese=True,
-                tts_in_progress=False,
-                has_tts=False,
-                tts_wav_url='',
-                model='gpt-canned',
-                voice='',
-            ),
-            PromptResponse(
-                prompt='いいです？',
-                response='はい、いいですよ！',
-                editing=False,
-                contains_japanese=True,
-                tts_in_progress=False,
-                has_tts=False,
-                tts_wav_url='',
-                model='gpt-canned',
-                voice='',
-            ),
-        ]
-        if USE_CANNED_RESPONSE
-        else []
+        get_canned_chat() if USE_CANNED_PROFILE_AND_CHAT else []
     )
     auto_speak: bool = True
     control_down: bool = False
@@ -79,8 +51,8 @@ class State(rx.State):  # type: ignore
     learning_aide: LearningAide = LearningAide()
     processing: bool = False
     new_prompt: str = '可愛いウサギが好きですか?' if USE_QUICK_PROMPT else ''
-    non_profile_voice: str = get_random_voice(True)
-    profile: Profile = Profile()
+    non_profile_voice: str = get_default_voice()
+    profile: Profile = Profile(canned=USE_CANNED_PROFILE_AND_CHAT)
     system_instruction: str = DEFAULT_SYSTEM_INSTRUCTION
     terse: bool = True
     warning: str
@@ -277,7 +249,7 @@ class State(rx.State):  # type: ignore
                 messages.append({'role': 'user', 'content': self.new_prompt})
 
                 prompt_response = PromptResponse(
-                    prompt=Speakable(
+                    prompt=Prompt(
                         text=self.new_prompt,
                         contains_japanese=contains_japanese(self.new_prompt),
                     ),

@@ -11,7 +11,7 @@ random.seed(time.time())
 
 
 def get_default_voice() -> str:
-    return 'ja-JP-Neural2-C'
+    return 'ja-JP-Neural2-B'
 
 
 def get_random_voice(male: bool) -> str:
@@ -31,7 +31,9 @@ def text_to_wav(text: str, voice: str, speaking_rate: float, pitch: float) -> st
     """
     try:
         hash_ = hashlib.md5(text.encode(encoding='utf-8')).hexdigest()  # nosec
-        tts_wav_filename = f'assets/wav/tts_{voice}_{speaking_rate}_{pitch}_{hash_}.wav'
+        tts_wav_filename = (
+            f'assets/wav/tts_{voice}_{speaking_rate:.1f}_{pitch:.1f}_{hash_}.wav'
+        )
         if os.path.isfile(tts_wav_filename):
             print('Skipping tts.')
             return tts_wav_filename
