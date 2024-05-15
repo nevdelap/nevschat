@@ -492,181 +492,175 @@ def chat() -> rx.Component:
             disabled=State.cannot_clear_chat,
             on_click=State.clear_chat,
         ),
+        rx.divider(),
+        rx.flex(
+            rx.button(
+                '辞書',
+                color_scheme='jade',
+                height='2.25em',
+                id='lookup_definition',
+                on_click=State.lookup_definition,
+            ),
+            rx.button(
+                '訳す',
+                color_scheme='jade',
+                height='2.25em',
+                id='translate',
+                on_click=State.translate,
+            ),
+            rx.button(
+                '文法',
+                color_scheme='jade',
+                height='2.25em',
+                id='explain_grammar',
+                on_click=State.explain_grammer,
+            ),
+            rx.button(
+                '使い方',
+                color_scheme='jade',
+                height='2.25em',
+                id='explain_usage',
+                on_click=State.explain_usage,
+            ),
+            rx.button(
+                '同じ意味',
+                color_scheme='jade',
+                height='2.25em',
+                id='give_examples_of_same_meaning',
+                on_click=State.give_examples_of_same_meaning,
+            ),
+            rx.button(
+                '反対の意味',
+                color_scheme='jade',
+                height='2.25em',
+                id='give_examples_of_opposite_meaning',
+                on_click=State.give_examples_of_opposite_meaning,
+            ),
+            spacing='2',
+            width='100%',
+            wrap='wrap',
+        ),
         rx.cond(
-            State.using_profile,
-            rx.vstack(
-                rx.divider(),
-                rx.flex(
-                    rx.button(
-                        '辞書',
-                        color_scheme='jade',
-                        height='2.25em',
-                        id='lookup_definition',
-                        on_click=State.lookup_definition,
-                    ),
-                    rx.button(
-                        '訳す',
-                        color_scheme='jade',
-                        height='2.25em',
-                        id='translate',
-                        on_click=State.translate,
-                    ),
-                    rx.button(
-                        '文法',
-                        color_scheme='jade',
-                        height='2.25em',
-                        id='explain_grammar',
-                        on_click=State.explain_grammer,
-                    ),
-                    rx.button(
-                        '使い方',
-                        color_scheme='jade',
-                        height='2.25em',
-                        id='explain_usage',
-                        on_click=State.explain_usage,
-                    ),
-                    rx.button(
-                        '同じ意味',
-                        color_scheme='jade',
-                        height='2.25em',
-                        id='give_examples_of_same_meaning',
-                        on_click=State.give_examples_of_same_meaning,
-                    ),
-                    rx.button(
-                        '反対の意味',
-                        color_scheme='jade',
-                        height='2.25em',
-                        id='give_examples_of_opposite_meaning',
-                        on_click=State.give_examples_of_opposite_meaning,
-                    ),
-                    spacing='2',
+            State.learning_aide.text != '',
+            rx.flex(
+                rx.spacer(
                     width='100%',
-                    wrap='wrap',
                 ),
-                rx.cond(
-                    State.learning_aide.text != '',
-                    rx.flex(
-                        rx.spacer(
-                            width='100%',
-                        ),
-                        rx.vstack(
-                            rx.box(
-                                rx.box(
-                                    rx.markdown(
-                                        State.learning_aide.text,
-                                        margin='-0.5em 0em -0.5em 0em',
-                                        width='100%',
-                                    ),
-                                    background_color=rx.color('jade', 3),
-                                    border_color=rx.color('jade', 8),
-                                    border_style='solid',
-                                    border_width='3px',
-                                    min_width='10em',
-                                    padding='0 1em 0 1em',
-                                ),
-                                rx.box(
-                                    rx.text(State.learning_aide.model),
-                                    color=rx.color('gray', 8),
-                                    font_size='0.4em',
-                                    padding_bottom='0.55em',
-                                    padding_right='1.5em',
-                                    position='absolute',
-                                    bottom='0',
-                                    right='0',
-                                ),
-                                position='relative',
+                rx.vstack(
+                    rx.box(
+                        rx.box(
+                            rx.markdown(
+                                State.learning_aide.text,
+                                margin='-0.5em 0em -0.5em 0em',
                                 width='100%',
                             ),
-                            rx.cond(
-                                State.learning_aide.tts_in_progress,
-                                rx.center(
-                                    rx.spinner(
-                                        color=rx.color('gray', 8),
-                                    ),
-                                    width='100%',
-                                ),
-                            ),
+                            background_color=rx.color('jade', 3),
+                            border_color=rx.color('jade', 8),
+                            border_style='solid',
+                            border_width='3px',
+                            min_width='10em',
+                            padding='0 1em 0 1em',
                         ),
-                        rx.vstack(
+                        rx.box(
+                            rx.text(State.learning_aide.model),
+                            color=rx.color('gray', 8),
+                            font_size='0.4em',
+                            padding_bottom='0.55em',
+                            padding_right='1.5em',
+                            position='absolute',
+                            bottom='0',
+                            right='0',
+                        ),
+                        position='relative',
+                        width='100%',
+                    ),
+                    rx.cond(
+                        State.learning_aide.tts_in_progress,
+                        rx.center(
+                            rx.spinner(
+                                color=rx.color('gray', 8),
+                            ),
+                            width='100%',
+                        ),
+                    ),
+                ),
+                rx.vstack(
+                    rx.hstack(
+                        rx.cond(
+                            State.processing,
+                            rx.button(
+                                rx.icon(
+                                    tag='x',
+                                    size=20,
+                                    stroke_width=1.5,
+                                ),
+                                color_scheme='tomato',
+                                margin_top='0.5em',
+                                on_click=State.cancel_processing,
+                            ),
                             rx.hstack(
                                 rx.cond(
-                                    State.processing,
+                                    State.learning_aide.contains_japanese,
                                     rx.button(
                                         rx.icon(
-                                            tag='x',
+                                            tag='volume-2',
                                             size=20,
                                             stroke_width=1.5,
                                         ),
-                                        color_scheme='tomato',
+                                        color_scheme='blue',
+                                        disabled=(
+                                            State.learning_aide.tts_in_progress
+                                            | (
+                                                State.learning_aide.tts_wav_url
+                                                != ''
+                                            )
+                                        ),
                                         margin_top='0.5em',
-                                        on_click=State.cancel_processing,
-                                    ),
-                                    rx.hstack(
-                                        rx.cond(
-                                            State.learning_aide.contains_japanese,
-                                            rx.button(
-                                                rx.icon(
-                                                    tag='volume-2',
-                                                    size=20,
-                                                    stroke_width=1.5,
-                                                ),
-                                                color_scheme='blue',
-                                                disabled=(
-                                                    State.learning_aide.tts_in_progress
-                                                    | (
-                                                        State.learning_aide.tts_wav_url
-                                                        != ''
-                                                    )
-                                                ),
-                                                margin_top='0.5em',
-                                                on_click=State.speak_learning_aide,  # pylint: disable=no-value-for-parameter
-                                            ),
-                                        ),
-                                        rx.button(
-                                            rx.icon(
-                                                tag='copy',
-                                                size=20,
-                                                stroke_width=1.5,
-                                            ),
-                                            color_scheme='gray',
-                                            margin_top='0.5em',
-                                            on_click=rx.set_clipboard(
-                                                State.learning_aide.text
-                                            ),
-                                        ),
+                                        on_click=State.speak_learning_aide,  # pylint: disable=no-value-for-parameter
                                     ),
                                 ),
-                            ),
-                            rx.cond(
-                                ~State.processing,
                                 rx.button(
                                     rx.icon(
-                                        tag='x',
+                                        tag='copy',
                                         size=20,
                                         stroke_width=1.5,
                                     ),
-                                    color_scheme='tomato',
+                                    color_scheme='gray',
                                     margin_top='0.5em',
-                                    on_click=State.clear_learning_aide_response,
+                                    on_click=rx.set_clipboard(
+                                        State.learning_aide.text
+                                    ),
                                 ),
                             ),
                         ),
-                        spacing='2',
-                        width='100%',
+                    ),
+                    rx.cond(
+                        ~State.processing,
+                        rx.button(
+                            rx.icon(
+                                tag='x',
+                                size=20,
+                                stroke_width=1.5,
+                            ),
+                            color_scheme='tomato',
+                            margin_top='0.5em',
+                            on_click=State.clear_learning_aide_response,
+                        ),
                     ),
                 ),
-                rx.cond(
-                    (
-                        (State.learning_aide.text != '')
-                        & (State.learning_aide.tts_wav_url != '')
-                    ),
-                    rx.audio(
-                        height='32px',
-                        playing=True,
-                        url=State.learning_aide.tts_wav_url,
-                        width='100%',
-                    ),
-                ),
+                spacing='2',
+                width='100%',
+            ),
+        ),
+        rx.cond(
+            (
+                (State.learning_aide.text != '')
+                & (State.learning_aide.tts_wav_url != '')
+            ),
+            rx.audio(
+                height='32px',
+                playing=True,
+                url=State.learning_aide.tts_wav_url,
                 width='100%',
             ),
         ),
