@@ -16,6 +16,12 @@ from nevschat.profile import Profile
 from nevschat.prompt import Prompt
 from nevschat.response import Response
 from nevschat.speakable import Speakable
+from nevschat.system_instructions import CHECK_GRAMMAR
+from nevschat.system_instructions import EXPLAIN_GRAMMAR
+from nevschat.system_instructions import EXPLAIN_USAGE
+from nevschat.system_instructions import EXPRESS_OPPOSITE_MEANING
+from nevschat.system_instructions import EXPRESS_SAME_MEANING
+from nevschat.system_instructions import GIVE_EXAMPLE_SENTENCES
 from nevschat.system_instructions import get_system_instructions
 
 SYSTEM_INSTRUCTIONS = get_system_instructions()
@@ -403,33 +409,37 @@ class State(rx.State):  # type: ignore
                 ),
             )
 
-    def explain_grammer(self) -> Any:
+    def check_grammar(self) -> Any:
         return self.do_chatgpt_learning_aide(
-            GPT_BEST_MODEL, SYSTEM_INSTRUCTIONS['Explain Grammar'][0]
+            GPT_BEST_MODEL, SYSTEM_INSTRUCTIONS[CHECK_GRAMMAR][0]
+        )
+
+    def explain_grammar(self) -> Any:
+        return self.do_chatgpt_learning_aide(
+            GPT_BEST_MODEL, SYSTEM_INSTRUCTIONS[EXPLAIN_GRAMMAR][0]
         )
 
     def explain_usage(self) -> Any:
         return self.do_chatgpt_learning_aide(
-            GTP_CHEAP_MODEL, SYSTEM_INSTRUCTIONS['Explain Usage'][0]
+            GTP_CHEAP_MODEL, SYSTEM_INSTRUCTIONS[EXPLAIN_USAGE][0]
         )
 
     def give_examples_of_same_meaning(self) -> Any:
         return self.do_chatgpt_learning_aide(
             GTP_CHEAP_MODEL,
-            SYSTEM_INSTRUCTIONS[
-                '日本語: Give varied ways of expressing the given meaning.'
-            ][0],
+            SYSTEM_INSTRUCTIONS[EXPRESS_SAME_MEANING][0],
         )
 
     def give_examples_of_opposite_meaning(self) -> Any:
         return self.do_chatgpt_learning_aide(
             GTP_CHEAP_MODEL,
-            SYSTEM_INSTRUCTIONS[
-                (
-                    '日本語: Give varied ways of expressing '
-                    + 'the opposite of the given meaning.'
-                )
-            ][0],
+            SYSTEM_INSTRUCTIONS[EXPRESS_OPPOSITE_MEANING][0],
+        )
+
+    def give_example_sentences(self) -> Any:
+        return self.do_chatgpt_learning_aide(
+            GTP_CHEAP_MODEL,
+            SYSTEM_INSTRUCTIONS[GIVE_EXAMPLE_SENTENCES][0],
         )
 
     ####################################################################################

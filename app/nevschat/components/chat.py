@@ -502,18 +502,25 @@ def chat() -> rx.Component:
                 on_click=State.lookup_definition,
             ),
             rx.button(
-                '訳す',
+                '翻訳',
                 color_scheme='jade',
                 height='2.25em',
                 id='translate',
                 on_click=State.translate,
             ),
             rx.button(
-                '文法',
+                '文法説明',
                 color_scheme='jade',
                 height='2.25em',
                 id='explain_grammar',
-                on_click=State.explain_grammer,
+                on_click=State.explain_grammar,
+            ),
+            rx.button(
+                '文法チェック',
+                color_scheme='jade',
+                height='2.25em',
+                id='check_grammar',
+                on_click=State.check_grammar,
             ),
             rx.button(
                 '使い方',
@@ -521,6 +528,13 @@ def chat() -> rx.Component:
                 height='2.25em',
                 id='explain_usage',
                 on_click=State.explain_usage,
+            ),
+            rx.button(
+                '例文',
+                color_scheme='jade',
+                height='2.25em',
+                id='give_example_sentences',
+                on_click=State.give_example_sentences,
             ),
             rx.button(
                 '同じ意味',

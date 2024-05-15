@@ -50,6 +50,6 @@ class Profile(Speakable):
             f'趣味は{hobbies}です。'
             f'{foods_and_drinks}が好きです。'
             f'私は{personal_feature}'
-            f'今{mood}'
+            f'今、{mood}'
         )
         self.voice = get_random_voice(self.male)

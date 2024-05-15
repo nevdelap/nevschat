@@ -6,7 +6,7 @@ from nevschat.state import State
 from reflex.style import color_mode  # type: ignore
 from reflex.style import toggle_color_mode
 
-VERSION = '0.0.121'
+VERSION = '0.0.122'
 TITLE = f'ネヴのすごいチャットジーピーティー v{VERSION}'
 
 
@@ -54,12 +54,14 @@ def index() -> rx.Component:
                 var update_selection_state = function() {
                     const has_selection = window.getSelection().toString() != '';
                     var ids = [
-                        'lookup_definition',
+                        'check_grammar',
                         'explain_grammar',
                         'explain_usage',
-                        'give_examples_of_same_meaning',
+                        'give_example_sentences',
                         'give_examples_of_opposite_meaning',
-                        'translate'
+                        'give_examples_of_same_meaning',
+                        'lookup_definition',
+                        'translate',
                     ];
                     ids.forEach(function(id) {
                         var element = document.getElementById(id);
