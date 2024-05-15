@@ -610,10 +610,7 @@ def chat() -> rx.Component:
                                         color_scheme='blue',
                                         disabled=(
                                             State.learning_aide.tts_in_progress
-                                            | (
-                                                State.learning_aide.tts_wav_url
-                                                != ''
-                                            )
+                                            | (State.learning_aide.tts_wav_url != '')
                                         ),
                                         margin_top='0.5em',
                                         on_click=State.speak_learning_aide,  # pylint: disable=no-value-for-parameter
@@ -627,9 +624,7 @@ def chat() -> rx.Component:
                                     ),
                                     color_scheme='gray',
                                     margin_top='0.5em',
-                                    on_click=rx.set_clipboard(
-                                        State.learning_aide.text
-                                    ),
+                                    on_click=rx.set_clipboard(State.learning_aide.text),
                                 ),
                             ),
                         ),

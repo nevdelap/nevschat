@@ -64,7 +64,7 @@ class Speakable(rx.Base, ABC):  # type: ignore
                 print(f'Checking that {full_tts_wav_url} is being served...', end='')
                 for _ in range(0, 10):
                     try:
-                        response = requests.head(full_tts_wav_url, timeout=10.0)
+                        response = requests.head(full_tts_wav_url, timeout=5.0)
                         if response.status_code >= 200 and response.status_code < 400:
                             print(' OK')
                             return
