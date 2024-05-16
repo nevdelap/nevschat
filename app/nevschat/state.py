@@ -33,8 +33,8 @@ GPT_BEST_MODEL = 'gpt-4o'
 GTP_CHEAP_MODEL = 'gpt-3.5-turbo'
 
 # Requires a restart when changing.
-USE_CANNED_PROFILE_AND_CHAT = True  # For testing.
-USE_QUICK_PROMPT = True  # For testing.
+USE_CANNED_PROFILE_AND_CHAT = False  # For testing.
+USE_QUICK_PROMPT = False  # For testing.
 
 
 class State(rx.State):  # type: ignore
@@ -357,6 +357,22 @@ class State(rx.State):  # type: ignore
             yield
         async with self:
             Speakable.text_to_wav(self.learning_aide, self)
+
+    @rx.background  # type: ignore
+    async def play_from_profile(self) -> Any:
+        print('Play from here - profile')
+        return rx.call_script(
+            'play_from_here("audio_profile")',
+            # callback=State.set_dictionary_learning_aide_prompt,
+        )
+
+    @rx.background  # type: ignore
+    async def play_from_here(self, audio_id: str) -> Any:
+        print(f'Play from here - {audio_id}')
+        return rx.call_script(
+            f'play_from_here("{audio_id}")',
+            # callback=State.set_dictionary_learning_aide_prompt,
+        )
 
     ####################################################################################
     # Learning Aide

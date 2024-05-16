@@ -6,7 +6,7 @@ from nevschat.state import State
 from reflex.style import color_mode  # type: ignore
 from reflex.style import toggle_color_mode
 
-VERSION = '0.0.123'
+VERSION = '0.0.124.alpha.1'
 TITLE = f'ネヴのすごいチャットジーピーティー v{VERSION}'
 
 
@@ -51,9 +51,36 @@ def index() -> rx.Component:
         ),
         rx.script(
             """
-                var update_selection_state = function() {
+                ///// Play From Here Buttons ///////////////////////////////////////////
+
+                const play_from_here = function(audio_id) {
+                    console.log('Play from here - ' + audio_id);
+                    if (audio_id) {
+                        const audio_div = document.querySelector('div#' + audio_id);
+                        if (audio_div) {
+                            const audio = audio_div.querySelector('audio');
+                            audio.addEventListener('ended', function onAudioEnd() {
+                                audio.removeEventListener('ended', onAudioEnd);
+                                const audio_divs = document.querySelectorAll('.audio');
+                                const index = Array.prototype.indexOf.call(
+                                    audio_divs,
+                                    audio_div
+                                );
+                                if (index >= 0 && index < audio_divs.length - 1) {
+                                    const next_audio_div = audio_divs[index + 1];
+                                    play_from_here(next_audio_div.id);
+                                }
+                            })
+                            audio.play();
+                        }
+                    }
+                }
+
+                ///// Learning Aide Buttons ////////////////////////////////////////////
+
+                const update_selection_state = function() {
                     const has_selection = window.getSelection().toString() != '';
-                    var ids = [
+                    const ids = [
                         'check_grammar',
                         'explain_grammar',
                         'explain_usage',
@@ -75,7 +102,7 @@ def index() -> rx.Component:
                     });
                 }
 
-                var get_selected_text_and_clear = function() {
+                const get_selected_text_and_clear = function() {
                     const selection = window.getSelection();
                     const select_text = selection.toString();
                     selection.removeAllRanges()

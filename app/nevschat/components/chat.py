@@ -147,10 +147,24 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
             ),
             rx.cond(
                 prompt_response.prompt.tts_wav_url != '',
-                rx.audio(
-                    height='32px',
-                    playing=True,
-                    url=prompt_response.prompt.tts_wav_url,
+                rx.hstack(
+                    rx.audio(
+                        id=f'audio_prompt_{index}',
+                        class_name='audio',
+                        height='32px',
+                        playing=True,
+                        url=prompt_response.prompt.tts_wav_url,
+                        width='100%',
+                    ),
+                    rx.button(
+                        rx.icon(
+                            tag='list-video',
+                            size=20,
+                            stroke_width=1.5,
+                        ),
+                        color_scheme='blue',
+                        on_click=lambda: State.play_from_here(f'audio_prompt_{index}'),  # pylint: disable=no-value-for-parameter
+                    ),
                     width='100%',
                 ),
             ),
@@ -275,10 +289,26 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
             ),
             rx.cond(
                 prompt_response.response.tts_wav_url != '',
-                rx.audio(
-                    height='32px',
-                    playing=True,
-                    url=prompt_response.response.tts_wav_url,
+                rx.hstack(
+                    rx.audio(
+                        id=f'audio_response_{index}',
+                        class_name='audio',
+                        height='32px',
+                        playing=True,
+                        url=prompt_response.response.tts_wav_url,
+                        width='100%',
+                    ),
+                    rx.button(
+                        rx.icon(
+                            tag='list-video',
+                            size=20,
+                            stroke_width=1.5,
+                        ),
+                        color_scheme='blue',
+                        on_click=lambda: State.play_from_here(  # pylint: disable=no-value-for-parameter
+                            f'audio_response_{index}'
+                        ),
+                    ),
                     width='100%',
                 ),
             ),
@@ -423,10 +453,24 @@ def chat() -> rx.Component:
                 ),
                 rx.cond(
                     State.profile.tts_wav_url != '',
-                    rx.audio(
-                        height='32px',
-                        playing=True,
-                        url=State.profile.tts_wav_url,
+                    rx.hstack(
+                        rx.audio(
+                            id='audio_profile',
+                            class_name='audio',
+                            height='32px',
+                            playing=True,
+                            url=State.profile.tts_wav_url,
+                            width='100%',
+                        ),
+                        rx.button(
+                            rx.icon(
+                                tag='list-video',
+                                size=20,
+                                stroke_width=1.5,
+                            ),
+                            color_scheme='blue',
+                            on_click=State.play_from_profile(),
+                        ),
                         width='100%',
                     ),
                 ),
@@ -667,6 +711,7 @@ def chat() -> rx.Component:
                 & (State.learning_aide.tts_wav_url != '')
             ),
             rx.audio(
+                id='audio_learning_aide',
                 height='32px',
                 playing=True,
                 url=State.learning_aide.tts_wav_url,
