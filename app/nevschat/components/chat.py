@@ -213,10 +213,16 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                             width='100%',
                         ),
                         rx.hstack(
-                            rx.text(prompt_response.response.model),
+                            rx.text(
+                                prompt_response.response.model,
+                                user_select='none',
+                            ),
                             rx.cond(
                                 prompt_response.response.tts_wav_url != '',
-                                rx.text(prompt_response.response.voice),
+                                rx.text(
+                                    prompt_response.response.voice,
+                                    user_select='none',
+                                ),
                             ),
                             color=rx.color('gray', 8),
                             font_size='0.4em',
@@ -391,7 +397,10 @@ def chat() -> rx.Component:
                             rx.cond(
                                 State.profile.tts_wav_url != '',
                                 rx.box(
-                                    rx.text(State.profile.voice),
+                                    rx.text(
+                                        State.profile.voice,
+                                        user_select='none',
+                                    ),
                                     color=rx.color('gray', 8),
                                     font_size='0.4em',
                                     padding_bottom='0.55em',
@@ -469,7 +478,7 @@ def chat() -> rx.Component:
                                 stroke_width=1.5,
                             ),
                             color_scheme='blue',
-                            on_click=State.play_from_profile(),
+                            on_click=State.play_from_profile(),  # pylint: disable=no-value-for-parameter
                         ),
                         width='100%',
                     ),
@@ -620,7 +629,10 @@ def chat() -> rx.Component:
                             padding='0 1em 0 1em',
                         ),
                         rx.box(
-                            rx.text(State.learning_aide.model),
+                            rx.text(
+                                State.learning_aide.model,
+                                user_select='none',
+                            ),
                             color=rx.color('gray', 8),
                             font_size='0.4em',
                             padding_bottom='0.55em',
