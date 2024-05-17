@@ -9,7 +9,6 @@ from rxconfig import site_runtime_assets_url
 
 import reflex as rx
 from nevschat.helpers import Warnable
-from nevschat.helpers import delete_old_wav_assets
 from nevschat.helpers import get_default_voice
 from nevschat.helpers import strip_non_japanese_and_split_sentences
 from nevschat.helpers import text_to_wav as tts_text_to_wav
@@ -54,9 +53,6 @@ class Speakable(rx.Base, ABC):  # type: ignore
                     self.speaking_rate,
                     self.pitch,
                 )
-                # Take advantage of a moment for the Nginx to make the wav available
-                # by doing some housekeeping.
-                delete_old_wav_assets()
                 self.tts_wav_url = os.path.join(
                     config.frontend_path, f"{tts_wav_filename[len('assets/'):]}"
                 )

@@ -1,4 +1,3 @@
-from .cleanup import delete_old_wav_assets
 from .dictionary import get_definition
 from .japanese_text import age_to_kanji
 from .japanese_text import contains_japanese
@@ -22,7 +21,6 @@ from .warnable import Warnable
 __all__ = [
     'age_to_kanji',
     'contains_japanese',
-    'delete_old_wav_assets',
     'get_definition',
     'get_pitch',
     'get_random_age',
