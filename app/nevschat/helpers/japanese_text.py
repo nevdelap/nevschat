@@ -56,7 +56,10 @@ def contains_japanese(text: str, *, log: bool = False) -> bool:
     """
     Return True if the text contains any Japanese at all.
     """
-    return any(is_japanese_char(ch, include_digits_and_punctuation=False, log=log) for ch in text)
+    return any(
+        is_japanese_char(ch, include_digits_and_punctuation=False, log=log)
+        for ch in text
+    )
 
 
 def contains_latin(text: str, log: bool = False) -> bool:
@@ -78,7 +81,9 @@ def strip_non_japanese_and_split_sentences(text: str) -> str:
             r'。+',
             '。',
             ''.join(
-                ch if is_japanese_char(ch, include_digits_and_punctuation=True) else '。'
+                ch
+                if is_japanese_char(ch, include_digits_and_punctuation=True)
+                else '。'
                 for ch in text
             )
             + '。',

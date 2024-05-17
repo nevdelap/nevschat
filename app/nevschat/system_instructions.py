@@ -93,6 +93,10 @@ _system_instructions['Nginx'] = (
     'The question is in the context of Nginx configuration.',
     True,
 )
+_system_instructions['Looker'] = (
+    "The question is in the context of Google's Looker, LookML, Dashboards, etc.",
+    True,
+)
 _system_instructions['Python'] = (
     'The question is in the context of the Python programming language.',
     True,
