@@ -13,7 +13,7 @@ def get_canned_chat() -> list[PromptResponse]:
                 speaking_rate=1,
                 text='そうですか？',
                 tts_wav_url=(
-                    'wav/tts_ja-JP-Neural2-B_1.0_0.0_'
+                    'wav/tts_ja-JP-Neural2-C_1.0_0.0_'
                     '3a26eb6e7ff37e88b995d6bbe579cfa1.wav'
                 ),
                 voice=get_default_voice(),
@@ -25,7 +25,7 @@ def get_canned_chat() -> list[PromptResponse]:
                 speaking_rate=1,
                 text='はい、そうです。',
                 tts_wav_url=(
-                    'wav/tts_ja-JP-Neural2-B_1.0_0.0_'
+                    'wav/tts_ja-JP-Neural2-C_1.0_0.0_'
                     'f01aa1dd97e1bc6798f739b4ab06094a.wav'
                 ),
                 voice=get_default_voice(),
@@ -39,7 +39,7 @@ def get_canned_chat() -> list[PromptResponse]:
                 speaking_rate=1,
                 text='いいです？',
                 tts_wav_url=(
-                    'wav/tts_ja-JP-Neural2-B_1.0_0.0_'
+                    'wav/tts_ja-JP-Neural2-C_1.0_0.0_'
                     '4ff62a3d772146da7c906eaa2099fbe7.wav'
                 ),
                 voice=get_default_voice(),
@@ -51,7 +51,7 @@ def get_canned_chat() -> list[PromptResponse]:
                 speaking_rate=1,
                 text='はい、いいですよ！',
                 tts_wav_url=(
-                    'wav/tts_ja-JP-Neural2-B_1.0_0.0_'
+                    'wav/tts_ja-JP-Neural2-C_1.0_0.0_'
                     'ccba5ccc5754fca6737a099281019854.wav'
                 ),
                 voice=get_default_voice(),

@@ -63,3 +63,7 @@ class Profile(Speakable):
                 '解くとバレーボールです。ドーナツやあたたかい水が好きです。'
                 '私は消化不良がよくあります。今、失望しています。'
             )
+            self.tts_wav_url = (
+                'wav/tts_ja-JP-Neural2-C_1.0_0.0_'
+                'cbceec2fbef664e23af493c528a1e77f.wav'
+            )

@@ -14,16 +14,16 @@ random.seed(time.time())
 # These are source controlled to avoid doing tts when using canned responses in
 # development.
 CANNED_WAV_FILES = [
-    'tts_ja-JP-Neural2-B_1.0_0.0_3a26eb6e7ff37e88b995d6bbe579cfa1.wav',
-    'tts_ja-JP-Neural2-B_1.0_0.0_4ff62a3d772146da7c906eaa2099fbe7.wav',
-    'tts_ja-JP-Neural2-B_1.0_0.0_cbceec2fbef664e23af493c528a1e77f.wav',
-    'tts_ja-JP-Neural2-B_1.0_0.0_ccba5ccc5754fca6737a099281019854.wav',
-    'tts_ja-JP-Neural2-B_1.0_0.0_f01aa1dd97e1bc6798f739b4ab06094a.wav',
+    'tts_ja-JP-Neural2-C_1.0_0.0_3a26eb6e7ff37e88b995d6bbe579cfa1.wav',
+    'tts_ja-JP-Neural2-C_1.0_0.0_4ff62a3d772146da7c906eaa2099fbe7.wav',
+    'tts_ja-JP-Neural2-C_1.0_0.0_cbceec2fbef664e23af493c528a1e77f.wav',
+    'tts_ja-JP-Neural2-C_1.0_0.0_ccba5ccc5754fca6737a099281019854.wav',
+    'tts_ja-JP-Neural2-C_1.0_0.0_f01aa1dd97e1bc6798f739b4ab06094a.wav',
 ]
 
 
 def get_default_voice() -> str:
-    return 'ja-JP-Neural2-B'
+    return 'ja-JP-Neural2-C'
 
 
 def get_random_voice(male: bool) -> str:
