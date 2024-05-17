@@ -363,6 +363,9 @@ class State(rx.State):  # type: ignore
             self.prompts_responses[-1].response.tts_in_progress = True
             yield
         async with self:
+            time.sleep(
+                3
+            )  # Temporary hack. Response needs to be spoken after prompt completes.
             Speakable.text_to_wav(self.prompts_responses[-1].response, self)
 
     @rx.background  # type: ignore
@@ -378,7 +381,6 @@ class State(rx.State):  # type: ignore
         print('Play from here - profile')
         return rx.call_script(
             'play_from_here("audio_profile")',
-            # callback=State.set_dictionary_learning_aide_prompt,
         )
 
     @rx.background  # type: ignore
@@ -386,7 +388,6 @@ class State(rx.State):  # type: ignore
         print(f'Play from here - {audio_id}')
         return rx.call_script(
             f'play_from_here("{audio_id}")',
-            # callback=State.set_dictionary_learning_aide_prompt,
         )
 
     ####################################################################################
