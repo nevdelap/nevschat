@@ -271,6 +271,13 @@ class State(rx.State):  # type: ignore
                     f'Messages: {messages}'
                 )
 
+            async with self:
+                if (
+                    self.prompts_responses[-1].prompt.contains_japanese
+                    and self.auto_speak
+                ):
+                    yield State.speak_last_prompt
+
             session = OpenAI(
                 timeout=10.0,
             ).chat.completions.create(
@@ -313,7 +320,7 @@ class State(rx.State):  # type: ignore
                 self.prompts_responses[-1].response.contains_japanese
                 and self.auto_speak
             ):
-                return State.speak_last_response
+                yield State.speak_last_response
 
     ####################################################################################
     # Text To Speech
@@ -341,6 +348,14 @@ class State(rx.State):  # type: ignore
             yield
         async with self:
             Speakable.text_to_wav(self.prompts_responses[index].response, self)
+
+    @rx.background  # type: ignore
+    async def speak_last_prompt(self) -> Any:
+        async with self:
+            self.prompts_responses[-1].prompt.tts_in_progress = True
+            yield
+        async with self:
+            Speakable.text_to_wav(self.prompts_responses[-1].prompt, self)
 
     @rx.background  # type: ignore
     async def speak_last_response(self) -> Any:
