@@ -3,7 +3,7 @@ import unicodedata
 
 
 def is_japanese_char(
-    ch: str, *, include_numbers: bool = True, log: bool = False
+    ch: str, *, include_digits_and_punctuation: bool = True, log: bool = False
 ) -> bool:
     """
     Return True if the character is a Japanese character.
@@ -16,11 +16,15 @@ def is_japanese_char(
         'IDEOGRAPHIC',
         'KATAKANA',
         'KATAKANA-HIRAGANA',
-        'LEFT',
-        'RIGHT',
     ]
-    if include_numbers:
-        included_blocks.append('DIGIT')
+    if include_digits_and_punctuation:
+        included_blocks.extend(
+            [
+                'DIGIT',
+                'LEFT',
+                'RIGHT',
+            ]
+        )
     try:
         block = unicodedata.name(ch).split()[0]
         is_japanese = block in included_blocks
@@ -52,7 +56,7 @@ def contains_japanese(text: str, *, log: bool = False) -> bool:
     """
     Return True if the text contains any Japanese at all.
     """
-    return any(is_japanese_char(ch, include_numbers=False, log=log) for ch in text)
+    return any(is_japanese_char(ch, include_digits_and_punctuation=False, log=log) for ch in text)
 
 
 def contains_latin(text: str, log: bool = False) -> bool:
@@ -74,7 +78,7 @@ def strip_non_japanese_and_split_sentences(text: str) -> str:
             r'。+',
             '。',
             ''.join(
-                ch if is_japanese_char(ch, include_numbers=True) else '。'
+                ch if is_japanese_char(ch, include_digits_and_punctuation=True) else '。'
                 for ch in text
             )
             + '。',
