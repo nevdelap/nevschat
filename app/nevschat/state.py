@@ -45,11 +45,12 @@ class State(rx.State):  # type: ignore
         get_canned_chat() if USE_CANNED_PROFILE_AND_CHAT else []
     )
     auto_speak: bool = True
+    chat_processing: bool = False
     control_down: bool = False
     edited_prompt: str
     gpt_best: bool = False
     learning_aide: LearningAide = LearningAide()
-    processing: bool = False
+    learning_aide_processing: bool = False
     new_prompt: str = '可愛いウサギが好きですか?' if USE_QUICK_PROMPT else ''
     non_profile_voice: str = get_default_voice()
     profile: Profile = Profile(canned=USE_CANNED_PROFILE_AND_CHAT)
@@ -77,7 +78,7 @@ class State(rx.State):  # type: ignore
 
     @rx.var  # type: ignore
     def cannot_enter_new_prompt_or_edit(self) -> bool:
-        return self.editing or self.processing
+        return self.editing or self.chat_processing
 
     @rx.var  # type: ignore
     def editing(self) -> bool:
@@ -103,8 +104,11 @@ class State(rx.State):  # type: ignore
     def you_are(self) -> str:
         return self.profile.text.replace('私は', 'あなたは')
 
-    def cancel_processing(self) -> None:
-        self.processing = False
+    def cancel_chat_processing(self) -> None:
+        self.chat_processing = False
+
+    def cancel_learning_aide_processing(self) -> None:
+        self.learning_aide_processing = False
 
     ####################################################################################
     # Profile
@@ -202,7 +206,7 @@ class State(rx.State):  # type: ignore
                 assert self.new_prompt != ''
 
                 self.cancel_control()
-                self.processing = True
+                self.chat_processing = True
                 self.warning = ''
 
                 model = GPT_BEST_MODEL if self.gpt_best else GTP_CHEAP_MODEL
@@ -276,6 +280,12 @@ class State(rx.State):  # type: ignore
                     self.prompts_responses[-1].prompt.contains_japanese
                     and self.auto_speak
                 ):
+                    self.learning_aide.model = GPT_BEST_MODEL
+                    self.learning_aide.system_instruction = SYSTEM_INSTRUCTIONS[
+                        CHECK_GRAMMAR
+                    ][0]
+                    self.learning_aide.prompt = self.prompts_responses[-1].prompt.text
+                    yield State.chatgpt_learning_aide
                     yield State.speak_last_prompt
 
             session = OpenAI(
@@ -302,7 +312,7 @@ class State(rx.State):  # type: ignore
                         ].response.contains_japanese = contains_japanese(
                             self.prompts_responses[-1].response.text
                         )
-                    if not self.processing:
+                    if not self.chat_processing:
                         # It's been cancelled.
                         self.prompts_responses[-1].response += ' (キャンセル）'
                         break
@@ -313,7 +323,7 @@ class State(rx.State):  # type: ignore
                 print(self.warning)
         finally:
             async with self:
-                self.processing = False
+                self.chat_processing = False
 
         async with self:
             if (
@@ -470,7 +480,7 @@ class State(rx.State):  # type: ignore
             return
         try:
             async with self:
-                self.processing = True
+                self.learning_aide_processing = True
                 self.warning = ''
                 self.learning_aide.model = ''
                 self.learning_aide.text = '見つけ中…'
@@ -496,7 +506,7 @@ class State(rx.State):  # type: ignore
                     time.sleep(0.001)
 
                     async with self:
-                        if not self.processing:
+                        if not self.learning_aide_processing:
                             # It's been cancelled.
                             self.learning_aide.text += ' (キャンセル）'
                             break
@@ -507,7 +517,7 @@ class State(rx.State):  # type: ignore
                 print(self.warning)
         finally:
             async with self:
-                self.processing = False
+                self.learning_aide_processing = False
 
     ####################################################################################
     # DeepL Learning Aide
@@ -533,7 +543,7 @@ class State(rx.State):  # type: ignore
             return
         try:
             async with self:
-                self.processing = True
+                self.learning_aide_processing = True
                 self.warning = ''
                 self.learning_aide.model = 'deepl'
                 self.learning_aide.text = '翻訳中…'
@@ -558,7 +568,7 @@ class State(rx.State):  # type: ignore
                     time.sleep(0.001)
 
                     async with self:
-                        if not self.processing:
+                        if not self.learning_aide_processing:
                             # It's been cancelled.
                             self.learning_aide.text += ' (キャンセル）'
                             break
@@ -569,7 +579,7 @@ class State(rx.State):  # type: ignore
                 print(self.warning)
         finally:
             async with self:
-                self.processing = False
+                self.learning_aide_processing = False
 
     ####################################################################################
     # ChatGPT Learning Aide
@@ -604,7 +614,7 @@ class State(rx.State):  # type: ignore
                 ).strip()
 
                 if learning_aid_prompt != '':
-                    self.processing = True
+                    self.learning_aide_processing = True
                     self.warning = ''
                     self.learning_aide.text = ''
                     self.learning_aide.contains_japanese = False
@@ -638,7 +648,10 @@ class State(rx.State):  # type: ignore
                             self.learning_aide.contains_japanese = contains_japanese(
                                 self.learning_aide.text
                             )
-                        if not self.processing:
+                            if self.learning_aide.text == 'The grammar is correct.':
+                                # No need to show it.
+                                self.learning_aide.text = ''
+                        if not self.learning_aide_processing:
                             # It's been cancelled.
                             self.learning_aide.text += ' (キャンセル）'
                             break
@@ -649,7 +662,7 @@ class State(rx.State):  # type: ignore
                 print(self.warning)
         finally:
             async with self:
-                self.processing = False
+                self.learning_aide_processing = False
 
     def clear_learning_aide_response(self) -> Any:
         return self.trigger_clear_learning_aide_prompt()

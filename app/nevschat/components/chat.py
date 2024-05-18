@@ -108,12 +108,13 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         ),
                         color_scheme='jade',
                         disabled=State.cannot_enter_new_prompt_or_edit,
-                        is_loading=State.processing,
+                        is_loading=State.chat_processing,
                         margin_top='0.5em',
                         on_click=lambda: State.edit_prompt(index),  # type: ignore  # pylint: disable=no-value-for-parameter
                     ),
                     rx.cond(
-                        ~State.processing & prompt_response.prompt.contains_japanese,
+                        ~State.chat_processing
+                        & prompt_response.prompt.contains_japanese,
                         rx.button(
                             rx.icon(
                                 tag='volume-2',
@@ -247,7 +248,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                     width='100%',
                 ),
                 rx.cond(
-                    State.processing,
+                    State.chat_processing,
                     rx.button(
                         rx.icon(
                             tag='x',
@@ -256,12 +257,13 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         ),
                         color_scheme='tomato',
                         margin_top='0.5em',
-                        on_click=State.cancel_processing,
+                        on_click=State.cancel_chat_processing,
                     ),
                 ),
                 rx.hstack(
                     rx.cond(
-                        ~State.processing & prompt_response.response.contains_japanese,
+                        ~State.chat_processing
+                        & prompt_response.response.contains_japanese,
                         rx.button(
                             rx.icon(
                                 tag='volume-2',
@@ -529,7 +531,7 @@ def chat() -> rx.Component:
                 ),
                 color_scheme='jade',
                 disabled=State.cannot_chatgpt_with_new_prompt,
-                is_loading=State.processing,
+                is_loading=State.chat_processing,
                 margin_top='0.5em',
                 on_click=State.chatgpt,
             ),
@@ -657,7 +659,7 @@ def chat() -> rx.Component:
                 rx.vstack(
                     rx.hstack(
                         rx.cond(
-                            State.processing,
+                            State.learning_aide_processing,
                             rx.button(
                                 rx.icon(
                                     tag='x',
@@ -666,7 +668,7 @@ def chat() -> rx.Component:
                                 ),
                                 color_scheme='tomato',
                                 margin_top='0.5em',
-                                on_click=State.cancel_processing,
+                                on_click=State.cancel_learning_aide_processing,
                             ),
                             rx.hstack(
                                 rx.cond(
@@ -700,7 +702,7 @@ def chat() -> rx.Component:
                         ),
                     ),
                     rx.cond(
-                        ~State.processing,
+                        ~State.learning_aide_processing,
                         rx.button(
                             rx.icon(
                                 tag='x',
