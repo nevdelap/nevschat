@@ -281,9 +281,10 @@ class State(rx.State):  # type: ignore
                     and self.auto_speak
                 ):
                     self.learning_aide.model = GPT_BEST_MODEL
-                    self.learning_aide.system_instruction = SYSTEM_INSTRUCTIONS[
-                        CHECK_GRAMMAR
-                    ][0]
+                    self.learning_aide.system_instruction = (
+                        SYSTEM_INSTRUCTIONS[CHECK_GRAMMAR][0]
+                        + " IF THE GRAMMAR IS CORRECT JUST REPLY '<OK>'"
+                    )
                     self.learning_aide.prompt = self.prompts_responses[-1].prompt.text
                     yield State.chatgpt_learning_aide
                     yield State.speak_last_prompt
@@ -425,7 +426,9 @@ class State(rx.State):  # type: ignore
 
     def check_grammar(self) -> Any:
         return self.do_chatgpt_learning_aide(
-            GPT_BEST_MODEL, SYSTEM_INSTRUCTIONS[CHECK_GRAMMAR][0]
+            GPT_BEST_MODEL,
+            SYSTEM_INSTRUCTIONS[CHECK_GRAMMAR][0]
+            + " IF THE GRAMMAR IS CORRECT JUST REPLY 'The grammar is correct.'",
         )
 
     def explain_grammar(self) -> Any:
@@ -648,7 +651,7 @@ class State(rx.State):  # type: ignore
                             self.learning_aide.contains_japanese = contains_japanese(
                                 self.learning_aide.text
                             )
-                            if self.learning_aide.text == 'The grammar is correct.':
+                            if self.learning_aide.text == '<OK>':
                                 # No need to show it.
                                 self.learning_aide.text = ''
                         if not self.learning_aide_processing:
