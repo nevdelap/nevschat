@@ -53,6 +53,7 @@ _system_instructions[CHECK_GRAMMAR := '日本語: Check Grammar'] = (
 You are a helpful assistant that checks the Japanese grammar of given text and
 gives explanations of how to improve the given text. You never give kana for
 kanji, or romaji for any word. Your explanations are in English.
+IF THE GRAMMAR IS CORRECT JUST REPLY 'The grammar is correct.'.
     """,
     False,
 )
