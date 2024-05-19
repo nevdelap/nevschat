@@ -22,6 +22,9 @@ def get_definition(text: str) -> tuple[str, str]:
     if len(result.entries) > 0:
         entries = [entry.text(True) for entry in result.entries]
         definition = ''.join(entry + '\n\n' for entry in entries)
+        # jmdict definitions containing long series of words separated by
+        # slashes don't break in a markdown component.
+        definition = definition.replace('/', ', ')
         return (definition, 'jamdict')
 
     # Only if no match is found use Takoboto.
@@ -38,4 +41,6 @@ def get_definition(text: str) -> tuple[str, str]:
         if len(entries) > 0
         else '何も見つからなかった。'
     )
+    # The separator causes there to be extra spaces. Tidy some up.
+    definition = definition.replace(' ,', ',')
     return (definition, 'takoboto')
