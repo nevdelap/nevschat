@@ -493,6 +493,10 @@ class State(rx.State):  # type: ignore
             yield
 
             definition, model = get_definition(self.learning_aide.prompt)
+            # Definitions containing long series of words separated by slashes
+            # don't break in a markdown component.
+            definition = definition.replace('/', ', ')
+
             async with self:
                 self.learning_aide.model = model
                 self.learning_aide.text = ''
