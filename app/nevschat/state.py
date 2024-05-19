@@ -56,6 +56,7 @@ class State(rx.State):  # type: ignore
     profile: Profile = Profile(canned=USE_CANNED_PROFILE_AND_CHAT)
     system_instruction: str = DEFAULT_SYSTEM_INSTRUCTION
     terse: bool = True
+    tts_processing: bool = False
     warning: str
 
     # These @rx.vars that just call a method on a property or do an operation
@@ -348,7 +349,11 @@ class State(rx.State):  # type: ignore
             self.profile.tts_in_progress = True
             yield
         async with self:
-            Speakable.text_to_wav(self.profile, self)
+            self.tts_processing = True
+            try:
+                Speakable.text_to_wav(self.profile, self)
+            finally:
+                self.tts_processing = False
 
     @rx.background  # type: ignore
     async def speak_prompt(self, index: int) -> Any:
@@ -356,7 +361,11 @@ class State(rx.State):  # type: ignore
             self.prompts_responses[index].prompt.tts_in_progress = True
             yield
         async with self:
-            Speakable.text_to_wav(self.prompts_responses[index].prompt, self)
+            self.tts_processing = True
+            try:
+                Speakable.text_to_wav(self.prompts_responses[index].prompt, self)
+            finally:
+                self.tts_processing = False
 
     @rx.background  # type: ignore
     async def speak_response(self, index: int) -> Any:
@@ -364,7 +373,11 @@ class State(rx.State):  # type: ignore
             self.prompts_responses[index].response.tts_in_progress = True
             yield
         async with self:
-            Speakable.text_to_wav(self.prompts_responses[index].response, self)
+            self.tts_processing = True
+            try:
+                Speakable.text_to_wav(self.prompts_responses[index].response, self)
+            finally:
+                self.tts_processing = False
 
     @rx.background  # type: ignore
     async def speak_last_prompt(self) -> Any:
@@ -376,7 +389,11 @@ class State(rx.State):  # type: ignore
         async with self:
             if len(self.prompts_responses) == 0:  # The user may have cleared the chat.
                 return
-            Speakable.text_to_wav(self.prompts_responses[-1].prompt, self)
+            self.tts_processing = True
+            try:
+                Speakable.text_to_wav(self.prompts_responses[-1].prompt, self)
+            finally:
+                self.tts_processing = False
 
     @rx.background  # type: ignore
     async def speak_last_response(self) -> Any:
@@ -388,10 +405,16 @@ class State(rx.State):  # type: ignore
         async with self:
             if len(self.prompts_responses) == 0:  # The user may have cleared the chat.
                 return
-            time.sleep(
-                3
-            )  # Temporary hack. Response needs to be spoken after prompt completes.
-            Speakable.text_to_wav(self.prompts_responses[-1].response, self)
+            # Wait for the prompt to finish tts'ing.
+            while self.tts_processing:
+                time.sleep(1)
+            # And give it time to be spoken. Hacky temporary workaround.
+            time.sleep(len(self.prompts_responses[-1].response.text) * 0.2)
+            self.tts_processing = True
+            try:
+                Speakable.text_to_wav(self.prompts_responses[-1].response, self)
+            finally:
+                self.tts_processing = False
 
     @rx.background  # type: ignore
     async def speak_learning_aide(self) -> Any:
@@ -399,7 +422,11 @@ class State(rx.State):  # type: ignore
             self.learning_aide.tts_in_progress = True
             yield
         async with self:
-            Speakable.text_to_wav(self.learning_aide, self)
+            self.tts_processing = True
+            try:
+                Speakable.text_to_wav(self.learning_aide, self)
+            finally:
+                self.tts_processing = False
 
     @rx.background  # type: ignore
     async def play_from_profile(self) -> Any:
