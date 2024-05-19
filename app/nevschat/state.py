@@ -277,7 +277,9 @@ class State(rx.State):  # type: ignore
 
             async with self:
                 if (
-                    self.prompts_responses[-1].prompt.contains_japanese
+                    # The user may have cleared the chat.
+                    len(self.prompts_responses) > 0
+                    and self.prompts_responses[-1].prompt.contains_japanese
                     and self.auto_speak
                 ):
                     self.learning_aide.model = GPT_BEST_MODEL
@@ -301,6 +303,9 @@ class State(rx.State):  # type: ignore
             for item in session:  # pylint: disable=not-an-iterable
                 async with self:
                     response = item.choices[0].delta.content  # type: ignore
+                    # The user may have cleared the chat.
+                    if len(self.prompts_responses) == 0:
+                        break
                     if response:
                         # The non-breaking space is used to make the markdown
                         # component render as if it had something in it, until
@@ -328,7 +333,8 @@ class State(rx.State):  # type: ignore
 
         async with self:
             if (
-                self.prompts_responses[-1].response.contains_japanese
+                len(self.prompts_responses) > 0  # The user may have cleared the chat.
+                and self.prompts_responses[-1].response.contains_japanese
                 and self.auto_speak
             ):
                 yield State.speak_last_response
@@ -363,17 +369,25 @@ class State(rx.State):  # type: ignore
     @rx.background  # type: ignore
     async def speak_last_prompt(self) -> Any:
         async with self:
+            if len(self.prompts_responses) == 0:  # The user may have cleared the chat.
+                return
             self.prompts_responses[-1].prompt.tts_in_progress = True
             yield
         async with self:
+            if len(self.prompts_responses) == 0:  # The user may have cleared the chat.
+                return
             Speakable.text_to_wav(self.prompts_responses[-1].prompt, self)
 
     @rx.background  # type: ignore
     async def speak_last_response(self) -> Any:
         async with self:
+            if len(self.prompts_responses) == 0:  # The user may have cleared the chat.
+                return
             self.prompts_responses[-1].response.tts_in_progress = True
             yield
         async with self:
+            if len(self.prompts_responses) == 0:  # The user may have cleared the chat.
+                return
             time.sleep(
                 3
             )  # Temporary hack. Response needs to be spoken after prompt completes.
