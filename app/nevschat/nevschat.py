@@ -6,7 +6,7 @@ from nevschat.state import State
 from reflex.style import color_mode  # type: ignore
 from reflex.style import toggle_color_mode
 
-VERSION = '0.0.124.alpha.8'
+VERSION = '0.0.125'
 TITLE = f'ネヴのすごいチャットジーピーティー v{VERSION}'
 
 
@@ -53,24 +53,40 @@ def index() -> rx.Component:
             """
                 ///// Play From Here Buttons ///////////////////////////////////////////
 
+                function onAudioPause(event) {
+                    console.log("Audio paused, ending play from here.");
+                    audio = event.target;
+                    if (!audio.ended) {
+                        audio.removeEventListener('ended', onAudioEnd);
+                        audio.removeEventListener('pause', onAudioPause);
+                    }
+                }
+
+                function onAudioEnd(event) {
+                    console.log("Audio ended, playing the next one.");
+                    audio = event.target;
+                    audio.removeEventListener('ended', onAudioEnd);
+                    audio.removeEventListener('pause', onAudioPause);
+                    const audio_div = audio.parentNode;
+                    const audio_divs = document.querySelectorAll('.audio');
+                    const index = Array.prototype.indexOf.call(
+                        audio_divs,
+                        audio_div
+                    );
+                    if (index >= 0 && index < audio_divs.length - 1) {
+                        const next_audio_div = audio_divs[index + 1];
+                        play_from_here(next_audio_div.id);
+                    }
+                }
+
                 const play_from_here = function(audio_id) {
                     console.log('Play from here - ' + audio_id);
                     if (audio_id) {
                         const audio_div = document.querySelector('div#' + audio_id);
                         if (audio_div) {
                             const audio = audio_div.querySelector('audio');
-                            audio.addEventListener('ended', function onAudioEnd() {
-                                audio.removeEventListener('ended', onAudioEnd);
-                                const audio_divs = document.querySelectorAll('.audio');
-                                const index = Array.prototype.indexOf.call(
-                                    audio_divs,
-                                    audio_div
-                                );
-                                if (index >= 0 && index < audio_divs.length - 1) {
-                                    const next_audio_div = audio_divs[index + 1];
-                                    play_from_here(next_audio_div.id);
-                                }
-                            })
+                            audio.addEventListener('pause', onAudioPause);
+                            audio.addEventListener('ended', onAudioEnd);
                             audio.play();
                         }
                     }
