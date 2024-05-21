@@ -6,7 +6,7 @@ from nevschat.state import State
 from reflex.style import color_mode  # type: ignore
 from reflex.style import toggle_color_mode
 
-VERSION = '0.0.127'
+VERSION = '0.0.128'
 TITLE = f'ネヴのすごいチャットジーピーティー v{VERSION}'
 
 
@@ -50,7 +50,7 @@ def index() -> rx.Component:
             None,
         ),
         rx.script(
-            """
+            r"""
                 ///// Play From Here Buttons ///////////////////////////////////////////
 
                 function onAudioPause(event) {
@@ -120,11 +120,19 @@ def index() -> rx.Component:
 
                 const get_selected_text_and_clear = function() {
                     const selection = window.getSelection();
-                    const select_text = selection.toString();
+                    const selected_text = selection.toString();
                     selection.removeAllRanges()
                     console.log('Cleared selection.')
                     update_selection_state();
-                    return select_text;
+                    // The model and voice are set in css to user-select=none, and that
+                    // prevents them being visibly selected in Chrome, but for some
+                    // reason they can selected (even if it is not visible) as far as
+                    // window.getSelection() in JavaScript is concerned. So strip that
+                    // out. (Hack.)
+                    return selected_text.replace(
+                        /gpt-\\S+(\\s+ja-JP-\\S+)?/g,
+                        ''
+                    ).trim();
                 }
 
                 document.addEventListener('selectionchange', function() {

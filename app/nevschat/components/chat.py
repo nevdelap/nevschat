@@ -214,16 +214,10 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                             width='100%',
                         ),
                         rx.hstack(
-                            rx.text(
-                                prompt_response.response.model,
-                                user_select='none',
-                            ),
+                            rx.text(prompt_response.response.model),
                             rx.cond(
                                 prompt_response.response.tts_wav_url != '',
-                                rx.text(
-                                    prompt_response.response.voice,
-                                    user_select='none',
-                                ),
+                                rx.text(prompt_response.response.voice),
                             ),
                             color=rx.color('gray', 8),
                             font_size='0.4em',
@@ -232,6 +226,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                             position='absolute',
                             bottom='0',
                             right='0',
+                            user_select='none',
                         ),
                         position='relative',
                         width='100%',
@@ -399,10 +394,7 @@ def chat() -> rx.Component:
                             rx.cond(
                                 State.profile.tts_wav_url != '',
                                 rx.box(
-                                    rx.text(
-                                        State.profile.voice,
-                                        user_select='none',
-                                    ),
+                                    rx.text(State.profile.voice),
                                     color=rx.color('gray', 8),
                                     font_size='0.4em',
                                     padding_bottom='0.55em',
@@ -410,6 +402,7 @@ def chat() -> rx.Component:
                                     position='absolute',
                                     bottom='0',
                                     right='0',
+                                    user_select='none',
                                 ),
                             ),
                             position='relative',
@@ -633,7 +626,6 @@ def chat() -> rx.Component:
                         rx.box(
                             rx.text(
                                 State.learning_aide.model,
-                                user_select='none',
                             ),
                             color=rx.color('gray', 8),
                             font_size='0.4em',
@@ -642,6 +634,7 @@ def chat() -> rx.Component:
                             position='absolute',
                             bottom='0',
                             right='0',
+                            user_select='none',
                         ),
                         position='relative',
                         width='100%',
