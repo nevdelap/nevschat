@@ -103,7 +103,7 @@ class State(rx.State):  # type: ignore
 
     @rx.var  # type: ignore
     def you_are(self) -> str:
-        return self.profile.text.replace('私は', 'あなたは')
+        return self.profile.text.replace('私', 'あなた')
 
     def cancel_chat_processing(self) -> None:
         self.chat_processing = False

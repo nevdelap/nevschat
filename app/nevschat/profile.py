@@ -46,7 +46,7 @@ class Profile(Speakable):
             self.pitch = get_pitch(self.male, age)
             self.speaking_rate = get_random_speaking_rate()
             self.text = (
-                f'私は{name}、'
+                f'私の名前は{name}、{'男性' if self.male else '女性'}、'
                 f'{age_to_kanji(age)}歳で、'
                 f'{city}に住んでいます。'
                 f'{profession}です。'
@@ -59,8 +59,8 @@ class Profile(Speakable):
         else:
             self.male = True
             self.text = (
-                '私は前川勝、五十三歳で、大阪に住んでいます。農家です。趣味はパズルを'
-                '解くとバレーボールです。ドーナツやあたたかい水が好きです。'
+                '私の名前は前川勝、男性、五十三歳で、大阪に住んでいます。農家です。'
+                '趣味はパズルを解くとバレーボールです。ドーナツやあたたかい水が好きです。'
                 '私は消化不良がよくあります。今、失望しています。'
             )
             self.tts_wav_url = (
