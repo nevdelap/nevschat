@@ -550,6 +550,13 @@ def chat() -> rx.Component:
                 on_click=State.lookup_definition,
             ),
             rx.button(
+                '漢字',
+                color_scheme='jade',
+                height='2.25em',
+                id='lookup_kanji',
+                on_click=State.lookup_kanji,
+            ),
+            rx.button(
                 '翻訳',
                 color_scheme='jade',
                 height='2.25em',

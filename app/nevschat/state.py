@@ -11,6 +11,7 @@ from nevschat.canned_chat import get_canned_chat
 from nevschat.helpers import contains_japanese
 from nevschat.helpers import get_default_voice
 from nevschat.helpers import get_definition
+from nevschat.helpers import get_kanji
 from nevschat.helpers import get_translation
 from nevschat.learning_aide import LearningAide
 from nevschat.profile import Profile
@@ -451,6 +452,9 @@ class State(rx.State):  # type: ignore
     def lookup_definition(self) -> Any:
         return self.do_dictionary_learning_aide()
 
+    def lookup_kanji(self) -> Any:
+        return self.do_kanji_learning_aide()
+
     def translate(self) -> Any:
         try:
             return self.do_deepl_learning_aide()
@@ -546,6 +550,68 @@ class State(rx.State):  # type: ignore
                         self.learning_aide.contains_japanese = contains_japanese(
                             definition
                         )
+
+                    yield
+                    time.sleep(0.001)
+
+                    async with self:
+                        if not self.learning_aide_processing:
+                            # It's been cancelled.
+                            self.learning_aide.text += ' (キャンセル）'
+                            break
+
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            async with self:
+                self.warning = str(ex)
+                print(self.warning)
+        finally:
+            async with self:
+                self.learning_aide_processing = False
+
+    ####################################################################################
+    # Kanji Learning Aide
+
+    def do_kanji_learning_aide(self) -> Any:
+        return self.trigger_set_kanji_learning_aide_prompt()
+
+    def trigger_set_kanji_learning_aide_prompt(self) -> Any:
+        return rx.call_script(
+            'get_selected_text_and_clear()',
+            callback=State.set_kanji_learning_aide_prompt,
+        )
+
+    @rx.background  # type: ignore
+    async def set_kanji_learning_aide_prompt(self, text) -> Any:
+        async with self:
+            self.learning_aide.prompt = text
+        return State.kanji_learning_aide
+
+    @rx.background  # type: ignore
+    async def kanji_learning_aide(self) -> Any:
+        if self.learning_aide.prompt == '':
+            return
+        try:
+            async with self:
+                self.learning_aide_processing = True
+                self.warning = ''
+                self.learning_aide.model = ''
+                self.learning_aide.text = '見つけ中…'
+                self.learning_aide.has_tts = False
+                self.learning_aide.tts_wav_url = ''
+
+            yield
+
+            kanji, model = get_kanji(self.learning_aide.prompt)
+
+            async with self:
+                self.learning_aide.model = model
+                self.learning_aide.text = ''
+
+            if kanji is not None:
+                for ch in kanji:
+                    async with self:
+                        self.learning_aide.text += ch
+                        self.learning_aide.contains_japanese = contains_japanese(kanji)
 
                     yield
                     time.sleep(0.001)

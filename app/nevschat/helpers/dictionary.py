@@ -11,7 +11,8 @@ _jam: Final = Jamdict()
 
 def get_definition(text: str) -> tuple[str, str]:
     """
-    Return definitions for the given text, with exact matches first.
+    Return definitions for the given text, with exact matches from jamdict
+    first, otherwise try takoboto.
     """
     if not contains_japanese(text):
         return ('テキストは日本語ではない。', '')
@@ -44,3 +45,21 @@ def get_definition(text: str) -> tuple[str, str]:
     # The separator causes there to be extra spaces. Tidy some up.
     definition = definition.replace(' ,', ',')
     return (definition, 'takoboto')
+
+
+def get_kanji(text: str) -> tuple[str, str]:
+    """
+    Return kanji for the given text, from jamdict.
+    """
+    if not contains_japanese(text):
+        return ('テキストは日本語ではない。', '')
+
+    # Look for an exact match in jamdict.
+    print(f'Looking up {text} in jamdict.')
+    result = _jam.lookup(text)
+    if len(result.chars) > 0:
+        entries = [f'{char}: {', '.join(char.meanings())}' for char in result.chars]
+        kanji = ''.join(entry + '\n\n' for entry in entries)
+    else:
+        kanji = '何も見つからなかった。'
+    return (kanji, 'jamdict')

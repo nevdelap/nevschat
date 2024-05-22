@@ -1,4 +1,5 @@
 from .dictionary import get_definition
+from .dictionary import get_kanji
 from .japanese_text import age_to_kanji
 from .japanese_text import contains_japanese
 from .japanese_text import strip_non_japanese_and_split_sentences
@@ -22,6 +23,7 @@ __all__ = [
     'age_to_kanji',
     'contains_japanese',
     'get_definition',
+    'get_kanji',
     'get_pitch',
     'get_random_age',
     'get_random_city',

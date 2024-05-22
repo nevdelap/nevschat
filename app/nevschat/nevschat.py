@@ -6,7 +6,7 @@ from nevschat.state import State
 from reflex.style import color_mode  # type: ignore
 from reflex.style import toggle_color_mode
 
-VERSION = '0.0.130'
+VERSION = '0.0.131'
 TITLE = f'ネヴのすごいチャットジーピーティー v{VERSION}'
 
 
@@ -104,6 +104,7 @@ def index() -> rx.Component:
                         'give_examples_of_opposite_meaning',
                         'give_examples_of_same_meaning',
                         'lookup_definition',
+                        'lookup_kanji',
                         'translate',
                     ];
                     ids.forEach(function(id) {
