@@ -58,7 +58,11 @@ def get_kanji(text: str) -> tuple[str, str]:
     print(f'Looking up {text} in jamdict.')
     result = _jam.lookup(text)
     if len(result.chars) > 0:
-        entries = [f'{char}: {', '.join(char.meanings())}' for char in result.chars]
+        entries = [
+            f'{char}: {', '.join(char.meanings())}'
+            for char in result.chars
+            if str(char) in text
+        ]
         kanji = ''.join(entry + '\n\n' for entry in entries)
     else:
         kanji = '何も見つからなかった。'
