@@ -1,3 +1,4 @@
+import re
 from typing import Final
 
 import requests
@@ -21,7 +22,7 @@ def get_definition(text: str) -> tuple[str, str]:
     print(f'Looking up {text} in jamdict.')
     result = _jam.lookup(text)
     if len(result.entries) > 0:
-        entries = [entry.text(True) for entry in result.entries]
+        entries = [_clean_spaces(entry.text(True)) for entry in result.entries]
         definition = ''.join(entry + '\n\n' for entry in entries)
         # jmdict definitions containing long series of words separated by
         # slashes don't break in a markdown component.
@@ -38,7 +39,7 @@ def get_definition(text: str) -> tuple[str, str]:
     results = soup.find_all('div', class_='ResultDiv')
     entries = [result.get_text(separator=' ') for result in results]
     definition = (
-        ''.join(entry + '\n\n' for entry in entries)
+        ''.join(_clean_spaces(entry) + '\n\n' for entry in entries)
         if len(entries) > 0
         else '何も見つからなかった。'
     )
@@ -59,7 +60,7 @@ def get_kanji(text: str) -> tuple[str, str]:
     result = _jam.lookup(text)
     if len(result.chars) > 0:
         entries = [
-            f'{char}: {', '.join(char.meanings(english_only=True))}'
+            f'{char} - {', '.join(char.meanings(english_only=True))}'
             for char in result.chars
             if str(char) in text
         ]
@@ -67,3 +68,7 @@ def get_kanji(text: str) -> tuple[str, str]:
     else:
         kanji = '何も見つからなかった。'
     return (kanji, 'jamdict')
+
+
+def _clean_spaces(text: str) -> str:
+    return re.sub(r'\s+', ' ', text).strip()
