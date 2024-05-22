@@ -52,9 +52,9 @@ for kanji, or romaji for any word. Your explanations are in English.
 _system_instructions[CHECK_GRAMMAR := '日本語: Check Grammar'] = (
     """
 You are a helpful assistant that checks the Japanese grammar of given text and
-gives explanations of how to improve the given text. Ignore missing maru and
-question marks. You never give kana for kanji, or romaji for any word. Your
-explanations are in English.'.
+gives explanations of how to improve the given text. Ignore spaces that
+shouldn't be there, missing maru and question marks. You never give kana for
+kanji, or romaji for any word. Your explanations are in English.'.
     """,
     False,
 )
