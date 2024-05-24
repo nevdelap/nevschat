@@ -1,5 +1,6 @@
 # mypy: disable-error-code="attr-defined,name-defined"
 
+import asyncio
 import re
 import time
 from typing import Any
@@ -334,6 +335,10 @@ class State(rx.State):  # type: ignore
         finally:
             async with self:
                 self.chat_processing = False
+
+        # Hacky temporary solution until I make it wait for the spoken prompt to
+        # have completed playing before playing the response - properly.
+        await asyncio.sleep(1)
 
         async with self:
             if (
