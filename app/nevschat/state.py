@@ -323,7 +323,7 @@ class State(rx.State):  # type: ignore
                         )
                     if not self.chat_processing:
                         # It's been cancelled.
-                        self.prompts_responses[-1].response += ' (キャンセル）'
+                        self.prompts_responses[-1].response.text += ' (キャンセル）'
                         break
                     yield
 
