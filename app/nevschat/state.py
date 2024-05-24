@@ -337,8 +337,15 @@ class State(rx.State):  # type: ignore
                 self.chat_processing = False
 
         # Hacky temporary solution until I make it wait for the spoken prompt to
-        # have completed playing before playing the response - properly.
-        await asyncio.sleep(1)
+        # have completed playing before playing the response - properly. Assume
+        # a characters per second speaking rate and adjust for the actual
+        # speaking rate.
+        characters_per_second = 8
+        await asyncio.sleep(
+            len(self.prompts_responses[-1].prompt.text)
+            / characters_per_second
+            / self.prompts_responses[-1].prompt.speaking_rate
+        )
 
         async with self:
             if (
