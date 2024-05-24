@@ -102,38 +102,84 @@ def test_strip_non_japanese_split_sentence(original: str, expected: str) -> None
     assert stripped == expected, f'{original}: {stripped} != {expected}'
 
 
-# If mixed Japanese and Latin, strip Latin characters.
-test_strip_non_japanese_split_sentence(
-    "Both '異る' and '違う' are verbs in Japanese that can be translated as "
-    "'to differ' or 'to be different'. '異る' carries a stronger connotation "
-    'of being unusual, rare, or significant in its difference compared to '
-    'something else.',
-    '異る。違う。異る。',
-)
+for original, expected in [
+    # If mixed Japanese and Latin, strip Latin characters.
+    (
+        "Both '異る' and '違う' are verbs in Japanese that can be translated as "
+        "'to differ' or 'to be different'. '異る' carries a stronger connotation "
+        'of being unusual, rare, or significant in its difference compared to '
+        'something else.',
+        '異る。違う。異る。',
+    ),
+    # If only Japanese leave as is.
+    ('おんな、おんな、', 'おんな、おんな、'),
+    # If mixed Japanese and Latin, strip Latin characters and duplication.
+    ('おんな、おんな、is Japanese.', 'おんな、。'),
+    # If mixed Japanese and Latin, strip Latin characters and duplication.
+    ('違う。違う。違う。hello.違う。違う。', '違う。'),
+    # If mixed Japanese and Latin, add 。 between pieces of Japanese.
+    ('日本語あるハー「」。、ab, ()1', '日本語あるハー「」。、。()1。'),
+]:
+    test_strip_non_japanese_split_sentence(original, expected)
 
-# If only Japanese leave as is.
-test_strip_non_japanese_split_sentence(
-    'おんな、おんな、',
-    'おんな、おんな、',
-)
 
-# If mixed Japanese and Latin, strip Latin characters and duplication.
-test_strip_non_japanese_split_sentence(
-    'おんな、おんな、is Japanese.',
-    'おんな、。',
-)
+def strip_spaces_in_japanese(text: str) -> str:
+    """
+    Voice input on Android insists on putting spaces in spoken Japanese, and
+    then ChatGPT complains about it when checking grammar, even when told to
+    ignore it. So strip it out. Rather than trying to make a regex that does it
+    reliably, use the unicodedata functionality that we already have. It is
+    stripping spaces only between Japanese characters so that it can be used on
+    mixed texts.
+    """
+    result = ''
+    previous_is_japanese = False
+    maybe_keep_spaces = ''
+    for ch in text:
+        if ch.isspace() and previous_is_japanese:
+            maybe_keep_spaces += ch
+            continue
+        if is_japanese_char(ch):
+            previous_is_japanese = True
+        else:
+            previous_is_japanese = False
+            result += maybe_keep_spaces
+        maybe_keep_spaces = ''
+        result += ch
+    return result
 
-# If mixed Japanese and Latin, strip Latin characters and duplication.
-test_strip_non_japanese_split_sentence(
-    '違う。違う。違う。hello.違う。違う。',
-    '違う。',
-)
 
-# If mixed Japanese and Latin, add 。 between pieces of Japanese.
-test_strip_non_japanese_split_sentence(
-    '日本語あるハー「」。、ab, ()1',
-    '日本語あるハー「」。、。()1。',
-)
+# Built-in test.
+def test_strip_spaces_in_japanese(original: str, expected: str) -> None:
+    stripped = strip_spaces_in_japanese(original)
+    assert stripped == expected, f'{original}: {stripped} != {expected}'
+
+
+for original, expected in [
+    ('猫は怖いいです。 鶏は臭いです。', '猫は怖いいです。鶏は臭いです。'),
+    ('猫は怖いいです。  鶏は臭いです。', '猫は怖いいです。鶏は臭いです。'),
+    (
+        'hello猫は怖いいです。  鶏は臭いです。there',
+        'hello猫は怖いいです。鶏は臭いです。there',
+    ),
+    (
+        'hello 猫は怖いいです。  鶏は臭いです。there',
+        'hello 猫は怖いいです。鶏は臭いです。there',
+    ),
+    (
+        'hello 猫は怖いいです。  鶏は臭いです。there ',
+        'hello 猫は怖いいです。鶏は臭いです。there ',
+    ),
+    (
+        'hello 猫は怖いいです。 waa! 鶏は臭いです。there ',
+        'hello 猫は怖いいです。 waa! 鶏は臭いです。there ',
+    ),
+    (
+        'h  ell o  猫は怖   いいです。 wa a!   鶏は臭 いです。 there   ',
+        'h  ell o  猫は怖いいです。 wa a!   鶏は臭いです。 there   ',
+    ),
+]:
+    test_strip_spaces_in_japanese(original, expected)
 
 
 def age_to_kanji(age: int) -> str:

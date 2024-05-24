@@ -3,6 +3,7 @@ from .dictionary import get_kanji
 from .japanese_text import age_to_kanji
 from .japanese_text import contains_japanese
 from .japanese_text import strip_non_japanese_and_split_sentences
+from .japanese_text import strip_spaces_in_japanese
 from .random_things import get_pitch
 from .random_things import get_random_age
 from .random_things import get_random_city
@@ -38,6 +39,7 @@ __all__ = [
     'get_random_voice',
     'get_translation',
     'strip_non_japanese_and_split_sentences',
+    'strip_spaces_in_japanese',
     'text_to_wav',
     'Warnable',
 ]

@@ -13,6 +13,7 @@ from nevschat.helpers import get_default_voice
 from nevschat.helpers import get_definition
 from nevschat.helpers import get_kanji
 from nevschat.helpers import get_translation
+from nevschat.helpers import strip_spaces_in_japanese
 from nevschat.learning_aide import LearningAide
 from nevschat.profile import Profile
 from nevschat.prompt import Prompt
@@ -710,7 +711,9 @@ class State(rx.State):  # type: ignore
         try:
             async with self:
                 learning_aide_system_instruction = self.learning_aide.system_instruction
-                learning_aid_prompt = self.learning_aide.prompt
+                learning_aid_prompt = strip_spaces_in_japanese(
+                    self.learning_aide.prompt
+                )
                 model = self.learning_aide.model
 
                 learning_aide_system_instruction = re.sub(
