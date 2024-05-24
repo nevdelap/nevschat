@@ -324,6 +324,7 @@ class State(rx.State):  # type: ignore
                         # It's been cancelled.
                         self.prompts_responses[-1].response += ' (キャンセル）'
                         break
+                    yield
 
         except Exception as ex:  # pylint: disable=broad-exception-caught
             async with self:
@@ -408,9 +409,8 @@ class State(rx.State):  # type: ignore
                 return
             # Wait for the prompt to finish tts'ing.
             while self.tts_processing:
-                time.sleep(1)
-            # And give it time to be spoken. Hacky temporary workaround.
-            time.sleep(len(self.prompts_responses[-1].response.text) * 0.2)
+                yield
+                time.sleep(0.5)
             self.tts_processing = True
             try:
                 Speakable.text_to_wav(self.prompts_responses[-1].response, self)
@@ -552,8 +552,6 @@ class State(rx.State):  # type: ignore
                         )
 
                     yield
-                    time.sleep(0.001)
-
                     async with self:
                         if not self.learning_aide_processing:
                             # It's been cancelled.
@@ -614,8 +612,6 @@ class State(rx.State):  # type: ignore
                         self.learning_aide.contains_japanese = contains_japanese(kanji)
 
                     yield
-                    time.sleep(0.001)
-
                     async with self:
                         if not self.learning_aide_processing:
                             # It's been cancelled.
@@ -674,10 +670,7 @@ class State(rx.State):  # type: ignore
                         self.learning_aide.contains_japanese = contains_japanese(
                             translation
                         )
-
                     yield
-                    time.sleep(0.001)
-
                     async with self:
                         if not self.learning_aide_processing:
                             # It's been cancelled.
@@ -766,6 +759,7 @@ class State(rx.State):  # type: ignore
                             # It's been cancelled.
                             self.learning_aide.text += ' (キャンセル）'
                             break
+                        yield
 
         except Exception as ex:  # pylint: disable=broad-exception-caught
             async with self:
