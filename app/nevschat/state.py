@@ -340,7 +340,7 @@ class State(rx.State):  # type: ignore
         # have completed playing before playing the response - properly. Assume
         # a characters per second speaking rate and adjust for the actual
         # speaking rate.
-        characters_per_second = 8
+        characters_per_second = 6
         await asyncio.sleep(
             len(self.prompts_responses[-1].prompt.text)
             / characters_per_second
