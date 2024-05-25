@@ -6,8 +6,13 @@ does exactly what I want and nothing else.
 
 <img
   src="screenshot.png"
-  width="796px"
+  width="839px"
   alt="Screenshot of Nev's Awesome ChatGPT" />
+
+<img
+  src="screenshot2.png"
+  width="839px"
+  alt="Another screenshot of Nev's Awesome ChatGPT" />
 
 ## Prerequisites
 
