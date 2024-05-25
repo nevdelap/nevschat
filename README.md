@@ -83,29 +83,14 @@ The OpenAI key is supplied in the OPENAI_API_KEY environment variable. It should
 be [configured](https://platform.openai.com/settings/organization/limits) with a
 monthly budget and email notification when it is exceeded.
 
-### Google TTS
+#### Google TTS
 
-The Google TTS API key is supplied the GOOGLE_TTS_KEY environment variable. It
+The Google TTS API key is supplied in the GOOGLE_TTS_KEY environment variable. It
 should be [restricted](https://console.cloud.google.com/apis/credentials) to be
-usable only for the Cloud Text-to-Speech API, only only from the production and
+usable only for the Cloud Text-to-Speech API, and only from the production and
 development IP addresses.
 
-#### Page structure
+#### DeepL
 
-* nevschat.py
-  * vstack
-    * title
-    * chat (in chat.py)
-    * cancel X
-* chat.py
-  * chat
-    * vstack contains
-      * wrap with the checkboxes, radio buttons, and dropdowns.
-      * foreach has the previous prompts_responses each rendered by
-        prompt_response_box.
-      * hstack has the next prompt with buttons.
-  * prompt_response_box
-    * has a conditional, rendering a prompt as being edited, or not edited with
-      buttons.
-    * if not being edited and is being generated renders a cancel button next to
-      the response.
+The DeepL auth key is supplied in  the DEEPL_AUTH_KEY environment variable. So
+far I'm on the free tier so I haven't configured any restrictions on it yet.
