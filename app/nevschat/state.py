@@ -102,7 +102,12 @@ class State(rx.State):  # type: ignore
         return len(self.prompts_responses) > 0
 
     @rx.var  # type: ignore
-    def using_profile(self) -> bool:
+    def using_profile_in_prompts(self) -> bool:
+        """
+        'Using' the profile means the profile is shown to the user and is
+        included in the chat prompts. If not 'using' it for that purpose the
+        profile voice is still used for spoken responses.
+        """
         return self.system_instruction == 'ランダムな人'
 
     @rx.var  # type: ignore
@@ -231,7 +236,7 @@ class State(rx.State):  # type: ignore
                     self.system_instruction
                 ]
 
-                if self.using_profile:  # pylint: disable=using-constant-test
+                if self.using_profile_in_prompts:  # pylint: disable=using-constant-test
                     system_instruction = system_instruction.format(you_are=self.you_are)
 
                 system_instruction = re.sub(r'\s+', ' ', system_instruction).strip()

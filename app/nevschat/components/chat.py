@@ -181,8 +181,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                                 width='100%',
                             ),
                             rx.cond(
-                                ~State.using_profile  # pylint: disable=invalid-unary-operand-type
-                                | State.profile.male,
+                                State.profile.male,
                                 rx.box(
                                     rx.markdown(
                                         prompt_response.response.text,
@@ -354,14 +353,13 @@ def chat() -> rx.Component:
             wrap='wrap',
         ),
         rx.cond(
-            State.using_profile,
+            State.using_profile_in_prompts,
             rx.vstack(
                 rx.hstack(
                     rx.vstack(
                         rx.box(
                             rx.cond(
-                                ~State.using_profile  # pylint: disable=invalid-unary-operand-type
-                                | State.profile.male,
+                                State.profile.male,
                                 rx.box(
                                     rx.markdown(
                                         State.profile.text,
