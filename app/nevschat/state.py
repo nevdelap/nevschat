@@ -484,6 +484,7 @@ class State(rx.State):  # type: ignore
             )
 
     def check_grammar(self) -> Any:
+        self.learning_aide.expects_japanese = True
         return self.do_chatgpt_learning_aide(
             GPT_BEST_MODEL,
             SYSTEM_INSTRUCTIONS[CHECK_GRAMMAR][0]
@@ -491,28 +492,33 @@ class State(rx.State):  # type: ignore
         )
 
     def explain_grammar(self) -> Any:
+        self.learning_aide.expects_japanese = True
         return self.do_chatgpt_learning_aide(
             GPT_BEST_MODEL, SYSTEM_INSTRUCTIONS[EXPLAIN_GRAMMAR][0]
         )
 
     def explain_usage(self) -> Any:
+        self.learning_aide.expects_japanese = True
         return self.do_chatgpt_learning_aide(
             GTP_CHEAP_MODEL, SYSTEM_INSTRUCTIONS[EXPLAIN_USAGE][0]
         )
 
     def give_examples_of_same_meaning(self) -> Any:
+        self.learning_aide.expects_japanese = False
         return self.do_chatgpt_learning_aide(
             GTP_CHEAP_MODEL,
             SYSTEM_INSTRUCTIONS[EXPRESS_SAME_MEANING][0],
         )
 
     def give_examples_of_opposite_meaning(self) -> Any:
+        self.learning_aide.expects_japanese = False
         return self.do_chatgpt_learning_aide(
             GTP_CHEAP_MODEL,
             SYSTEM_INSTRUCTIONS[EXPRESS_OPPOSITE_MEANING][0],
         )
 
     def give_example_sentences(self) -> Any:
+        self.learning_aide.expects_japanese = False
         return self.do_chatgpt_learning_aide(
             GTP_CHEAP_MODEL,
             SYSTEM_INSTRUCTIONS[GIVE_EXAMPLE_SENTENCES][0],
@@ -736,7 +742,9 @@ class State(rx.State):  # type: ignore
                     self.learning_aide.tts_wav_url = ''
             yield
             async with self:
-                if not contains_japanese(self.learning_aide.prompt):
+                if self.learning_aide.expects_japanese and not contains_japanese(
+                    self.learning_aide.prompt
+                ):
                     self.learning_aide.text = 'テキストは日本語ではない。'
                 else:
                     messages = [
