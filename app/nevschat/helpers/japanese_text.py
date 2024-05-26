@@ -35,6 +35,21 @@ def is_japanese_char(
         return False
 
 
+def is_kanji(ch: str, *, log: bool = False) -> bool:
+    """
+    Return True if the character is a kanji.
+    """
+    assert len(ch) == 1
+    try:
+        block = unicodedata.name(ch).split()[0]
+        is_kanji = block == 'CJK'
+        if log:
+            print(ch, block, 'K' if is_kanji else '')
+        return is_kanji
+    except ValueError:
+        return False
+
+
 def is_latin_char(ch: str, log: bool = False) -> bool:
     """
     Return True if the character is a Japanese character.
@@ -60,6 +75,13 @@ def contains_japanese(text: str, *, log: bool = False) -> bool:
         is_japanese_char(ch, include_digits_and_punctuation=False, log=log)
         for ch in text
     )
+
+
+def contains_kanji(text: str, *, log: bool = False) -> bool:
+    """
+    Return True if the text contains any kanji.
+    """
+    return any(is_kanji(ch, log=log) for ch in text)
 
 
 def contains_latin(text: str, log: bool = False) -> bool:

@@ -10,6 +10,7 @@ from openai import OpenAI
 import reflex as rx
 from nevschat.canned_chat import get_canned_chat
 from nevschat.helpers import contains_japanese
+from nevschat.helpers import contains_kanji
 from nevschat.helpers import get_default_voice
 from nevschat.helpers import get_definition
 from nevschat.helpers import get_kanji
@@ -537,8 +538,6 @@ class State(rx.State):  # type: ignore
 
     @rx.background  # type: ignore
     async def dictionary_learning_aide(self) -> Any:
-        if self.learning_aide.prompt == '':
-            return
         try:
             async with self:
                 self.learning_aide_processing = True
@@ -547,30 +546,30 @@ class State(rx.State):  # type: ignore
                 self.learning_aide.text = '見つけ中…'
                 self.learning_aide.has_tts = False
                 self.learning_aide.tts_wav_url = ''
-
             yield
-
-            definition, model = get_definition(self.learning_aide.prompt)
-
             async with self:
-                self.learning_aide.model = model
-                self.learning_aide.text = ''
-
-            if definition is not None:
-                for ch in definition:
-                    async with self:
-                        self.learning_aide.text += ch
-                        self.learning_aide.contains_japanese = contains_japanese(
-                            definition
-                        )
-
+                if not contains_japanese(self.learning_aide.prompt):
+                    definition = 'テキストは日本語ではない。'
+                    self.learning_aide.text = ''
+                else:
+                    definition, model = get_definition(self.learning_aide.prompt)
                     yield
                     async with self:
-                        if not self.learning_aide_processing:
-                            # It's been cancelled.
-                            self.learning_aide.text += ' (キャンセル）'
-                            break
-
+                        self.learning_aide.model = model
+                        self.learning_aide.text = ''
+                if definition is not None:
+                    for ch in definition:
+                        async with self:
+                            self.learning_aide.text += ch
+                            self.learning_aide.contains_japanese = contains_japanese(
+                                definition
+                            )
+                        yield
+                        async with self:
+                            if not self.learning_aide_processing:
+                                # It's been cancelled.
+                                self.learning_aide.text += ' (キャンセル）'
+                                break
         except Exception as ex:  # pylint: disable=broad-exception-caught
             async with self:
                 self.warning = str(ex)
@@ -599,8 +598,6 @@ class State(rx.State):  # type: ignore
 
     @rx.background  # type: ignore
     async def kanji_learning_aide(self) -> Any:
-        if self.learning_aide.prompt == '':
-            return
         try:
             async with self:
                 self.learning_aide_processing = True
@@ -609,28 +606,30 @@ class State(rx.State):  # type: ignore
                 self.learning_aide.text = '見つけ中…'
                 self.learning_aide.has_tts = False
                 self.learning_aide.tts_wav_url = ''
-
             yield
-
-            kanji, model = get_kanji(self.learning_aide.prompt)
-
             async with self:
-                self.learning_aide.model = model
-                self.learning_aide.text = ''
-
-            if kanji is not None:
-                for ch in kanji:
-                    async with self:
-                        self.learning_aide.text += ch
-                        self.learning_aide.contains_japanese = contains_japanese(kanji)
-
+                if not contains_kanji(self.learning_aide.prompt):
+                    self.learning_aide.text = 'テキストには漢字がない。'
+                else:
+                    kanji, model = get_kanji(self.learning_aide.prompt)
                     yield
                     async with self:
-                        if not self.learning_aide_processing:
-                            # It's been cancelled.
-                            self.learning_aide.text += ' (キャンセル）'
-                            break
+                        self.learning_aide.model = model
+                        self.learning_aide.text = ''
+                    if kanji is not None:
+                        for ch in kanji:
+                            async with self:
+                                self.learning_aide.text += ch
+                                self.learning_aide.contains_japanese = (
+                                    contains_japanese(kanji)
+                                )
 
+                            yield
+                            async with self:
+                                if not self.learning_aide_processing:
+                                    # It's been cancelled.
+                                    self.learning_aide.text += ' (キャンセル）'
+                                    break
         except Exception as ex:  # pylint: disable=broad-exception-caught
             async with self:
                 self.warning = str(ex)
@@ -659,8 +658,6 @@ class State(rx.State):  # type: ignore
 
     @rx.background  # type: ignore
     async def deepl_learning_aide(self) -> Any:
-        if self.learning_aide.prompt == '':
-            return
         try:
             async with self:
                 self.learning_aide_processing = True
@@ -669,27 +666,28 @@ class State(rx.State):  # type: ignore
                 self.learning_aide.text = '翻訳中…'
                 self.learning_aide.has_tts = False
                 self.learning_aide.tts_wav_url = ''
-
             yield
-
-            translation = get_translation(self.learning_aide.prompt)
             async with self:
-                self.learning_aide.text = ''
-
-            if translation is not None:
-                for ch in translation:
-                    async with self:
-                        self.learning_aide.text += ch
-                        self.learning_aide.contains_japanese = contains_japanese(
-                            translation
-                        )
+                if self.learning_aide.prompt == '':
+                    self.learning_aide.text = 'テキストはない。'
+                else:
+                    translation = get_translation(self.learning_aide.prompt)
                     yield
                     async with self:
-                        if not self.learning_aide_processing:
-                            # It's been cancelled.
-                            self.learning_aide.text += ' (キャンセル）'
-                            break
-
+                        self.learning_aide.text = ''
+                    if translation is not None:
+                        for ch in translation:
+                            async with self:
+                                self.learning_aide.text += ch
+                                self.learning_aide.contains_japanese = (
+                                    contains_japanese(translation)
+                                )
+                            yield
+                            async with self:
+                                if not self.learning_aide_processing:
+                                    # It's been cancelled.
+                                    self.learning_aide.text += ' (キャンセル）'
+                                    break
         except Exception as ex:  # pylint: disable=broad-exception-caught
             async with self:
                 self.warning = str(ex)
@@ -727,55 +725,52 @@ class State(rx.State):  # type: ignore
                     self.learning_aide.prompt
                 )
                 model = self.learning_aide.model
-
                 learning_aide_system_instruction = re.sub(
                     r'\s+', ' ', learning_aide_system_instruction
                 ).strip()
-
                 if learning_aid_prompt != '':
                     self.learning_aide_processing = True
                     self.warning = ''
                     self.learning_aide.text = ''
                     self.learning_aide.contains_japanese = False
                     self.learning_aide.tts_wav_url = ''
-
-            if learning_aid_prompt != '':
-                messages = [
-                    {
-                        'role': 'system',
-                        'content': learning_aide_system_instruction,
-                    },
-                    {'role': 'user', 'content': learning_aid_prompt},
-                ]
-
-                print(f'Model: {model}\nMessages: {messages}')
-
-                session = OpenAI(
-                    timeout=10.0,
-                ).chat.completions.create(
-                    model=model,
-                    messages=messages,  # type: ignore
-                    stream=True,  # Enable streaming
-                )
-
-                # pylint error: https://github.com/openai/openai-python/issues/870
-                for item in session:  # pylint: disable=not-an-iterable
-                    response = item.choices[0].delta.content  # type: ignore
-                    async with self:
-                        if response:
-                            self.learning_aide.text += response
-                            self.learning_aide.contains_japanese = contains_japanese(
-                                self.learning_aide.text
-                            )
-                            if self.learning_aide.text == '<OK>':
-                                # No need to show it.
-                                self.learning_aide.text = ''
-                        if not self.learning_aide_processing:
-                            # It's been cancelled.
-                            self.learning_aide.text += ' (キャンセル）'
-                            break
-                        yield
-
+            yield
+            async with self:
+                if not contains_japanese(self.learning_aide.prompt):
+                    self.learning_aide.text = 'テキストは日本語ではない。'
+                else:
+                    messages = [
+                        {
+                            'role': 'system',
+                            'content': learning_aide_system_instruction,
+                        },
+                        {'role': 'user', 'content': learning_aid_prompt},
+                    ]
+                    print(f'Model: {model}\nMessages: {messages}')
+                    session = OpenAI(
+                        timeout=10.0,
+                    ).chat.completions.create(
+                        model=model,
+                        messages=messages,  # type: ignore
+                        stream=True,  # Enable streaming
+                    )
+                    # pylint error: https://github.com/openai/openai-python/issues/870
+                    for item in session:  # pylint: disable=not-an-iterable
+                        response = item.choices[0].delta.content  # type: ignore
+                        async with self:
+                            if response:
+                                self.learning_aide.text += response
+                                self.learning_aide.contains_japanese = (
+                                    contains_japanese(self.learning_aide.text)
+                                )
+                                if self.learning_aide.text == '<OK>':
+                                    # No need to show it.
+                                    self.learning_aide.text = ''
+                            if not self.learning_aide_processing:
+                                # It's been cancelled.
+                                self.learning_aide.text += ' (キャンセル）'
+                                break
+                            yield
         except Exception as ex:  # pylint: disable=broad-exception-caught
             async with self:
                 self.warning = str(ex)

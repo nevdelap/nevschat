@@ -2,6 +2,7 @@ from .dictionary import get_definition
 from .dictionary import get_kanji
 from .japanese_text import age_to_kanji
 from .japanese_text import contains_japanese
+from .japanese_text import contains_kanji
 from .japanese_text import strip_non_japanese_and_split_sentences
 from .japanese_text import strip_spaces_in_japanese
 from .random_things import get_pitch
@@ -23,6 +24,7 @@ from .warnable import Warnable
 __all__ = [
     'age_to_kanji',
     'contains_japanese',
+    'contains_kanji',
     'get_definition',
     'get_kanji',
     'get_pitch',
