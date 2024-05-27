@@ -6,6 +6,7 @@ from nevschat.state import SYSTEM_INSTRUCTIONS
 from nevschat.state import PromptResponse
 from nevschat.state import State
 
+from nevschat.components.my_audio import my_audio
 
 def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Component:
     return rx.vstack(
@@ -150,7 +151,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
             rx.cond(
                 prompt_response.prompt.tts_wav_url != '',
                 rx.hstack(
-                    rx.audio(
+                    my_audio(
                         id=f'audio_prompt_{index}',
                         class_name='audio',
                         height='32px',
@@ -293,7 +294,7 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
             rx.cond(
                 prompt_response.response.tts_wav_url != '',
                 rx.hstack(
-                    rx.audio(
+                    my_audio(
                         id=f'audio_response_{index}',
                         class_name='audio',
                         height='32px',
@@ -457,7 +458,7 @@ def chat() -> rx.Component:
                 rx.cond(
                     State.profile.tts_wav_url != '',
                     rx.hstack(
-                        rx.audio(
+                        my_audio(
                             id='audio_profile',
                             class_name='audio',
                             height='32px',
@@ -724,7 +725,7 @@ def chat() -> rx.Component:
                 (State.learning_aide.text != '')
                 & (State.learning_aide.tts_wav_url != '')
             ),
-            rx.audio(
+            my_audio(
                 id='audio_learning_aide',
                 height='32px',
                 playing=True,
