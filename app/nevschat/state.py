@@ -462,6 +462,13 @@ class State(rx.State):  # type: ignore
             f'play_from_here("{audio_id}")',
         )
 
+    @rx.background  # type: ignore
+    async def disable_autoplay(self, audio_id: str) -> Any:
+        print(f'Disable autoplay - {audio_id}')
+        return rx.call_script(
+            f'disable_autoplay("{audio_id}")',
+        )
+
     ####################################################################################
     # Learning Aide
 

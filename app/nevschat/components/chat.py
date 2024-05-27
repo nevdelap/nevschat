@@ -1,12 +1,12 @@
 # mypy: disable-error-code="attr-defined,name-defined"
 
 import reflex as rx
+from nevschat.components.my_audio import my_audio
 from nevschat.state import DEFAULT_SYSTEM_INSTRUCTION
 from nevschat.state import SYSTEM_INSTRUCTIONS
 from nevschat.state import PromptResponse
 from nevschat.state import State
 
-from nevschat.components.my_audio import my_audio
 
 def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Component:
     return rx.vstack(
@@ -155,6 +155,10 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         id=f'audio_prompt_{index}',
                         class_name='audio',
                         height='32px',
+                        # playing=True makes it play when it appears on the page
+                        # for the first time, the on_pause makes it not autoplay
+                        # in future, particularly on page refreshes.
+                        on_pause=State.disable_autoplay(f'audio_prompt_{index}'),  # pylint: disable=no-value-for-parameter
                         playing=True,
                         url=prompt_response.prompt.tts_wav_url,
                         width='100%',
@@ -298,6 +302,10 @@ def prompt_response_box(prompt_response: PromptResponse, index: int) -> rx.Compo
                         id=f'audio_response_{index}',
                         class_name='audio',
                         height='32px',
+                        # playing=True makes it play when it appears on the page
+                        # for the first time, the on_pause makes it not autoplay
+                        # in future, particularly on page refreshes.
+                        on_pause=State.disable_autoplay(f'audio_response_{index}'),  # pylint: disable=no-value-for-parameter
                         playing=True,
                         url=prompt_response.response.tts_wav_url,
                         width='100%',
@@ -462,6 +470,10 @@ def chat() -> rx.Component:
                             id='audio_profile',
                             class_name='audio',
                             height='32px',
+                            # playing=True makes it play when it appears on the page
+                            # for the first time, the on_pause makes it not autoplay
+                            # in future, particularly on page refreshes.
+                            on_pause=State.disable_autoplay('audio_profile'),  # pylint: disable=no-value-for-parameter
                             playing=True,
                             url=State.profile.tts_wav_url,
                             width='100%',
@@ -728,6 +740,10 @@ def chat() -> rx.Component:
             my_audio(
                 id='audio_learning_aide',
                 height='32px',
+                # playing=True makes it play when it appears on the page
+                # for the first time, the on_pause makes it not autoplay
+                # in future, particularly on page refreshes.
+                on_pause=State.disable_autoplay('audio_learning_aide'),  # pylint: disable=no-value-for-parameter
                 playing=True,
                 url=State.learning_aide.tts_wav_url,
                 width='100%',

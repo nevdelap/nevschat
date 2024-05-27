@@ -2,15 +2,16 @@
 
 # from __future__ import annotations
 
-import reflex as rx
 from typing import Any
 
+import reflex as rx
 from reflex.components.component import NoSSRComponent  # type: ignore
-from reflex.vars import Var # type: ignore
+from reflex.vars import Var  # type: ignore
 
-assert not hasattr(rx.constants.EventTriggers, 'ON_ENDED'), (
-    "It looks like this mightn't be needed now."
-)
+assert not hasattr(
+    rx.constants.EventTriggers, 'ON_ENDED'
+), "It looks like this mightn't be needed now."
+
 
 class MyAudio(NoSSRComponent):  # type: ignore
     """
@@ -20,9 +21,9 @@ class MyAudio(NoSSRComponent):  # type: ignore
     not now.
     """
 
-    library = "react-player@2.12.0"
+    library = 'react-player@2.12.0'
 
-    tag = "ReactPlayer"
+    tag = 'ReactPlayer'
 
     is_default = True
 
@@ -54,8 +55,7 @@ class MyAudio(NoSSRComponent):  # type: ignore
     height: Var[str]
 
     def get_event_triggers(self) -> dict[str, Any]:
-        return {
-            "on_ended": lambda e0: [e0]
-        }
+        return {'on_pause': lambda e0: [e0]}
+
 
 my_audio = MyAudio.create
