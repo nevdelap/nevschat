@@ -8,7 +8,7 @@ def is_japanese_char(
     """
     Return True if the character is a Japanese character.
     """
-    assert len(ch) == 1
+    assert len(ch) == 1, 'is_japanese_char, len(ch) == 1'
     included_blocks = [
         'CJK',
         'FULLWIDTH',
@@ -39,7 +39,7 @@ def is_kanji(ch: str, *, log: bool = False) -> bool:
     """
     Return True if the character is a kanji.
     """
-    assert len(ch) == 1
+    assert len(ch) == 1, 'is_kanji, len(ch) == 1'
     try:
         block = unicodedata.name(ch).split()[0]
         is_kanji = block == 'CJK'
@@ -52,9 +52,9 @@ def is_kanji(ch: str, *, log: bool = False) -> bool:
 
 def is_latin_char(ch: str, log: bool = False) -> bool:
     """
-    Return True if the character is a Japanese character.
+    Return True if the character is a Latin character.
     """
-    assert len(ch) == 1
+    assert len(ch) == 1, 'is_latin_char, len(ch) == 1'
     try:
         block = unicodedata.name(ch).split()[0]
         is_latin = block in [
@@ -151,7 +151,7 @@ def strip_short_hiragana_sentences(text: str, up_to_characters: int) -> str:
     strip_non_japanese_and_split_sentences, that is, sentences and fragments
     stripped out of mixed text and delimited by '。' characters for tts.
     """
-    assert all(is_japanese_char(ch) for ch in text)
+    assert all(is_japanese_char(ch) for ch in text), 'strip_short_hiragana_sentences, all(is_japanese_char)'
     result = ''
     maybe_keep_sentence = ''
     for ch in text:
@@ -197,7 +197,7 @@ def strip_duplicate_sentences(text: str) -> str:
     strip_non_japanese_and_split_sentences, that is, sentences and fragments
     stripped out of mixed text and delimited by '。' characters for tts.
     """
-    assert all(is_japanese_char(ch) for ch in text)
+    assert all(is_japanese_char(ch) for ch in text), 'strip_duplicate_sentences, all(is_japanese_char)'
     while True:
         old_len = len(text)
         text = re.sub(r'([^。]*。)\1', r'\1', text)
