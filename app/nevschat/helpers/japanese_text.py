@@ -73,23 +73,6 @@ def is_kanji(ch: str, *, log: bool = False) -> bool:
         return False
 
 
-def is_latin_char(ch: str, log: bool = False) -> bool:
-    """
-    Return True if the character is a Latin character.
-    """
-    assert len(ch) == 1, 'is_latin_char, len(ch) == 1'
-    try:
-        block = unicodedata.name(ch).split()[0]
-        is_latin = block in [
-            'LATIN',
-        ]
-        if log:
-            print(ch, block, 'L' if is_latin else '')
-        return is_latin
-    except ValueError:
-        return False
-
-
 def contains_japanese(text: str, *, log: bool = False) -> bool:
     """
     Return True if the text contains any Japanese at all.
@@ -107,11 +90,71 @@ def contains_kanji(text: str, *, log: bool = False) -> bool:
     return any(is_kanji(ch, log=log) for ch in text)
 
 
-def contains_latin(text: str, log: bool = False) -> bool:
+def contains_non_japanese(text: str, log: bool = False) -> bool:
     """
     Return True if the text contains any Latin characters at all.
     """
-    return any(is_latin_char(ch, log) for ch in text)
+    return any(not is_japanese_char(ch, log=log) for ch in text)
+
+
+def strip_spaces_in_japanese(text: str) -> str:
+    """
+    Voice input on Android insists on putting spaces in spoken Japanese, and
+    then ChatGPT complains about it when checking grammar, even when told to
+    ignore it. So strip it out. Rather than trying to make a regex that does it
+    reliably, use the unicodedata functionality that we already have. It is
+    stripping spaces only between Japanese characters so that it can be used on
+    mixed texts.
+    """
+    result = ''
+    previous_is_japanese = False
+    maybe_keep_spaces = ''
+    for ch in text:
+        if ch.isspace() and previous_is_japanese:
+            maybe_keep_spaces += ch
+            continue
+        if is_japanese_char(ch):
+            previous_is_japanese = True
+        else:
+            previous_is_japanese = False
+            result += maybe_keep_spaces
+        maybe_keep_spaces = ''
+        result += ch
+    return result
+
+
+# Built-in test.
+def test_strip_spaces_in_japanese(original: str, expected: str) -> None:
+    stripped = strip_spaces_in_japanese(original)
+    assert stripped == expected, f'{original}: {stripped} != {expected}'
+
+
+for original, expected in [
+    ('猫は怖いいです。 鶏は臭いです。', '猫は怖いいです。鶏は臭いです。'),
+    ('猫は怖いいです。  鶏は臭いです。', '猫は怖いいです。鶏は臭いです。'),
+    (
+        'hello猫は怖いいです。  鶏は臭いです。there',
+        'hello猫は怖いいです。鶏は臭いです。there',
+    ),
+    (
+        'hello 猫は怖いいです。  鶏は臭いです。there',
+        'hello 猫は怖いいです。鶏は臭いです。there',
+    ),
+    (
+        'hello 猫は怖いいです。  鶏は臭いです。there ',
+        'hello 猫は怖いいです。鶏は臭いです。there ',
+    ),
+    (
+        'hello 猫は怖いいです。 waa! 鶏は臭いです。there ',
+        'hello 猫は怖いいです。 waa! 鶏は臭いです。there ',
+    ),
+    (
+        'h  ell o  猫は怖   いいです。 wa a!   鶏は臭 いです。 there   ',
+        'h  ell o  猫は怖いいです。 wa a!   鶏は臭いです。 there   ',
+    ),
+]:
+    test_strip_spaces_in_japanese(original, expected)
+
 
 
 def strip_non_japanese_and_split_sentences(
@@ -123,10 +166,12 @@ def strip_non_japanese_and_split_sentences(
     tts insert a pause rather then running them all together, and remove
     consecutive duplicate sentences.
     """
-    if contains_latin(text):
-        text = re.sub(
-            r'。+',
-            '。',
+    if contains_non_japanese(text):
+        # Android puts spaces in voice input where it shouldn't. Make sure they
+        # don't count as separate sentences.
+        text = strip_spaces_in_japanese(text)
+        # Replace non-japanese chars with 。.
+        text = (
             ''.join(
                 ch
                 if is_japanese_char(
@@ -136,7 +181,13 @@ def strip_non_japanese_and_split_sentences(
                 else '。'
                 for ch in text
             )
-            + '。',
+            + '。'
+        )
+        # Then replace all strings of 。 with a single one.
+        text = re.sub(
+            r'。+',
+            '。',
+            text,
         ).lstrip('。')
     return text
 
@@ -164,6 +215,8 @@ for original, expected in [
     ('違う。違う。違う。hello.違う。違う。', '違う。違う。違う。違う。違う。'),
     # If mixed Japanese and Latin, add 。 between pieces of Japanese.
     ('日本語あるハー「」。、ab, ()1', '日本語あるハー「」。、。()1。'),
+    # Strip spaces too.
+    ('おんな、 おんな、', 'おんな、おんな、。'),
 ]:
     test_strip_non_japanese_split_sentences(original, expected)
 
@@ -289,65 +342,6 @@ These components work together to convey that the speaker has a fondness for the
     ),
 ]:
     test_strip_duplicate_sentences(original, expected)
-
-
-def strip_spaces_in_japanese(text: str) -> str:
-    """
-    Voice input on Android insists on putting spaces in spoken Japanese, and
-    then ChatGPT complains about it when checking grammar, even when told to
-    ignore it. So strip it out. Rather than trying to make a regex that does it
-    reliably, use the unicodedata functionality that we already have. It is
-    stripping spaces only between Japanese characters so that it can be used on
-    mixed texts.
-    """
-    result = ''
-    previous_is_japanese = False
-    maybe_keep_spaces = ''
-    for ch in text:
-        if ch.isspace() and previous_is_japanese:
-            maybe_keep_spaces += ch
-            continue
-        if is_japanese_char(ch):
-            previous_is_japanese = True
-        else:
-            previous_is_japanese = False
-            result += maybe_keep_spaces
-        maybe_keep_spaces = ''
-        result += ch
-    return result
-
-
-# Built-in test.
-def test_strip_spaces_in_japanese(original: str, expected: str) -> None:
-    stripped = strip_spaces_in_japanese(original)
-    assert stripped == expected, f'{original}: {stripped} != {expected}'
-
-
-for original, expected in [
-    ('猫は怖いいです。 鶏は臭いです。', '猫は怖いいです。鶏は臭いです。'),
-    ('猫は怖いいです。  鶏は臭いです。', '猫は怖いいです。鶏は臭いです。'),
-    (
-        'hello猫は怖いいです。  鶏は臭いです。there',
-        'hello猫は怖いいです。鶏は臭いです。there',
-    ),
-    (
-        'hello 猫は怖いいです。  鶏は臭いです。there',
-        'hello 猫は怖いいです。鶏は臭いです。there',
-    ),
-    (
-        'hello 猫は怖いいです。  鶏は臭いです。there ',
-        'hello 猫は怖いいです。鶏は臭いです。there ',
-    ),
-    (
-        'hello 猫は怖いいです。 waa! 鶏は臭いです。there ',
-        'hello 猫は怖いいです。 waa! 鶏は臭いです。there ',
-    ),
-    (
-        'h  ell o  猫は怖   いいです。 wa a!   鶏は臭 いです。 there   ',
-        'h  ell o  猫は怖いいです。 wa a!   鶏は臭いです。 there   ',
-    ),
-]:
-    test_strip_spaces_in_japanese(original, expected)
 
 
 def age_to_kanji(age: int) -> str:
