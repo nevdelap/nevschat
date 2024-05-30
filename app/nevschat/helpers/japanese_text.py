@@ -58,6 +58,7 @@ for original, is_japanese in [
 ]:
     test_is_japanese_char(original, is_japanese)
 
+
 def is_kanji(ch: str, *, log: bool = False) -> bool:
     """
     Return True if the character is a kanji.
@@ -156,7 +157,6 @@ for original, expected in [
     test_strip_spaces_in_japanese(original, expected)
 
 
-
 def strip_non_japanese_and_split_sentences(
     text: str, include_digits_and_punctuation: bool = True
 ) -> str:
@@ -227,7 +227,9 @@ def strip_short_hiragana_sentences(text: str, up_to_characters: int) -> str:
     strip_non_japanese_and_split_sentences, that is, sentences and fragments
     stripped out of mixed text and delimited by '。' characters for tts.
     """
-    assert all(is_japanese_char(ch) for ch in text), 'strip_short_hiragana_sentences, all(is_japanese_char)'
+    assert all(
+        is_japanese_char(ch) for ch in text
+    ), 'strip_short_hiragana_sentences, all(is_japanese_char)'
     result = ''
     maybe_keep_sentence = ''
     for ch in text:
@@ -273,7 +275,9 @@ def strip_duplicate_sentences(text: str) -> str:
     strip_non_japanese_and_split_sentences, that is, sentences and fragments
     stripped out of mixed text and delimited by '。' characters for tts.
     """
-    assert all(is_japanese_char(ch) for ch in text), 'strip_duplicate_sentences, all(is_japanese_char)'
+    assert all(
+        is_japanese_char(ch) for ch in text
+    ), 'strip_duplicate_sentences, all(is_japanese_char)'
     while True:
         old_len = len(text)
         text = re.sub(r'([^。]*。)\1', r'\1', text)
