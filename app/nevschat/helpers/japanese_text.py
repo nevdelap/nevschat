@@ -35,6 +35,29 @@ def is_japanese_char(
         return False
 
 
+# Built-in test.
+def test_is_japanese_char(ch: str, expected: bool) -> None:
+    actual = is_japanese_char(ch)
+    assert actual == expected, f'{ch}: {actual} != {expected}'
+
+
+for original, is_japanese in [
+    ('か', True),
+    ('カ', True),
+    ('今', True),
+    ('。', True),
+    ('、', True),
+    ('1', True),
+    ('１', True),
+    ('　', True),
+    ('a', False),
+    (',', False),
+    ('.', False),
+    (':', False),
+    (' ', False),
+]:
+    test_is_japanese_char(original, is_japanese)
+
 def is_kanji(ch: str, *, log: bool = False) -> bool:
     """
     Return True if the character is a kanji.
