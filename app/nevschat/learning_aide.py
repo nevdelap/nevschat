@@ -7,6 +7,7 @@ class LearningAide(Speakable):
     model: str = ''
     prompt: str = ''
     system_instruction: str = ''
+    target_lang: str = ''
 
     def clear(self) -> None:
         super().clear()
@@ -14,3 +15,4 @@ class LearningAide(Speakable):
         self.model = ''
         self.prompt = ''
         self.system_instruction = ''
+        self.target_lang = ''

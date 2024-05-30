@@ -577,6 +577,13 @@ def chat() -> rx.Component:
                 on_click=State.translate,
             ),
             rx.button(
+                'フランス語へ',
+                color_scheme='jade',
+                height='2.25em',
+                id='translate_to_french',
+                on_click=State.translate_to_french,
+            ),
+            rx.button(
                 '文法説明',
                 color_scheme='jade',
                 height='2.25em',

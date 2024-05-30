@@ -9,6 +9,8 @@ from openai import OpenAI
 
 import reflex as rx
 from nevschat.canned_chat import get_canned_chat
+from nevschat.helpers import ENGLISH
+from nevschat.helpers import FRENCH
 from nevschat.helpers import contains_japanese
 from nevschat.helpers import contains_kanji
 from nevschat.helpers import get_default_voice
@@ -483,7 +485,7 @@ class State(rx.State):  # type: ignore
 
     def translate(self) -> Any:
         try:
-            return self.do_deepl_learning_aide()
+            return self.do_deepl_learning_aide(ENGLISH)
         except Exception as ex:  # pylint: disable=broad-exception-caught
             self.warning = str(ex)
             print(self.warning)
@@ -492,6 +494,20 @@ class State(rx.State):  # type: ignore
                 (
                     'Translate the given Japanese text into English. '
                     + 'NEVER give pronunciation. NEVER give romaji.'
+                ),
+            )
+
+    def translate_to_french(self) -> Any:
+        try:
+            return self.do_deepl_learning_aide(FRENCH)
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            self.warning = str(ex)
+            print(self.warning)
+            return self.do_chatgpt_learning_aide(
+                GTP_CHEAP_MODEL,
+                (
+                    'Traduisez le texte japonais donné en anglais.'
+                    + 'Ne donnez JAMAIS la prononciation. NE JAMAIS donner le romaji.'
                 ),
             )
 
@@ -659,7 +675,8 @@ class State(rx.State):  # type: ignore
     ####################################################################################
     # DeepL Learning Aide
 
-    def do_deepl_learning_aide(self) -> Any:
+    def do_deepl_learning_aide(self, target_lang: str) -> Any:
+        self.learning_aide.target_lang = target_lang
         return self.trigger_set_deepl_learning_aide_prompt()
 
     def trigger_set_deepl_learning_aide_prompt(self) -> Any:
@@ -689,7 +706,10 @@ class State(rx.State):  # type: ignore
                 if self.learning_aide.prompt == '':
                     self.learning_aide.text = 'テキストはない。'
                 else:
-                    translation = get_translation(self.learning_aide.prompt)
+                    translation = get_translation(
+                        self.learning_aide.prompt,
+                        target_lang=self.learning_aide.target_lang,
+                    )
                     yield
                     async with self:
                         self.learning_aide.text = ''

@@ -15,6 +15,8 @@ from .random_things import get_random_name
 from .random_things import get_random_personal_feature
 from .random_things import get_random_profession
 from .random_things import get_random_speaking_rate
+from .translation import ENGLISH
+from .translation import FRENCH
 from .translation import get_translation
 from .tts import get_default_voice
 from .tts import get_random_voice
@@ -22,6 +24,8 @@ from .tts import text_to_wav
 from .warnable import Warnable
 
 __all__ = [
+    'ENGLISH',
+    'FRENCH',
     'age_to_kanji',
     'contains_japanese',
     'contains_kanji',

@@ -6,7 +6,7 @@ from nevschat.state import State
 from reflex.style import color_mode  # type: ignore
 from reflex.style import toggle_color_mode
 
-VERSION = '0.0.150'
+VERSION = '0.0.151'
 TITLE = f'ネヴのすごいチャットジーピーティー v{VERSION}'
 
 
@@ -102,7 +102,7 @@ def index() -> rx.Component:
                 ///// Learning Aide Buttons ////////////////////////////////////////////
 
                 const update_selection_state = function() {
-                    const has_selection = window.getSelection().toString() != '';
+                    const selection = window.getSelection().toString();
                     const ids = [
                         'check_grammar',
                         'explain_grammar',
@@ -113,10 +113,15 @@ def index() -> rx.Component:
                         'lookup_definition',
                         'lookup_kanji',
                         'translate',
+                        'translate_to_french',
                     ];
                     ids.forEach(function(id) {
                         var element = document.getElementById(id);
-                        if (has_selection) {
+                        if (
+                            !id.startsWith('translate') && selection.length > 0
+                            // Deepl doesn't translate single characters.
+                            || id.startsWith('translate') && selection.length > 1
+                        ) {
                             element.removeAttribute('data-disabled');
                         } else {
                             element.setAttribute('data-disabled', 'true');
