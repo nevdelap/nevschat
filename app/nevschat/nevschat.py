@@ -120,7 +120,7 @@ def index() -> rx.Component:
                         'translate',
                         'translate_to_french',
                     ];
-                    ids.forEach(function(id) {
+                    ids.forEach(id => {
                         var element = document.getElementById(id);
                         if (
                             !id.startsWith('translate') && selection.length > 0
