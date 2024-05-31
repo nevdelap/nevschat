@@ -582,15 +582,11 @@ class State(rx.State):  # type: ignore
                 self.learning_aide.tts_wav_url = ''
             yield
             async with self:
-                if not contains_japanese(self.learning_aide.prompt):
-                    definition = 'テキストは日本語ではない。'
+                definition, model = get_definition(self.learning_aide.prompt)
+                yield
+                async with self:
+                    self.learning_aide.model = model
                     self.learning_aide.text = ''
-                else:
-                    definition, model = get_definition(self.learning_aide.prompt)
-                    yield
-                    async with self:
-                        self.learning_aide.model = model
-                        self.learning_aide.text = ''
                 if definition is not None:
                     for ch in definition:
                         async with self:

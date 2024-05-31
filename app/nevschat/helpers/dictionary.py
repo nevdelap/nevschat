@@ -5,7 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from jamdict import Jamdict  # type: ignore
 
-from .japanese_text import contains_japanese
+from .japanese_text import contains_kanji
 
 _jam: Final = Jamdict()
 
@@ -15,9 +15,6 @@ def get_definition(text: str) -> tuple[str, str]:
     Return definitions for the given text, with exact matches from jamdict
     first, otherwise try takoboto.
     """
-    if not contains_japanese(text):
-        return ('テキストは日本語ではない。', '')
-
     # Look for an exact match in jamdict.
     print(f'Looking up {text} in jamdict.')
     result = _jam.lookup(text)
@@ -52,8 +49,8 @@ def get_kanji(text: str) -> tuple[str, str]:
     """
     Return kanji for the given text, from jamdict.
     """
-    if not contains_japanese(text):
-        return ('テキストは日本語ではない。', '')
+    if not contains_kanji(text):
+        return ('テキストには漢字がない。', '')
 
     # Look for an exact match in jamdict.
     print(f'Looking up {text} in jamdict.')
