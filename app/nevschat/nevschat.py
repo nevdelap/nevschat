@@ -6,7 +6,7 @@ from nevschat.state import State
 from reflex.style import color_mode  # type: ignore
 from reflex.style import toggle_color_mode
 
-VERSION = '0.0.151'
+VERSION = '0.0.152'
 TITLE = f'ネヴのすごいチャットジーピーティー v{VERSION}'
 
 
@@ -84,7 +84,12 @@ def index() -> rx.Component:
                     const audio_div = document.querySelector('div#' + audio_id);
                     // Stop everything that is already playing
                     // before starting play from here.
-                    document.querySelectorAll("audio").forEach(audio => audio.pause());
+                    document.querySelectorAll("audio").forEach(
+                        audio => {
+                            audio.autoplay = false;
+                            audio.pause()
+                        }
+                    );
                     const audio = audio_div.querySelector('audio');
                     audio.addEventListener('pause', onAudioPause);
                     audio.addEventListener('ended', onAudioEnd);
