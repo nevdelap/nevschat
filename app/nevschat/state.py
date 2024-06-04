@@ -13,6 +13,7 @@ from nevschat.helpers import ENGLISH
 from nevschat.helpers import FRENCH
 from nevschat.helpers import contains_japanese
 from nevschat.helpers import contains_kanji
+from nevschat.helpers import contains_non_japanese
 from nevschat.helpers import get_default_voice
 from nevschat.helpers import get_definition
 from nevschat.helpers import get_kanji
@@ -268,6 +269,7 @@ class State(rx.State):  # type: ignore
                     prompt=Prompt(
                         text=self.new_prompt,
                         contains_japanese=contains_japanese(self.new_prompt),
+                        contains_non_japanese=contains_non_japanese(self.new_prompt),
                     ),
                     response=Response(
                         model=model,
@@ -291,7 +293,7 @@ class State(rx.State):  # type: ignore
                 if (
                     # The user may have cleared the chat.
                     len(self.prompts_responses) > 0
-                    and self.prompts_responses[-1].prompt.contains_japanese
+                    and not self.prompts_responses[-1].prompt.contains_non_japanese
                     and self.auto_speak
                 ):
                     self.learning_aide.model = GPT_BEST_MODEL
