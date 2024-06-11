@@ -775,7 +775,7 @@ class State(rx.State):  # type: ignore
                 if self.learning_aide.expects_japanese and not contains_japanese(
                     self.learning_aide.prompt
                 ):
-                    self.learning_aide.text = 'テキストは日本語ではない。'
+                    self.learning_aide.text = 'テキストは日本語だけではない。'
                 else:
                     messages = [
                         {
