@@ -1,4 +1,4 @@
-FROM python:3.12-slim as base
+FROM python:3.12.3-slim as base
 RUN apt-get update && apt-get install -y \
     curl \
     && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
