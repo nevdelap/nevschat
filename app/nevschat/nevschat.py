@@ -6,8 +6,8 @@ from nevschat.state import State
 from reflex.style import color_mode  # type: ignore
 from reflex.style import toggle_color_mode
 
-VERSION = '0.0.155'
-TITLE = f'ネヴのすごいチャットジーピーティー v{VERSION}'
+VERSION = '0.0.156'
+TITLE = f'ネヴのすごいチャット v{VERSION}'
 
 
 def index() -> rx.Component:
