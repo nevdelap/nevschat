@@ -10,6 +10,8 @@ from rxconfig import site_runtime_assets_url
 import reflex as rx
 from nevschat.helpers import Warnable
 from nevschat.helpers import get_default_voice
+from nevschat.helpers import strip_duplicate_sentences
+from nevschat.helpers import strip_hiragana_only
 from nevschat.helpers import strip_non_japanese_and_split_sentences
 from nevschat.helpers import text_to_wav as tts_text_to_wav
 
@@ -22,6 +24,7 @@ class Speakable(rx.Base, ABC):  # type: ignore
     pitch: float = 0
     speaking_rate: float = 1
     text: str = ''
+    cleanup_before_speaking: bool = False
     tts_in_progress = False
     tts_wav_url = ''
     voice: str = get_default_voice()
@@ -30,6 +33,7 @@ class Speakable(rx.Base, ABC):  # type: ignore
         self.pitch = 0
         self.speaking_rate = 1
         self.text = ''
+        self.cleanup_before_speaking = False
         self.tts_in_progress = False
         self.tts_wav_url = ''
         self.voice = get_default_voice()
@@ -47,8 +51,12 @@ class Speakable(rx.Base, ABC):  # type: ignore
                 return
             print(f'Creating .wav for: {self.text}')
             try:
+                text = strip_non_japanese_and_split_sentences(self.text)
+                if self.cleanup_before_speaking:
+                    text = strip_hiragana_only(text)
+                    text = strip_duplicate_sentences(text)
                 tts_wav_filename = tts_text_to_wav(
-                    strip_non_japanese_and_split_sentences(self.text),
+                    text,
                     self.voice,
                     self.speaking_rate,
                     self.pitch,

@@ -36,12 +36,7 @@ def is_japanese_char(
 
 
 # Built-in test.
-def test_is_japanese_char(ch: str, expected: bool) -> None:
-    actual = is_japanese_char(ch)
-    assert actual == expected, f'{ch}: {actual} != {expected}'
-
-
-for original, is_japanese in [
+for ch, expected_is_japanese in [
     ('か', True),
     ('カ', True),
     ('今', True),
@@ -56,7 +51,10 @@ for original, is_japanese in [
     (':', False),
     (' ', False),
 ]:
-    test_is_japanese_char(original, is_japanese)
+    is_japanese = is_japanese_char(ch)
+    assert (
+        is_japanese == expected_is_japanese
+    ), f'{ch}: {is_japanese} != {expected_is_japanese}'
 
 
 def is_kanji(ch: str, *, log: bool = False) -> bool:
@@ -125,12 +123,7 @@ def strip_spaces_in_japanese(text: str) -> str:
 
 
 # Built-in test.
-def test_strip_spaces_in_japanese(original: str, expected: str) -> None:
-    stripped = strip_spaces_in_japanese(original)
-    assert stripped == expected, f'{original}: {stripped} != {expected}'
-
-
-for original, expected in [
+for original, expected_stripped in [
     ('猫は怖いいです。 鶏は臭いです。', '猫は怖いいです。鶏は臭いです。'),
     ('猫は怖いいです。  鶏は臭いです。', '猫は怖いいです。鶏は臭いです。'),
     (
@@ -154,7 +147,10 @@ for original, expected in [
         'h  ell o  猫は怖いいです。 wa a!   鶏は臭いです。 there   ',
     ),
 ]:
-    test_strip_spaces_in_japanese(original, expected)
+    stripped = strip_spaces_in_japanese(original)
+    assert (
+        stripped == expected_stripped
+    ), f'{original}: {stripped} != {expected_stripped}'
 
 
 def strip_non_japanese_and_split_sentences(
@@ -193,12 +189,7 @@ def strip_non_japanese_and_split_sentences(
 
 
 # Built-in test.
-def test_strip_non_japanese_split_sentences(original: str, expected: str) -> None:
-    stripped = strip_non_japanese_and_split_sentences(original)
-    assert stripped == expected, f'{original}: {stripped} != {expected}'
-
-
-for original, expected in [
+for original, expected_stripped in [
     # If mixed Japanese and Latin, strip Latin characters.
     (
         "Both '異る' and '違う' are verbs in Japanese that can be translated as "
@@ -218,55 +209,44 @@ for original, expected in [
     # Strip spaces too.
     ('おんな、 おんな、', 'おんな、おんな、。'),
 ]:
-    test_strip_non_japanese_split_sentences(original, expected)
+    stripped = strip_non_japanese_and_split_sentences(original)
+    assert (
+        stripped == expected_stripped
+    ), f'{original}: {stripped} != {expected_stripped}'
 
 
-def strip_short_hiragana_sentences(text: str, up_to_characters: int) -> str:
+def strip_hiragana_only(text: str) -> str:
     """
-    Strip short sentences out of text returned from
+    Strip hiragana only sentences out of text returned from
     strip_non_japanese_and_split_sentences, that is, sentences and fragments
     stripped out of mixed text and delimited by '。' characters for tts.
     """
     assert all(
         is_japanese_char(ch) for ch in text
-    ), 'strip_short_hiragana_sentences, all(is_japanese_char)'
+    ), 'strip_hiragana_only, all(is_japanese_char)'
     result = ''
     maybe_keep_sentence = ''
     for ch in text:
         if ch != '。':
             maybe_keep_sentence += ch
             continue
-        if len(maybe_keep_sentence) > up_to_characters or any(
-            is_kanji(ch) for ch in maybe_keep_sentence
-        ):
+        if any(is_kanji(ch) for ch in maybe_keep_sentence):
             result += maybe_keep_sentence + ch
         maybe_keep_sentence = ''
-    result += maybe_keep_sentence
+    if any(is_kanji(ch) for ch in maybe_keep_sentence):
+        result += maybe_keep_sentence
     return result
 
 
 # Built-in test.
-def test_strip_short_hiragana_sentences(
-    original: str, expected: str, up_to_characters: int
-) -> None:
-    stripped = strip_short_hiragana_sentences(original, up_to_characters)
-    assert stripped == expected, f'{original}: {stripped} != {expected}'
-
-
-for original, expected, up_to_characters in [
-    (
-        'おはよう！。か。や。いぬ。今。どうした？',
-        'おはよう！。か。や。いぬ。今。どうした？',
-        0,
-    ),
-    ('おはよう！。か。や。いぬ。今。どうした？', 'おはよう！。いぬ。今。どうした？', 1),
-    ('おはよう！。か。や。いぬ。今。どうした？', 'おはよう！。今。どうした？', 2),
-    ('おはよう！。か。や。いぬ。今。どうした？', 'おはよう！。今。どうした？', 3),
-    ('おはよう！。か。や。いぬ。今。どうした？', 'おはよう！。今。どうした？', 4),
-    ('おはよう！。か。や。いぬ。今。どうした？', '今。どうした？', 5),
-    ('おはよう！。か。や。いぬ。今。どうした？。', '今。', 5),
+for original, expected_stripped in [
+    ('おはよう！。か。や。いぬ。今。どうした？', '今。'),
+    ('おはよう！。か。や。いぬ。今。どうした？。', '今。'),
 ]:
-    test_strip_short_hiragana_sentences(original, expected, up_to_characters)
+    stripped = strip_hiragana_only(original)
+    assert (
+        stripped == expected_stripped
+    ), f'{original}: {stripped} != {expected_stripped}'
 
 
 def strip_duplicate_sentences(text: str) -> str:
@@ -278,74 +258,28 @@ def strip_duplicate_sentences(text: str) -> str:
     assert all(
         is_japanese_char(ch) for ch in text
     ), 'strip_duplicate_sentences, all(is_japanese_char)'
-    while True:
-        old_len = len(text)
-        text = re.sub(r'([^。]*。)\1', r'\1', text)
-        if len(text) == old_len:
-            break
-    return text
+    original = [
+        sentence + '。' for sentence in text.split('。') if sentence.strip() != ''
+    ]
+    without_duplicates = [x for i, x in enumerate(original) if x not in original[:i]]
+    return ''.join(without_duplicates)
 
 
 # Built-in test.
-def test_strip_duplicate_sentences(original: str, expected: str) -> None:
-    original = strip_short_hiragana_sentences(
-        strip_non_japanese_and_split_sentences(
-            original,
-            include_digits_and_punctuation=False,
-        ),
-        up_to_characters=3,
-    )
-    stripped = strip_duplicate_sentences(original)
-    assert stripped == expected, f'{original}: {stripped} != {expected}'
-
-
-for original, expected in [
-    ('違う。違う。違う。違う。違う。', '違う。'),
-    ('違う。や。や。違う。', '違う。'),
+for original, expected_stripped in [
     (
-        # pylint: disable=line-too-long
-        """Certainly, let's break down the more advanced aspects of the provided text:
-
-1. **うどんやワッフルや紅茶が好きです**:
-   - The particle "や" is used here to list multiple items in a non-exhaustive manner. This implies that there are potentially other items the speaker likes, but these three are mentioned as examples. This is subtly different from the exhaustive list implied by the particle "と".
-   - The sentence structure is a basic subject-predicate form, where "が" marks the subject "うどんやワッフルや紅茶" for the predicate "好きです".
-
-2. **私は想像力が豊かです**:
-   - This sentence uses "私は", with "は" as the topic marker, to introduce the topic of the sentence, "私".
-   - The particle "が" is used again here to mark the subject within the context of the topic. "想像力" (imagination) is being described as "豊かです" (abundant/rich). Essentially, the structure indicates that the imagination is abundant, attached to the topic "私".
-   - The adjective "豊か" is in its formal ending "です", indicating a polite form. "豊か" is a na-adjective, and the verb "です" is used to link this adjective to the subject.
-z
-3. **今、刺激されています**:
-   - "今" sets the time frame for the following statement, meaning "now".
-   - The verb "刺激する" means "to stimulate". Here, it is in the passive form "刺激される", which means "to be stimulated".
-   - "刺激されています" uses the passive form in the polite present continuous tense, implying that the subject (understood to be "私", from context) is currently being stimulated. The "-ています" form indicates an ongoing action or state.""",
-        # pylint: enable=line-too-long
-        (
-            'うどんやワッフルや紅茶が好きです。うどんやワッフルや紅茶。好きです。'
-            '私は想像力が豊かです。私は。私。想像力。豊かです。私。豊か。'
-            '今、刺激されています。今。刺激する。刺激される。刺激されています。'
-            '私。ています。'
-        ),
+        'おはよう！。おはよう！。か。や。や。いぬ。や。今。か。どうした？',
+        'おはよう！。か。や。いぬ。今。どうした？。',
     ),
     (
-        # pylint: disable=line-too-long
-        """The sentence "おにぎりやお茶漬けや烏龍茶が好きです。" uses several advanced grammatical features that are worth noting.
-
-や (particle): The particle "や" is used to list multiple items in a non-exhaustive manner. It implies that there are other items that are liked besides the ones mentioned. In the sentence, "や" connects "おにぎり," "お茶漬け," and "烏龍茶," indicating that the speaker likes onigiri, ochazuke, and oolong tea, among other things.
-
-が (particle): The particle "が" is used to mark the subject of the sentence. In this context, "が" marks the subject "おにぎりやお茶漬けや烏龍茶" for the verb "好きです," indicating what the speaker likes.
-
-好きです (expression): This phrase is a polite form of "好きだ," which is an adjectival noun meaning "to like" or "to be fond of." The nominal nature of "好き" often needs the preceding subject marked typically by "が" to indicate the object of liking. It's worth noting that in casual speech, "好き" can be used as "好きだ" instead of "好きです."
-
-These components work together to convey that the speaker has a fondness for the listed items among potentially others not mentioned.""",
-        # pylint: enable=line-too-long
-        (
-            'おにぎりやお茶漬けや烏龍茶が好きです。おにぎり。お茶漬け。烏龍茶。'
-            'おにぎりやお茶漬けや烏龍茶。好きです。好きだ。好き。好きだ。好きです。'
-        ),
+        'おはよう！。おはよう！。か。や。や。いぬ。や。今。か。どうした？。',
+        'おはよう！。か。や。いぬ。今。どうした？。',
     ),
 ]:
-    test_strip_duplicate_sentences(original, expected)
+    stripped = strip_duplicate_sentences(original)
+    assert (
+        stripped == expected_stripped
+    ), f'{original}: {stripped} != {expected_stripped}'
 
 
 def age_to_kanji(age: int) -> str:
@@ -361,16 +295,15 @@ def age_to_kanji(age: int) -> str:
     )
 
 
-def test_age_to_kanji(age: int, expected: str) -> None:
+for age, expected_kanji in [
+    (0, '零'),
+    (1, '一'),
+    (7, '七'),
+    (10, '十'),
+    (16, '十六'),
+    (40, '四十'),
+    (44, '四十四'),
+    (50, '五十'),
+]:
     kanji = age_to_kanji(age)
-    assert kanji == expected, f'{age}: {kanji} != {expected}'
-
-
-test_age_to_kanji(0, '零')
-test_age_to_kanji(1, '一')
-test_age_to_kanji(7, '七')
-test_age_to_kanji(10, '十')
-test_age_to_kanji(16, '十六')
-test_age_to_kanji(40, '四十')
-test_age_to_kanji(44, '四十四')
-test_age_to_kanji(50, '五十')
+    assert kanji == expected_kanji, f'{age}: {kanji} != {expected_kanji}'

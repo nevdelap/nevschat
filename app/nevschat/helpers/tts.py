@@ -8,8 +8,6 @@ import time
 import google.cloud.texttospeech as tts
 
 from .cleanup import delete_old_wav_assets
-from .japanese_text import strip_non_japanese_and_split_sentences
-from .japanese_text import strip_short_hiragana_sentences
 
 random.seed(time.time())
 
@@ -46,13 +44,6 @@ def text_to_wav(text: str, voice: str, speaking_rate: float, pitch: float) -> st
     Write a wave file into assets/wav, if it doesn't already exist.
     """
     try:
-        text = strip_non_japanese_and_split_sentences(
-            text,
-            include_digits_and_punctuation=False,
-        )
-        text = strip_short_hiragana_sentences(
-            text, up_to_characters=SKIP_KANA_ONLY_SENTENCES_UP_TO_CHARACTERS
-        )
         hash_ = hashlib.md5(text.encode(encoding='utf-8')).hexdigest()  # nosec
         tts_wav_filename = (
             f'assets/wav/tts_{voice}_{speaking_rate:.1f}_{pitch:.1f}_{hash_}.wav'
