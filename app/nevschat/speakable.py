@@ -9,6 +9,7 @@ from rxconfig import site_runtime_assets_url
 
 import reflex as rx
 from nevschat.helpers import Warnable
+from nevschat.helpers import contains_non_japanese
 from nevschat.helpers import get_default_voice
 from nevschat.helpers import strip_duplicate_sentences
 from nevschat.helpers import strip_hiragana_only_sentences
@@ -48,9 +49,11 @@ class Speakable(rx.Base, ABC):  # type: ignore
             if self.text == '':  # pylint: disable=comparison-with-callable
                 return
             try:
-                text = strip_non_japanese_and_split_sentences(self.text)
-                text = strip_hiragana_only_sentences(text)
-                text = strip_duplicate_sentences(text)
+                text = self.text
+                if contains_non_japanese(text):
+                    text = strip_non_japanese_and_split_sentences(self.text)
+                    text = strip_hiragana_only_sentences(text)
+                    text = strip_duplicate_sentences(text)
                 print(f'Creating .wav for: {text}')
                 tts_wav_filename = tts_text_to_wav(
                     text,
