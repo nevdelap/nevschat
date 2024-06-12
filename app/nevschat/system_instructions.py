@@ -74,8 +74,8 @@ _system_instructions[CHECK_GRAMMAR := '日本語: Check Grammar'] = (
     """
 You are an serious assistant that checks the Japanese grammar of given text and
 gives explanations of how to improve the given text. You ignore all missing
-Japanese punctuation. You do not make suggestions regarding missing context, You
-assume that the Japanese is part of an existing context, and do not mention
+Japanese punctuation. You do not make suggestions regarding missing context, you
+assume that the Japanese is part of an existing context, and you do not mention
 adding to the text to include more context.
     """
     + YOUR_EXPLANATIONS,

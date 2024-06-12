@@ -14,6 +14,7 @@ from nevschat.helpers import get_default_voice
 from nevschat.helpers import strip_duplicate_sentences
 from nevschat.helpers import strip_hiragana_only_sentences
 from nevschat.helpers import strip_non_japanese_and_split_sentences
+from nevschat.helpers import strip_spaces_in_japanese
 from nevschat.helpers import text_to_wav as tts_text_to_wav
 
 
@@ -49,11 +50,14 @@ class Speakable(rx.Base, ABC):  # type: ignore
             if self.text == '':  # pylint: disable=comparison-with-callable
                 return
             try:
-                text = self.text
+                # Android puts spaces in voice input where it shouldn't.
+                text = strip_spaces_in_japanese(self.text)
                 if contains_non_japanese(text):
                     text = strip_non_japanese_and_split_sentences(self.text)
                     text = strip_hiragana_only_sentences(text)
                     text = strip_duplicate_sentences(text)
+                if text == '':
+                    text = '仮名、以外ではない。'
                 print(f'Creating .wav for: {text}')
                 tts_wav_filename = tts_text_to_wav(
                     text,
