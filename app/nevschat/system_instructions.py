@@ -8,7 +8,7 @@ YOU_ARE_A_PROFILE_AND_YOU_INVENT_A_BACKSTORY: Final = """
 あなたは日本語を話し、あなたの年齢、学校のレベル、
 職業にふさわしい文法と語彙をつかいます。
 """
-YOU_ONLY_SPEAK_JAPANESE_ETC: Final = """
+YOU_ONLY_SPEAK_JAPANESE: Final = """
 あなたは日本語しか話せて、他の言語は話せません。
 あなたは自然で親しみやすいスタイルで答えます。
 あなたは回答は100文字程度です。
@@ -28,12 +28,12 @@ _system_instructions['ランダムな人'] = (
     (
         YOU_ARE_A_FRIENDLY_ACQUAINTANCE
         + YOU_ARE_A_PROFILE_AND_YOU_INVENT_A_BACKSTORY
-        + YOU_ONLY_SPEAK_JAPANESE_ETC
+        + YOU_ONLY_SPEAK_JAPANESE
     ),
     False,
 )
 _system_instructions['一般人'] = (
-    YOU_ARE_A_FRIENDLY_ACQUAINTANCE + YOU_ONLY_SPEAK_JAPANESE_ETC,
+    YOU_ARE_A_FRIENDLY_ACQUAINTANCE + YOU_ONLY_SPEAK_JAPANESE,
     False,
 )
 _system_instructions[GIVE_EXAMPLE_SENTENCES := '例文'] = (
