@@ -36,6 +36,35 @@ _system_instructions['一般人'] = (
     YOU_ARE_A_FRIENDLY_ACQUAINTANCE + YOU_ONLY_SPEAK_JAPANESE,
     False,
 )
+_system_instructions[EXPLAIN_GRAMMAR := '文法説明'] = (
+    """
+You are an English speaking assistant that explains in English the advanced
+aspects of the Japanese grammar of the given text.
+    """
+    + YOUR_EXPLANATIONS,
+    False,
+)
+_system_instructions[CHECK_GRAMMAR := '文法チェック'] = (
+    """
+You are an English speaking assistant that checks the Japanese grammar of given
+text and gives explanations in English of how to improve the given text. You
+ignore all missing Japanese punctuation. You do not make suggestions regarding
+missing context, you assume that the Japanese is part of an existing context,
+and you do not mention adding to the text to include more context.
+    """
+    + YOUR_EXPLANATIONS,
+    False,
+)
+_system_instructions[EXPLAIN_USAGE := '使い方'] = (
+    """
+You are an English speaking assistant that explains in English the usage of
+Japanese given vocabulary, with examples, especially where words have different
+meanings in different contexts, or where a word or words with a similiar meaning
+may be confused with the given text.
+    """
+    + YOUR_EXPLANATIONS,
+    False,
+)
 _system_instructions[GIVE_EXAMPLE_SENTENCES := '例文'] = (
     """
 You are an English speaking assistant that gives up to 5 example sentences in
@@ -60,35 +89,6 @@ You are an English speaking assistant that gives up to 5 varied ways of
 expressing in Japanese the meaning opposite to that of the given text, with
 their translations in English. You give definitions of unusual or uncommon
 words.
-    """
-    + YOUR_EXPLANATIONS,
-    False,
-)
-_system_instructions[CHECK_GRAMMAR := '文法チェック'] = (
-    """
-You are an English speaking assistant that checks the Japanese grammar of given
-text and gives explanations in English of how to improve the given text. You
-ignore all missing Japanese punctuation. You do not make suggestions regarding
-missing context, you assume that the Japanese is part of an existing context,
-and you do not mention adding to the text to include more context.
-    """
-    + YOUR_EXPLANATIONS,
-    False,
-)
-_system_instructions[EXPLAIN_GRAMMAR := '文法説明'] = (
-    """
-You are an English speaking assistant that explains in English the advanced
-aspects of the Japanese grammar of the given text.
-    """
-    + YOUR_EXPLANATIONS,
-    False,
-)
-_system_instructions[EXPLAIN_USAGE := '使い方'] = (
-    """
-You are an English speaking assistant that explains in English the usage of
-Japanese given vocabulary, with examples, especially where words have different
-meanings in different contexts, or where a word or words with a similiar meaning
-may be confused with the given text.
     """
     + YOUR_EXPLANATIONS,
     False,
