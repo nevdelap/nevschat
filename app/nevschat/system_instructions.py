@@ -64,7 +64,7 @@ words.
     + YOUR_EXPLANATIONS,
     False,
 )
-_system_instructions[CHECK_GRAMMAR := '文保チェック'] = (
+_system_instructions[CHECK_GRAMMAR := '文法チェック'] = (
     """
 You are an English speaking assistant that checks the Japanese grammar of given
 text and gives explanations in English of how to improve the given text. You
