@@ -19,8 +19,8 @@ YOU_ONLY_SPEAK_JAPANESE_ETC: Final = """
 
 YOUR_EXPLANATIONS = """
 Your explanations are in English for advanced learners of Japanese, and you
-ALWAYS assume the user can read kanji, you NEVER give kana versions of any text
-containing kanji, and you NEVER give romaji for any word.
+ALWAYS assume the user can read kanji and kana, you NEVER give kana versions of
+any text containing kanji, and you NEVER give romaji for any text.
 """
 
 _system_instructions: Final = OrderedDict()
