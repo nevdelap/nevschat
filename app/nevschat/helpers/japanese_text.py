@@ -3,10 +3,11 @@ import unicodedata
 
 
 def is_japanese_char(
-    ch: str, *, include_digits_and_punctuation: bool = True, log: bool = False
+    ch: str, *, include_digits_and_brackets: bool = True, log: bool = False
 ) -> bool:
     """
-    Return True if the character is a Japanese character.
+    Return True if the character is a Japanese character, optionally counting digits and
+    brackets as Japanese characters.
     """
     assert len(ch) == 1, 'is_japanese_char, len(ch) == 1'
     included_blocks = [
@@ -17,7 +18,7 @@ def is_japanese_char(
         'KATAKANA',
         'KATAKANA-HIRAGANA',
     ]
-    if include_digits_and_punctuation:
+    if include_digits_and_brackets:
         included_blocks.extend(
             [
                 'DIGIT',
@@ -35,8 +36,57 @@ def is_japanese_char(
         return False
 
 
+def is_kana_or_kanji_or_digit_or_char(
+    ch: str, *, other: str = '', log: bool = False
+) -> bool:
+    """
+    Return True if the character is a Japanese character or digit, excluding
+    punctation.
+    """
+    assert len(ch) == 1, 'is_kana_or_kanji_or_digit, len(ch) == 1'
+    included_blocks = [
+        'CJK',
+        'DIGIT',
+        'HIRAGANA',
+        'KATAKANA',
+        'KATAKANA-HIRAGANA',
+    ]
+    try:
+        if ch in other:
+            return True
+        block = unicodedata.name(ch).split()[0]
+        is_kana_or_kanji = block in included_blocks
+        if log:
+            print(ch, block, 'J' if is_kana_or_kanji else '')
+        return is_kana_or_kanji
+    except ValueError:
+        return False
+
+
 # Built-in test.
-for ch, expected_is_japanese in [
+for ch, other, expected_is in [
+    ('か', '', True),
+    ('カ', '', True),
+    ('今', '', True),
+    ('！', '！？', True),
+    ('？', '！？', True),
+    ('。', '', False),
+    ('、', '', False),
+    ('1', '', True),
+    ('１', '', False),
+    ('　', '', False),
+    ('a', '', False),
+    (',', '', False),
+    ('.', '', False),
+    (':', '', False),
+    (' ', '', False),
+]:
+    is_ = is_kana_or_kanji_or_digit_or_char(ch, other=other)
+    assert is_ == expected_is, f'{ch}: {is_} != {expected_is}'
+
+
+# Built-in test.
+for ch, expected_is in [
     ('か', True),
     ('カ', True),
     ('今', True),
@@ -51,10 +101,8 @@ for ch, expected_is_japanese in [
     (':', False),
     (' ', False),
 ]:
-    is_japanese = is_japanese_char(ch)
-    assert (
-        is_japanese == expected_is_japanese
-    ), f'{ch}: {is_japanese} != {expected_is_japanese}'
+    is_ = is_japanese_char(ch)
+    assert is_ == expected_is, f'{ch}: {is_} != {expected_is}'
 
 
 def is_kanji(ch: str, *, log: bool = False) -> bool:
@@ -77,8 +125,7 @@ def contains_japanese(text: str, *, log: bool = False) -> bool:
     Return True if the text contains any Japanese at all.
     """
     return any(
-        is_japanese_char(ch, include_digits_and_punctuation=False, log=log)
-        for ch in text
+        is_japanese_char(ch, include_digits_and_brackets=False, log=log) for ch in text
     )
 
 
@@ -154,7 +201,7 @@ for original, expected_stripped in [
 
 
 def strip_non_japanese_and_split_sentences(
-    text: str, include_digits_and_punctuation: bool = True
+    text: str, include_digits_and_brackets: bool = True
 ) -> str:
     """
     If the text contains non-Japanese characters from the text, insert 。
@@ -172,7 +219,7 @@ def strip_non_japanese_and_split_sentences(
                 ch
                 if is_japanese_char(
                     ch,
-                    include_digits_and_punctuation=include_digits_and_punctuation,
+                    include_digits_and_brackets=include_digits_and_brackets,
                 )
                 else '。'
                 for ch in text
@@ -215,7 +262,77 @@ for original, expected_stripped in [
     ), f'{original}: {stripped} != {expected_stripped}'
 
 
-def strip_hiragana_only_sentences(text: str) -> str:
+def replace_punctuation_with_commas(text: str) -> str:
+    """
+    Replace non-kana/kanji/digits with Japanese commas, for tts.
+    """
+    text = ''.join(
+        ch
+        if is_kana_or_kanji_or_digit_or_char(ch, other='！？') or ch == '。'
+        else '、'
+        for ch in text
+    )
+    # Clean up duplication.
+    text = re.sub(
+        r'、、+',
+        '、',
+        text,
+    )
+    text = re.sub(
+        r'、*。、*',
+        '。',
+        text,
+    )
+    text = re.sub(
+        r'^[、。]+',
+        '',
+        text,
+    )
+    return text
+
+
+# Built-in test.
+for original, expected_replaced in [
+    (
+        '、',
+        '',
+    ),
+    (
+        '、か',
+        'か',
+    ),
+    (
+        '、 か',
+        'か',
+    ),
+    (
+        '、　か',
+        'か',
+    ),
+    (
+        '、か、。',
+        'か。',
+    ),
+    (
+        '、か、、。、',
+        'か。',
+    ),
+    (
+        '、1. か',
+        '1、か',
+    ),
+    (
+        '1. こんにちは、（おい！）。2. げんき？',
+        '1、こんにちは、おい！。2、げんき？',
+    ),
+]:
+    replaced = replace_punctuation_with_commas(original)
+    assert (
+        replaced == expected_replaced
+    ), f'{original}: {replaced} != {expected_replaced}'
+
+
+def strip_sentences_without_kanji(text: str) -> str:
     """
     Strip hiragana only sentences out of text returned from
     strip_non_japanese_and_split_sentences, that is, sentences and fragments
@@ -223,7 +340,7 @@ def strip_hiragana_only_sentences(text: str) -> str:
     """
     assert all(
         is_japanese_char(ch) for ch in text
-    ), 'strip_hiragana_only_sentences, all(is_japanese_char)'
+    ), 'strip_sentences_without_kanji, all(is_japanese_char)'
     result = ''
     maybe_keep_sentence = ''
     for ch in text:
@@ -242,8 +359,10 @@ def strip_hiragana_only_sentences(text: str) -> str:
 for original, expected_stripped in [
     ('おはよう！。か。や。いぬ。今。どうした？', '今。'),
     ('おはよう！。か。や。いぬ。今。どうした？。', '今。'),
+    ('い。', ''),
+    (')。い。', ''),
 ]:
-    stripped = strip_hiragana_only_sentences(original)
+    stripped = strip_sentences_without_kanji(original)
     assert (
         stripped == expected_stripped
     ), f'{original}: {stripped} != {expected_stripped}'
@@ -282,10 +401,53 @@ for original, expected_stripped in [
             '大切。大事。1。大切(たいせつ)。大切。家族は私にとって大切です。(。)'
             '2。大事(だいじ)。大事。病気を治すことが一番大事です。(。)。大切。大事。'
         ),
-        '大切。大事。1。大切(たいせつ)。家族は私にとって大切です。(。)2。大事(だいじ)。病気を治すことが一番大事です。)。',
+        '大切。大事。1。大切、たいせつ。家族は私にとって大切です。2。大事、だいじ。病気を治すことが一番大事です。',
     ),
 ]:
-    stripped = strip_duplicate_sentences(original)
+    stripped = strip_non_japanese_and_split_sentences(original)
+    stripped = replace_punctuation_with_commas(stripped)
+    stripped = strip_duplicate_sentences(stripped)
+    assert (
+        stripped == expected_stripped
+    ), f'{original}: {stripped} != {expected_stripped}'
+
+
+# Built-in test.
+for original, expected_stripped in [
+    (
+        # pylint: disable=line-too-long
+        """Certainly! Both 上手い and 上手な are used to describe someone's skill or talent, but they are used in different grammatical contexts and can have slightly different nuances.
+上手い (うまい)
+上手い is an adjective (in the い-adjective form) that means "skillful" or "good at" something. It is frequently used in casual conversation to appreciate someone's skill.
+Examples:
+彼は料理が上手い。 (He is good at cooking.)
+君のギターの演奏は本当に上手いね。 (Your guitar playing is really skillful.)
+上手な (じょうずな)
+上手な is a な-adjective and it carries a more formal tone, often used in written Japanese or formal speech. It also means "skillful" or "good at something," but it usually implies a more learned or cultivated skill.
+Examples:
+彼は上手なスピーチをしました。 (He gave a skillful speech.)
+彼女は上手な絵を描きます。 (She draws skillful pictures.)
+Comparison:
+カジュアルな会話で:
+彼はスキーが上手いよ。 (He is good at skiing.)
+フォーマルな状況で:
+彼は上手なスキー選手です。 (He is a skillful skier.)
+In summary:
+Use 上手い in more informal, conversational contexts.
+Use 上手な when you need a more formal tone, such as in speeches, writing, or formal situations.""",
+        # pylint: enable=line-too-long
+        (
+            '上手い。上手な。上手い(うまい)上手い。彼は料理が上手い。'
+            ')君のギターの演奏は本当に上手いね。)上手な(じょうずな)上手な。'
+            '彼は上手なスピーチをしました。)彼女は上手な絵を描きます。'
+            'カジュアルな会話で。彼はスキーが上手いよ。)フォーマルな状況で。'
+            '彼は上手なスキー選手です。'
+        ),
+    ),
+]:
+    stripped = strip_non_japanese_and_split_sentences(original)
+    stripped = strip_sentences_without_kanji(stripped)
+    stripped = strip_duplicate_sentences(stripped)
     assert (
         stripped == expected_stripped
     ), f'{original}: {stripped} != {expected_stripped}'

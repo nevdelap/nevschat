@@ -11,9 +11,10 @@ import reflex as rx
 from nevschat.helpers import Warnable
 from nevschat.helpers import contains_non_japanese
 from nevschat.helpers import get_default_voice
+from nevschat.helpers import replace_punctuation_with_commas
 from nevschat.helpers import strip_duplicate_sentences
-from nevschat.helpers import strip_hiragana_only_sentences
 from nevschat.helpers import strip_non_japanese_and_split_sentences
+from nevschat.helpers import strip_sentences_without_kanji
 from nevschat.helpers import strip_spaces_in_japanese
 from nevschat.helpers import text_to_wav as tts_text_to_wav
 
@@ -54,7 +55,8 @@ class Speakable(rx.Base, ABC):  # type: ignore
                 text = strip_spaces_in_japanese(self.text)
                 if contains_non_japanese(text):
                     text = strip_non_japanese_and_split_sentences(self.text)
-                    text = strip_hiragana_only_sentences(text)
+                    text = strip_sentences_without_kanji(text)
+                    text = replace_punctuation_with_commas(text)
                     text = strip_duplicate_sentences(text)
                 if text == '':
                     text = '仮名、以外ではない。'
