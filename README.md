@@ -90,10 +90,10 @@ monthly budget and email notification when it is exceeded.
 
 #### Google TTS
 
-The Google TTS API key is supplied in the GOOGLE_TTS_KEY environment variable. It
-should be [restricted](https://console.cloud.google.com/apis/credentials) to be
-usable only for the Cloud Text-to-Speech API, and only from the production and
-development IP addresses.
+The Google TTS API key is supplied in the GOOGLE_TTS_KEY environment variable.
+It should be [restricted](https://console.cloud.google.com/apis/credentials) to
+be usable only for the Cloud Text-to-Speech API, and only from the production
+and development IP addresses.
 
 #### DeepL
 

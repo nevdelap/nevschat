@@ -12,6 +12,11 @@
     "MD029": {
         "style": "ordered"
     },
+    "MD033": {
+        "allowed_elements": [
+            "img"
+        ]
+    },
     "MD035": {
         "style": "---"
     },
