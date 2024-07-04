@@ -73,6 +73,36 @@ git push --force origin latest --no-verify &&
 ssh_droplet "cd ~/nevschat && scripts/deploy && sleep 30 && scripts/logs"
 ```
 
+## Quick Release
+
+This is used as `lpd` - lint, push, deploy.
+
+```bash
+#!/bin/bash
+current_dir="$(basename "$(pwd)")"
+if [[ "$current_dir" == "droplet" ]]; then
+    echo 'Pushing droplet.'
+    git push --force origin HEAD:master
+    git push --tags
+elif [[ "$current_dir" == "nevschat" ]]; then
+    echo 'Linting, pushing, and deploying nevschat.'
+    scripts/lint &&
+    git push --force origin HEAD:master --no-verify &&
+    git tag --force latest &&
+    git push --force origin latest --no-verify &&
+    ssh_droplet "
+        cd ~/droplet &&
+        git fetch &&
+        git checkout origin/master &&
+        monit reload &&
+        cd ~/nevschat &&
+        scripts/deploy &&
+        sleep 30 &&
+        scripts/logs
+    "
+fi
+```
+
 ### General Info
 
 #### Documentation
