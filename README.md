@@ -127,5 +127,5 @@ and development IP addresses.
 
 #### DeepL
 
-The DeepL auth key is supplied in  the DEEPL_AUTH_KEY environment variable. So
+The DeepL auth key is supplied in the DEEPL_AUTH_KEY environment variable. So
 far I'm on the free tier so I haven't configured any restrictions on it yet.
