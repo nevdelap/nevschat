@@ -84,6 +84,11 @@ if [[ "$current_dir" == "droplet" ]]; then
     echo 'Pushing droplet.'
     git push --force origin HEAD:master
     git push --tags
+    ssh_droplet "
+        cd ~/droplet &&
+        git fetch &&
+        git checkout origin/master
+    "
 elif [[ "$current_dir" == "nevschat" ]]; then
     echo 'Linting, pushing, and deploying nevschat.'
     scripts/lint &&
