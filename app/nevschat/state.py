@@ -37,7 +37,7 @@ SYSTEM_INSTRUCTIONS = get_system_instructions()
 DEFAULT_SYSTEM_INSTRUCTION = list(SYSTEM_INSTRUCTIONS.keys())[0]
 
 GPT_BEST_MODEL = 'gpt-4o'
-GTP_CHEAP_MODEL = 'gpt-4o-mini'
+GTP_CHEAP_MODEL = 'gpt-3.5-turbo'
 
 # Requires a restart when changing.
 USE_CANNED_PROFILE_AND_CHAT = False  # For testing.
