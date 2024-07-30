@@ -2,6 +2,5 @@
 *.py[cod]
 .web
 __pycache__/
-assets/external/
 reflex.db
 requirements.txt
