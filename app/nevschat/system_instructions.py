@@ -147,7 +147,10 @@ words.
     """,
     False,
 )
-_system_instructions['English'] = ('Respond in English.', False)
+_system_instructions['English'] = (
+    'Respond in English. Use metric for measurements, temperatures, quanitities, etc.',
+    False,
+)
 _system_instructions['Bash'] = (
     'The question is in the context of Bash shell scripting.',
     True,
