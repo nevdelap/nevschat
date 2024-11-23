@@ -23,20 +23,23 @@ paru -Sy unzip
 ## From Scratch
 
 ```bash
-mkdir -p ~/miniconda3 &&
-cd ~/miniconda3 &&
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
-  -O miniconda.sh &&
-bash miniconda.sh -b -u -p ~/miniconda3 &&
-rm miniconda.sh &&
-mkdir ~/nevschat &&
-cd ~/nevschat &&
+# Install micromamba using the package manager.
+mkdir -p ~/reflex &&
+cd ~/reflex &&
 git clone git@github.com:nevdelap/droplet.git &&
 git clone git@github.com:nevdelap/nevschat.git &&
 cd nevschat &&
 git submodule init &&
 git submodule update &&
-scripts/install_dev
+scripts/install_dev &&
+micromamba activate nevschat
+```
+
+## Run The App In Dev
+
+```bash
+cd app &&
+reflex run # Test at http://localhost:3000/
 ```
 
 ## Update Reflex
@@ -49,13 +52,6 @@ cd .. &&
 git add reflex &&
 git commit -m 'Update reflex.' &&
 pip install -e reflex
-```
-
-## Run The App In Dev
-
-```bash
-cd app &&
-reflex run # Test at http://localhost:3000/
 ```
 
 ## Release On DigitalOcean

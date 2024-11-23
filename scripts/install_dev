@@ -3,14 +3,12 @@ set -eufo pipefail
 PROJECT_DIR="$(cd -- "$(dirname -- "$0")/.." && pwd)"
 cd "$PROJECT_DIR"
 
-# shellcheck source=/dev/null
-. ~/miniconda3/etc/profile.d/conda.sh
-conda config --set auto_activate_base false
-conda deactivate
-conda env remove -yn nevschat
-conda create -yqn nevschat python=3.12.3
-conda activate nevschat
-conda install -yq \
+if micromamba env list | grep '\bnevschat\b'; then
+	micromamba env remove -yn nevschat
+fi
+eval "$(micromamba shell hook --shell )"
+micromamba create -yn nevschat python=3.12.3
+micromamba install -yqn nevschat \
 	--channel conda-forge \
 	--channel defaults \
 	--quiet \
@@ -28,7 +26,7 @@ conda install -yq \
 	ruff \
 	types-beautifulsoup4=4.12.0 \
 	types-requests==2.31.0
-pip install -U \
+micromamba run -n nevschat pip install -U \
 	beautifulsoup4==4.12.3 \
 	deepl==1.18.0 \
     jamdict==0.1a11.post2 \
@@ -38,5 +36,5 @@ pip install -U \
 [ -d reflex ] ||
 	git clone git@github.com:reflex-dev/reflex.git &&
 	git submodule update
-pip install -e reflex
+micromamba run -n nevschat pip install -e reflex
 echo Done.
