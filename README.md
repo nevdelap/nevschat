@@ -83,7 +83,9 @@ if [[ "$current_dir" == "droplet" ]]; then
     ssh_droplet "
         cd ~/droplet &&
         git fetch &&
-        git checkout origin/master
+        git checkout origin/master &&
+        chmod 0700 /etc/monit/monitrc &&
+        monit reload
     "
 elif [[ "$current_dir" == "nevschat" ]]; then
     echo 'Linting, pushing, and deploying nevschat.'
