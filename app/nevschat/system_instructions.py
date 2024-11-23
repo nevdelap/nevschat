@@ -96,6 +96,10 @@ words.
     + YOUR_EXPLANATIONS,
     False,
 )
+_system_instructions['日本語訳'] = (
+    'Translate the given text into Japanese.',
+    False,
+)
 _system_instructions['Expliquer la grammaire'] = (
     """
 You are an English speaking assistant that explains in English the advanced
@@ -147,6 +151,10 @@ words.
     """,
     False,
 )
+_system_instructions['Traduction en français'] = (
+    'Translate the given text into French.',
+    False,
+)
 _system_instructions['English'] = (
     'Respond in English. Use metric for measurements, temperatures, quanitities, etc.',
     False,
@@ -164,14 +172,6 @@ _system_instructions['Git'] = (
     True,
 )
 _system_instructions['Linux'] = ('The question is in the context of Linux.', True)
-_system_instructions['Nginx'] = (
-    'The question is in the context of Nginx configuration.',
-    True,
-)
-_system_instructions['Looker'] = (
-    "The question is in the context of Google's Looker, LookML, Dashboards, etc.",
-    True,
-)
 _system_instructions['Python'] = (
     'The question is in the context of the Python programming language.',
     True,
