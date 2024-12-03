@@ -180,6 +180,10 @@ _system_instructions['Regular Expressions'] = (
     'The question is in the context of the Regular Expressions.',
     True,
 )
+_system_instructions['Rust'] = (
+    'The question is in the context of the Rust programming language.',
+    True,
+)
 _system_instructions['Snowflake SQL'] = (
     'The question is in the context of Snowflake SQL queries.',
     True,
