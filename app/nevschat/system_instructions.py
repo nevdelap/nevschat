@@ -159,8 +159,19 @@ _system_instructions['English'] = (
     'Respond in English. Use metric for measurements, temperatures, quanitities, etc.',
     False,
 )
+_system_instructions['Android Development'] = (
+    """
+The question is in the context of Android development using Kotlin
+and Jetpack in Android Studio.
+    """,
+    True,
+)
 _system_instructions['Bash'] = (
     'The question is in the context of Bash shell scripting.',
+    True,
+)
+_system_instructions['dbt'] = (
+    'The question is in the context of the dbt SQL data build tool.',
     True,
 )
 _system_instructions['Docker'] = (
