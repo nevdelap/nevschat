@@ -142,7 +142,7 @@ class State(rx.State):  # type: ignore
     ####################################################################################
     # System Instruction
 
-    @rx.background  # type: ignore
+    @rx.event(background=True)  # type: ignore
     async def set_system_instruction(self, system_instruction: str) -> Any:
         async with self:
             self.system_instruction = system_instruction
@@ -212,7 +212,7 @@ class State(rx.State):  # type: ignore
     ####################################################################################
     # ChatGPT
 
-    @rx.background  # type: ignore
+    @rx.event(background=True)  # type: ignore
     async def chatgpt(self) -> Any:
         try:
             async with self:
@@ -368,7 +368,7 @@ class State(rx.State):  # type: ignore
     ####################################################################################
     # Text To Speech
 
-    @rx.background  # type: ignore
+    @rx.event(background=True)  # type: ignore
     async def speak_profile(self) -> Any:
         async with self:
             self.profile.tts_in_progress = True
@@ -380,7 +380,7 @@ class State(rx.State):  # type: ignore
             finally:
                 self.tts_processing = False
 
-    @rx.background  # type: ignore
+    @rx.event(background=True)  # type: ignore
     async def speak_prompt(self, index: int) -> Any:
         async with self:
             self.prompts_responses[index].prompt.tts_in_progress = True
@@ -392,7 +392,7 @@ class State(rx.State):  # type: ignore
             finally:
                 self.tts_processing = False
 
-    @rx.background  # type: ignore
+    @rx.event(background=True)  # type: ignore
     async def speak_response(self, index: int) -> Any:
         async with self:
             self.prompts_responses[index].response.tts_in_progress = True
@@ -404,7 +404,7 @@ class State(rx.State):  # type: ignore
             finally:
                 self.tts_processing = False
 
-    @rx.background  # type: ignore
+    @rx.event(background=True)  # type: ignore
     async def speak_last_prompt(self) -> Any:
         async with self:
             if len(self.prompts_responses) == 0:  # The user may have cleared the chat.
@@ -420,7 +420,7 @@ class State(rx.State):  # type: ignore
             finally:
                 self.tts_processing = False
 
-    @rx.background  # type: ignore
+    @rx.event(background=True)  # type: ignore
     async def speak_last_response(self) -> Any:
         async with self:
             if len(self.prompts_responses) == 0:  # The user may have cleared the chat.
@@ -440,7 +440,7 @@ class State(rx.State):  # type: ignore
             finally:
                 self.tts_processing = False
 
-    @rx.background  # type: ignore
+    @rx.event(background=True)  # type: ignore
     async def speak_learning_aide(self) -> Any:
         async with self:
             self.learning_aide.tts_in_progress = True
@@ -452,21 +452,21 @@ class State(rx.State):  # type: ignore
             finally:
                 self.tts_processing = False
 
-    @rx.background  # type: ignore
+    @rx.event(background=True)  # type: ignore
     async def play_from_profile(self) -> Any:
         print('Play from here - profile')
         return rx.call_script(
             'play_from_here("audio_profile")',
         )
 
-    @rx.background  # type: ignore
+    @rx.event(background=True)  # type: ignore
     async def play_from_here(self, audio_id: str) -> Any:
         print(f'Play from here - {audio_id}')
         return rx.call_script(
             f'play_from_here("{audio_id}")',
         )
 
-    @rx.background  # type: ignore
+    @rx.event(background=True)  # type: ignore
     async def disable_autoplay(self, audio_id: str) -> Any:
         print(f'Disable autoplay - {audio_id}')
         return rx.call_script(
@@ -566,13 +566,13 @@ class State(rx.State):  # type: ignore
             callback=State.set_dictionary_learning_aide_prompt,
         )
 
-    @rx.background  # type: ignore
+    @rx.event(background=True)  # type: ignore
     async def set_dictionary_learning_aide_prompt(self, text) -> Any:
         async with self:
             self.learning_aide.prompt = text
         return State.dictionary_learning_aide
 
-    @rx.background  # type: ignore
+    @rx.event(background=True)  # type: ignore
     async def dictionary_learning_aide(self) -> Any:
         try:
             async with self:
@@ -622,13 +622,13 @@ class State(rx.State):  # type: ignore
             callback=State.set_kanji_learning_aide_prompt,
         )
 
-    @rx.background  # type: ignore
+    @rx.event(background=True)  # type: ignore
     async def set_kanji_learning_aide_prompt(self, text) -> Any:
         async with self:
             self.learning_aide.prompt = text
         return State.kanji_learning_aide
 
-    @rx.background  # type: ignore
+    @rx.event(background=True)  # type: ignore
     async def kanji_learning_aide(self) -> Any:
         try:
             async with self:
@@ -683,13 +683,13 @@ class State(rx.State):  # type: ignore
             callback=State.set_deepl_learning_aide_prompt,
         )
 
-    @rx.background  # type: ignore
+    @rx.event(background=True)  # type: ignore
     async def set_deepl_learning_aide_prompt(self, text) -> Any:
         async with self:
             self.learning_aide.prompt = text
         return State.deepl_learning_aide
 
-    @rx.background  # type: ignore
+    @rx.event(background=True)  # type: ignore
     async def deepl_learning_aide(self) -> Any:
         try:
             async with self:
@@ -746,13 +746,13 @@ class State(rx.State):  # type: ignore
             callback=State.set_chatgpt_learning_aide_prompt,
         )
 
-    @rx.background  # type: ignore
+    @rx.event(background=True)  # type: ignore
     async def set_chatgpt_learning_aide_prompt(self, text) -> Any:
         async with self:
             self.learning_aide.prompt = text
         return State.chatgpt_learning_aide
 
-    @rx.background  # type: ignore
+    @rx.event(background=True)  # type: ignore
     async def chatgpt_learning_aide(self) -> Any:
         try:
             async with self:

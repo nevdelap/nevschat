@@ -156,13 +156,14 @@ _system_instructions['Traduction en français'] = (
     False,
 )
 _system_instructions['English'] = (
-    'Respond in English. Use metric for measurements, temperatures, quanitities, etc.',
+    'Respond in English. Use metric for measurements, temperatures, quantities, etc.',
     False,
 )
 _system_instructions['Android Development'] = (
     """
 The question is in the context of Android development using Kotlin
-and Jetpack in Android Studio.
+and Jetpack Compose in Android Studio. Never respond with Java, never
+respond with XML templates.
     """,
     True,
 )
