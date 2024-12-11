@@ -2,9 +2,7 @@ FROM python:3.12.3-slim as base
 RUN apt-get update && apt-get install -y curl \
     && curl -sSL https://deb.nodesource.com/setup_23.x | bash - \
     && apt-get update \
-    && apt-get install -y \
-    nodejs \
-    unzip \
+    && apt-get install -y nodejs unzip \
     && rm -rf /var/lib/apt/lists/*
 RUN pip install --upgrade pip --root-user-action=ignore && \
     pip install --root-user-action=ignore \
