@@ -1,7 +1,6 @@
 FROM python:3.12.3-slim as base
-RUN apt-get update && apt-get install -y \
-    curl \
-    && curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
+RUN apt-get update && apt-get install -y curl \
+    && curl -sSL https://deb.nodesource.com/setup_23.x | bash - \
     && apt-get update \
     && apt-get install -y \
     nodejs \
