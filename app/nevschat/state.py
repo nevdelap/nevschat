@@ -645,8 +645,8 @@ class State(rx.State):  # type: ignore
                     if kanji is not None:
                         for ch in kanji:
                             self.learning_aide.text += ch
-                            self.learning_aide.contains_japanese = (
-                                contains_japanese(kanji)
+                            self.learning_aide.contains_japanese = contains_japanese(
+                                kanji
                             )
                             yield
                             if not self.learning_aide_processing:
@@ -704,8 +704,8 @@ class State(rx.State):  # type: ignore
                     if translation is not None:
                         for ch in translation:
                             self.learning_aide.text += ch
-                            self.learning_aide.contains_japanese = (
-                                contains_japanese(translation)
+                            self.learning_aide.contains_japanese = contains_japanese(
+                                translation
                             )
                             yield
                             if not self.learning_aide_processing:
@@ -785,8 +785,8 @@ class State(rx.State):  # type: ignore
                         response = item.choices[0].delta.content  # type: ignore
                         if response:
                             self.learning_aide.text += response
-                            self.learning_aide.contains_japanese = (
-                                contains_japanese(self.learning_aide.text)
+                            self.learning_aide.contains_japanese = contains_japanese(
+                                self.learning_aide.text
                             )
                             if self.learning_aide.text == '<OK>':
                                 # No need to show it.
