@@ -34,10 +34,10 @@ from nevschat.system_instructions import GIVE_EXAMPLE_SENTENCES
 from nevschat.system_instructions import get_system_instructions
 
 SYSTEM_INSTRUCTIONS = get_system_instructions()
-DEFAULT_SYSTEM_INSTRUCTION = list(SYSTEM_INSTRUCTIONS.keys())[0]
+DEFAULT_SYSTEM_INSTRUCTION = 'English'
 
 GPT_BEST_MODEL = 'gpt-4o'
-GTP_CHEAP_MODEL = 'gpt-4o-mini'
+GTP_CHEAP_MODEL = 'gpt-4o'
 
 # Requires a restart when changing.
 USE_CANNED_PROFILE_AND_CHAT = False  # For testing.
@@ -55,14 +55,14 @@ class State(rx.State):  # type: ignore
     chat_processing: bool = False
     control_down: bool = False
     edited_prompt: str
-    gpt_best: bool = False
+    # gpt_best: bool = False
     learning_aide: LearningAide = LearningAide()
     learning_aide_processing: bool = False
     new_prompt: str = '可愛いウサギが好きですか?' if USE_QUICK_PROMPT else ''
     non_profile_voice: str = get_default_voice()
     profile: Profile = Profile(canned=USE_CANNED_PROFILE_AND_CHAT)
     system_instruction: str = DEFAULT_SYSTEM_INSTRUCTION
-    terse: bool = True
+    terse: bool = False
     tts_processing: bool = False
     warning: str
 
@@ -222,7 +222,7 @@ class State(rx.State):  # type: ignore
                 self.chat_processing = True
                 self.warning = ''
 
-                model = GPT_BEST_MODEL if self.gpt_best else GTP_CHEAP_MODEL
+                model = GPT_BEST_MODEL  # if self.gpt_best else GTP_CHEAP_MODEL
                 messages = []
 
                 if self.terse:
@@ -284,9 +284,8 @@ class State(rx.State):  # type: ignore
                 self.new_prompt = ''
 
                 print(
-                    f'GPT Best Model? {self.gpt_best}\n'
-                    f'Terse? {self.terse}\n'
-                    f'Messages: {messages}'
+                    # f'GPT Best Model? {self.gpt_best}\n'
+                    f'Terse? {self.terse}\nMessages: {messages}'
                 )
 
             async with self:
