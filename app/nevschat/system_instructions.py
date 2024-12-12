@@ -183,6 +183,13 @@ _system_instructions['Git'] = (
     'The question is in the context of the Git version control tool.',
     True,
 )
+_system_instructions['Kotlin'] = (
+    """
+The question is in the context of the Kotlin programming language and its use with
+the `kotlinc` and `kotlin` commands in the terminal.
+    """,
+    True,
+)
 _system_instructions['Linux'] = ('The question is in the context of Linux.', True)
 _system_instructions['Python'] = (
     'The question is in the context of the Python programming language.',
