@@ -161,9 +161,9 @@ _system_instructions['English'] = (
 )
 _system_instructions['Android Development'] = (
     """
-The question is in the context of Android development using Kotlin
-and Jetpack Compose in Android Studio. Never respond with Java, never
-respond with XML templates.
+The question is in the context of Android development using Kotlin, Jetpack
+Compose, and Material3 in Android Studio. Never respond with Java, never respond
+with XML templates, never respond with Material.
     """,
     True,
 )
