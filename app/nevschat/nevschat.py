@@ -1,12 +1,14 @@
 # mypy: disable-error-code="attr-defined,name-defined"
 
+import logging
+
 import reflex as rx
 from nevschat.components import chat
 from nevschat.state import State
 from reflex.style import color_mode  # type: ignore
 from reflex.style import toggle_color_mode
 
-VERSION = '0.0.181'
+VERSION = '0.0.182'
 TITLE = f'ネヴの凄いチャット v{VERSION}'
 
 
@@ -164,6 +166,11 @@ def index() -> rx.Component:
     )
 
 
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(funcName)s - Line %(lineno)d %(message)s',
+)
+
 app = rx.App(
     theme=rx.theme(
         accent_color='bronze',
@@ -173,6 +180,7 @@ app = rx.App(
         scaling='100%',
     )
 )
+
 app.add_page(
     index,
     title=TITLE,

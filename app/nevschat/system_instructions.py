@@ -96,6 +96,14 @@ words.
     + YOUR_EXPLANATIONS,
     False,
 )
+_system_instructions[EXPLAIN_GRAMMAR := 'オナマトペの説明'] = (
+    """
+You are AN ENGLISH SPEAKING ASSISTANT that explains IN ENGLISH the given
+onomatopoeia from Japanese manga.
+    """
+    + YOUR_EXPLANATIONS,
+    False,
+)
 _system_instructions['日本語訳'] = (
     'Translate the given text into Japanese.',
     False,

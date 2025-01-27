@@ -1,6 +1,7 @@
 # mypy: disable-error-code="attr-defined,name-defined"
 
 import asyncio
+import logging
 import re
 import time
 from typing import Any
@@ -44,6 +45,13 @@ USE_CANNED_PROFILE_AND_CHAT = False  # For testing.
 USE_QUICK_PROMPT = False  # For testing.
 
 
+def log(msg: str = '') -> None:
+    """
+    Log basic info.
+    """
+    logging.info(msg=msg)
+
+
 class State(rx.State):  # type: ignore
     ####################################################################################
     # State
@@ -72,23 +80,23 @@ class State(rx.State):  # type: ignore
     # discover. When I discover otherwise hopefully these can be moved into
     # methods in those classes marked @rx.var.
 
-    @rx.var  # type: ignore
+    @rx.var(cache=True)  # type: ignore
     def cannot_chatgpt_with_new_prompt(self) -> bool:
         return self.editing or len(self.new_prompt.strip()) == 0
 
-    @rx.var  # type: ignore
+    @rx.var(cache=True)  # type: ignore
     def cannot_clear_chat(self) -> bool:
         return len(self.prompts_responses) == 0
 
-    @rx.var  # type: ignore
+    @rx.var(cache=True)  # type: ignore
     def cannot_clear_or_chatgpt_with_edited_prompt(self) -> bool:
         return len(self.edited_prompt.strip()) == 0
 
-    @rx.var  # type: ignore
+    @rx.var(cache=True)  # type: ignore
     def cannot_enter_new_prompt_or_edit(self) -> bool:
         return self.editing or self.chat_processing
 
-    @rx.var  # type: ignore
+    @rx.var(cache=True)  # type: ignore
     def editing(self) -> bool:
         return any(
             prompt_response.editing for prompt_response in self.prompts_responses
@@ -100,11 +108,11 @@ class State(rx.State):  # type: ignore
                 return index
         return None
 
-    @rx.var  # type: ignore
+    @rx.var(cache=True)  # type: ignore
     def has_prompts_responses(self) -> bool:
         return len(self.prompts_responses) > 0
 
-    @rx.var  # type: ignore
+    @rx.var(cache=True)  # type: ignore
     def using_profile_in_prompts(self) -> bool:
         """
         'Using' the profile means the profile is shown to the user and is
@@ -113,7 +121,7 @@ class State(rx.State):  # type: ignore
         """
         return self.system_instruction == 'ランダムな人'
 
-    @rx.var  # type: ignore
+    @rx.var(cache=True)  # type: ignore
     def you_are(self) -> str:
         return self.profile.text.replace('私', 'あなた')
 
@@ -478,12 +486,15 @@ class State(rx.State):  # type: ignore
         self.learning_aide.clear()
 
     def lookup_definition(self) -> Any:
+        log()
         return self.do_dictionary_learning_aide()
 
     def lookup_kanji(self) -> Any:
+        log()
         return self.do_kanji_learning_aide()
 
     def translate(self) -> Any:
+        log()
         try:
             return self.do_deepl_learning_aide(ENGLISH)
         except Exception as ex:  # pylint: disable=broad-exception-caught
@@ -498,6 +509,7 @@ class State(rx.State):  # type: ignore
             )
 
     def translate_to_french(self) -> Any:
+        log()
         try:
             return self.do_deepl_learning_aide(FRENCH)
         except Exception as ex:  # pylint: disable=broad-exception-caught
@@ -512,6 +524,7 @@ class State(rx.State):  # type: ignore
             )
 
     def check_grammar(self) -> Any:
+        log()
         self.learning_aide.expects_japanese = True
         return self.do_chatgpt_learning_aide(
             GPT_BEST_MODEL,
@@ -520,18 +533,21 @@ class State(rx.State):  # type: ignore
         )
 
     def explain_grammar(self) -> Any:
+        log()
         self.learning_aide.expects_japanese = True
         return self.do_chatgpt_learning_aide(
             GPT_BEST_MODEL, SYSTEM_INSTRUCTIONS[EXPLAIN_GRAMMAR][0]
         )
 
     def explain_usage(self) -> Any:
+        log()
         self.learning_aide.expects_japanese = True
         return self.do_chatgpt_learning_aide(
             GTP_CHEAP_MODEL, SYSTEM_INSTRUCTIONS[EXPLAIN_USAGE][0]
         )
 
     def give_examples_of_same_meaning(self) -> Any:
+        log()
         self.learning_aide.expects_japanese = False
         return self.do_chatgpt_learning_aide(
             GTP_CHEAP_MODEL,
@@ -539,6 +555,7 @@ class State(rx.State):  # type: ignore
         )
 
     def give_examples_of_opposite_meaning(self) -> Any:
+        log()
         self.learning_aide.expects_japanese = False
         return self.do_chatgpt_learning_aide(
             GTP_CHEAP_MODEL,
@@ -546,6 +563,7 @@ class State(rx.State):  # type: ignore
         )
 
     def give_example_sentences(self) -> Any:
+        log()
         self.learning_aide.expects_japanese = False
         return self.do_chatgpt_learning_aide(
             GTP_CHEAP_MODEL,
