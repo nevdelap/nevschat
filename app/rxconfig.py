@@ -18,6 +18,7 @@ config = rx.Config(
         'react-loading-icons',
     ],
     frontend_path='/chat' if is_prod else '',
+    telemetry_enabled=False,
 )
 # In dev the assets are served by reflex on port 3000. In prod it is served by Nginx.
 site_runtime_assets_url = (
