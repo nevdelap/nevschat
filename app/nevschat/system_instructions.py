@@ -167,6 +167,11 @@ _system_instructions['English'] = (
     'Respond IN ENGLISH. Use metric for measurements, temperatures, quantities, etc.',
     False,
 )
+_system_instructions['Recipe'] = (
+    'Respond IN ENGLISH. Use metric for measurements, temperatures, quantities, etc. '
+    'Give a recipe, authentic to the culture of origin, for the food described.',
+    False,
+)
 _system_instructions['Android Development'] = (
     """
 The question is in the context of Android development using Kotlin, Jetpack
