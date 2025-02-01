@@ -167,6 +167,14 @@ _system_instructions['English'] = (
     'Respond IN ENGLISH. Use metric for measurements, temperatures, quantities, etc.',
     False,
 )
+_system_instructions['Français'] = (
+    'Répondre en français. Utilisez le système métrique pour les mesures, les températures, les quantités, etc.',
+    False,
+)
+_system_instructions['Español'] = (
+    'Responder EN ESPAÑOL. Utiliza el sistema métrico decimal para medidas, temperaturas, cantidades, etc.',
+    False,
+)
 _system_instructions['Recipe'] = (
     'Respond IN ENGLISH. Use metric for measurements, temperatures, quantities, etc. '
     'Give a recipe, authentic to the culture of origin, for the food described.',
