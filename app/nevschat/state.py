@@ -37,7 +37,7 @@ from nevschat.system_instructions import get_system_instructions
 SYSTEM_INSTRUCTIONS = get_system_instructions()
 DEFAULT_SYSTEM_INSTRUCTION = 'English'
 
-GPT_BEST_MODEL = 'gpt-4o'
+GPT_BEST_MODEL = 'gpt-4.5-preview'
 GTP_CHEAP_MODEL = 'gpt-4o'
 
 # Requires a restart when changing.
