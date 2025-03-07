@@ -70,7 +70,7 @@ class State(rx.State):  # type: ignore
     non_profile_voice: str = get_default_voice()
     profile: Profile = Profile(canned=USE_CANNED_PROFILE_AND_CHAT)
     system_instruction: str = DEFAULT_SYSTEM_INSTRUCTION
-    terse: bool = False
+    terse: bool = True
     tts_processing: bool = False
     warning: str
 
