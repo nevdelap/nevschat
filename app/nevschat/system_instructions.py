@@ -170,14 +170,14 @@ _system_instructions['English'] = (
     False,
 )
 _system_instructions['Français'] = (
-    'Répondez EN ANGLAIS. Utilisez le système métrique pour les mesures, températures, '
+    'Répondez EN FRANÇAIS. Utilisez le système métrique pour les mesures, températures, '
     'quantités, etc. Encadrez les notations mathématiques par des doubles signes '
     "dollar afin qu'elles s'affichent correctement, et formatez par ailleurs votre "
     'réponse pour un affichage correct en markdown.',
     False,
 )
 _system_instructions['Español'] = (
-    'Responda EN INGLÉS. Use el sistema métrico para medidas, temperaturas, '
+    'Responda EN ESPAÑOL. Use el sistema métrico para medidas, temperaturas, '
     'cantidades, etc. Encierre la notación matemática entre signos dobles de dólar '
     'para que se muestre correctamente, y dé formato al resto de su respuesta para '
     'que se visualice correctamente en markdown.',
