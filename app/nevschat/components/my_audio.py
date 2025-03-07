@@ -8,9 +8,9 @@ import reflex as rx
 from reflex.components.component import NoSSRComponent  # type: ignore
 from reflex.vars import Var  # type: ignore
 
-assert not hasattr(
-    rx.constants.EventTriggers, 'ON_ENDED'
-), "It looks like this mightn't be needed now."
+assert not hasattr(rx.constants.EventTriggers, 'ON_ENDED'), (
+    "It looks like this mightn't be needed now."
+)
 
 
 class MyAudio(NoSSRComponent):  # type: ignore

@@ -170,10 +170,10 @@ _system_instructions['English'] = (
     False,
 )
 _system_instructions['Français'] = (
-    "Répondez EN ANGLAIS. Utilisez le système métrique pour les mesures, températures, "
-    "quantités, etc. Encadrez les notations mathématiques par des doubles signes "
+    'Répondez EN ANGLAIS. Utilisez le système métrique pour les mesures, températures, '
+    'quantités, etc. Encadrez les notations mathématiques par des doubles signes '
     "dollar afin qu'elles s'affichent correctement, et formatez par ailleurs votre "
-    "réponse pour un affichage correct en markdown.",
+    'réponse pour un affichage correct en markdown.',
     False,
 )
 _system_instructions['Español'] = (
@@ -251,17 +251,15 @@ The question is in the context of Web development, CSS, HTML, and Javascript.
 )
 
 
-def get_system_instructions() -> (
-    OrderedDict[
-        str,  # The key displayed in the dropdown.
-        tuple[
-            # The system instruction to tell ChatGPT who it is and what to do.
-            str,
-            # Whether the system instruction is to do with code. If it is a system
-            # instruction will be included to tell it to wrap code blocks in
-            # backticks for displaying as code in the rendered markdown.
-            bool,
-        ],
-    ]
-):
+def get_system_instructions() -> OrderedDict[
+    str,  # The key displayed in the dropdown.
+    tuple[
+        # The system instruction to tell ChatGPT who it is and what to do.
+        str,
+        # Whether the system instruction is to do with code. If it is a system
+        # instruction will be included to tell it to wrap code blocks in
+        # backticks for displaying as code in the rendered markdown.
+        bool,
+    ],
+]:
     return _system_instructions

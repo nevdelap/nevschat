@@ -195,9 +195,9 @@ for original, expected_stripped in [
     ),
 ]:
     stripped = strip_spaces_in_japanese(original)
-    assert (
-        stripped == expected_stripped
-    ), f'{original}: {stripped} != {expected_stripped}'
+    assert stripped == expected_stripped, (
+        f'{original}: {stripped} != {expected_stripped}'
+    )
 
 
 def strip_non_japanese_and_split_sentences(
@@ -257,9 +257,9 @@ for original, expected_stripped in [
     ('おんな、 おんな、', 'おんな、おんな、。'),
 ]:
     stripped = strip_non_japanese_and_split_sentences(original)
-    assert (
-        stripped == expected_stripped
-    ), f'{original}: {stripped} != {expected_stripped}'
+    assert stripped == expected_stripped, (
+        f'{original}: {stripped} != {expected_stripped}'
+    )
 
 
 def replace_punctuation_with_commas(text: str) -> str:
@@ -327,9 +327,9 @@ for original, expected_replaced in [
     ),
 ]:
     replaced = replace_punctuation_with_commas(original)
-    assert (
-        replaced == expected_replaced
-    ), f'{original}: {replaced} != {expected_replaced}'
+    assert replaced == expected_replaced, (
+        f'{original}: {replaced} != {expected_replaced}'
+    )
 
 
 def strip_sentences_without_kanji(text: str) -> str:
@@ -338,9 +338,9 @@ def strip_sentences_without_kanji(text: str) -> str:
     strip_non_japanese_and_split_sentences, that is, sentences and fragments
     stripped out of mixed text and delimited by '。' characters for tts.
     """
-    assert all(
-        is_japanese_char(ch) for ch in text
-    ), 'strip_sentences_without_kanji, all(is_japanese_char)'
+    assert all(is_japanese_char(ch) for ch in text), (
+        'strip_sentences_without_kanji, all(is_japanese_char)'
+    )
     result = ''
     maybe_keep_sentence = ''
     for ch in text:
@@ -363,9 +363,9 @@ for original, expected_stripped in [
     (')。い。', ''),
 ]:
     stripped = strip_sentences_without_kanji(original)
-    assert (
-        stripped == expected_stripped
-    ), f'{original}: {stripped} != {expected_stripped}'
+    assert stripped == expected_stripped, (
+        f'{original}: {stripped} != {expected_stripped}'
+    )
 
 
 def strip_duplicate_sentences(text: str) -> str:
@@ -374,9 +374,9 @@ def strip_duplicate_sentences(text: str) -> str:
     strip_non_japanese_and_split_sentences, that is, sentences and fragments
     stripped out of mixed text and delimited by '。' characters for tts.
     """
-    assert all(
-        is_japanese_char(ch) for ch in text
-    ), 'strip_duplicate_sentences, all(is_japanese_char)'
+    assert all(is_japanese_char(ch) for ch in text), (
+        'strip_duplicate_sentences, all(is_japanese_char)'
+    )
     original = [
         sentence + '。' for sentence in text.split('。') if sentence.strip() != ''
     ]
@@ -407,9 +407,9 @@ for original, expected_stripped in [
     stripped = strip_non_japanese_and_split_sentences(original)
     stripped = replace_punctuation_with_commas(stripped)
     stripped = strip_duplicate_sentences(stripped)
-    assert (
-        stripped == expected_stripped
-    ), f'{original}: {stripped} != {expected_stripped}'
+    assert stripped == expected_stripped, (
+        f'{original}: {stripped} != {expected_stripped}'
+    )
 
 
 # Built-in test.
@@ -448,9 +448,9 @@ Use 上手な when you need a more formal tone, such as in speeches, writing, or
     stripped = strip_non_japanese_and_split_sentences(original)
     stripped = strip_sentences_without_kanji(stripped)
     stripped = strip_duplicate_sentences(stripped)
-    assert (
-        stripped == expected_stripped
-    ), f'{original}: {stripped} != {expected_stripped}'
+    assert stripped == expected_stripped, (
+        f'{original}: {stripped} != {expected_stripped}'
+    )
 
 
 def age_to_kanji(age: int) -> str:

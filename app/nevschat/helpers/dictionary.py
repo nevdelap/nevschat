@@ -57,7 +57,7 @@ def get_kanji(text: str) -> tuple[str, str]:
     result = _jam.lookup(text)
     if len(result.chars) > 0:
         entries = [
-            f'{char} - {', '.join(char.meanings(english_only=True))}'
+            f'{char} - {", ".join(char.meanings(english_only=True))}'
             for char in result.chars
             if str(char) in text
         ]

@@ -583,7 +583,7 @@ class State(rx.State):  # type: ignore
         )
 
     @rx.event(background=True)  # type: ignore
-    async def set_dictionary_learning_aide_prompt(self, text) -> Any:
+    async def set_dictionary_learning_aide_prompt(self, text: str) -> Any:
         async with self:
             self.learning_aide.prompt = text
         return State.dictionary_learning_aide
@@ -636,7 +636,7 @@ class State(rx.State):  # type: ignore
         )
 
     @rx.event(background=True)  # type: ignore
-    async def set_kanji_learning_aide_prompt(self, text) -> Any:
+    async def set_kanji_learning_aide_prompt(self, text: str) -> Any:
         async with self:
             self.learning_aide.prompt = text
         return State.kanji_learning_aide
@@ -693,7 +693,7 @@ class State(rx.State):  # type: ignore
         )
 
     @rx.event(background=True)  # type: ignore
-    async def set_deepl_learning_aide_prompt(self, text) -> Any:
+    async def set_deepl_learning_aide_prompt(self, text: str) -> Any:
         async with self:
             self.learning_aide.prompt = text
         return State.deepl_learning_aide
@@ -753,7 +753,7 @@ class State(rx.State):  # type: ignore
         )
 
     @rx.event(background=True)  # type: ignore
-    async def set_chatgpt_learning_aide_prompt(self, text) -> Any:
+    async def set_chatgpt_learning_aide_prompt(self, text: str) -> Any:
         async with self:
             self.learning_aide.prompt = text
         return State.chatgpt_learning_aide

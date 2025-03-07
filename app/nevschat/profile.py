@@ -46,7 +46,7 @@ class Profile(Speakable):
             self.pitch = get_pitch(self.male, age)
             self.speaking_rate = get_random_speaking_rate()
             self.text = (
-                f'私の名前は{name}、{'男性' if self.male else '女性'}、'
+                f'私の名前は{name}、{"男性" if self.male else "女性"}、'
                 f'{age_to_kanji(age)}歳で、'
                 f'{city}に住んでいます。'
                 f'{profession}です。'
@@ -64,6 +64,5 @@ class Profile(Speakable):
                 '私は消化不良がよくあります。今、失望しています。'
             )
             self.tts_wav_url = (
-                'wav/tts_ja-JP-Neural2-C_1.0_0.0_'
-                'cbceec2fbef664e23af493c528a1e77f.wav'
+                'wav/tts_ja-JP-Neural2-C_1.0_0.0_cbceec2fbef664e23af493c528a1e77f.wav'
             )

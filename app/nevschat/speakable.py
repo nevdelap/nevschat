@@ -68,7 +68,7 @@ class Speakable(rx.Base, ABC):  # type: ignore
                     self.pitch,
                 )
                 self.tts_wav_url = os.path.join(
-                    config.frontend_path, f"{tts_wav_filename[len('assets/'):]}"
+                    config.frontend_path, f'{tts_wav_filename[len("assets/") :]}'
                 )
                 full_tts_wav_url = urljoin(site_runtime_assets_url, self.tts_wav_url)
                 print(f'Checking that {full_tts_wav_url} is being served...', end='')
