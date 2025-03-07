@@ -6,7 +6,7 @@ cd "$PROJECT_DIR"
 if micromamba env list | grep '\bnevschat\b'; then
 	micromamba env remove -yn nevschat
 fi
-eval "$(micromamba shell hook --shell )"
+eval "$(micromamba shell hook --shell bash)"
 micromamba create -yn nevschat python=3.12.3
 micromamba install -yqn nevschat \
 	--channel conda-forge \
