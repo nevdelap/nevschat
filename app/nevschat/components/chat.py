@@ -334,11 +334,11 @@ def chat() -> rx.Component:
     """List all the messages in a single conversation."""
     return rx.vstack(
         rx.flex(
-            # rx.checkbox(
-            #     'o1-preview',
-            #     checked=State.gpt_best,
-            #     on_change=State.set_gpt_best,
-            # ),
+            rx.checkbox(
+                'Best Model',
+                checked=State.gpt_best,
+                on_change=State.set_gpt_best,
+            ),
             rx.checkbox(
                 '簡潔な返答',
                 checked=State.terse,

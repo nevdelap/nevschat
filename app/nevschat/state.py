@@ -63,7 +63,7 @@ class State(rx.State):  # type: ignore
     chat_processing: bool = False
     control_down: bool = False
     edited_prompt: str
-    # gpt_best: bool = False
+    gpt_best: bool = True
     learning_aide: LearningAide = LearningAide()
     learning_aide_processing: bool = False
     new_prompt: str = '可愛いウサギが好きですか?' if USE_QUICK_PROMPT else ''
@@ -230,7 +230,7 @@ class State(rx.State):  # type: ignore
                 self.chat_processing = True
                 self.warning = ''
 
-                model = GPT_BEST_MODEL  # if self.gpt_best else GTP_CHEAP_MODEL
+                model = GPT_BEST_MODEL if self.gpt_best else GTP_CHEAP_MODEL
                 messages = []
 
                 if self.terse:
@@ -292,7 +292,7 @@ class State(rx.State):  # type: ignore
                 self.new_prompt = ''
 
                 print(
-                    # f'GPT Best Model? {self.gpt_best}\n'
+                    f'GPT Best Model? {self.gpt_best}\n'
                     f'Terse? {self.terse}\nMessages: {messages}'
                 )
 
