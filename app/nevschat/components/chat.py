@@ -335,7 +335,7 @@ def chat() -> rx.Component:
     return rx.vstack(
         rx.flex(
             rx.checkbox(
-                'Best Model',
+                'ベストモデル',
                 checked=State.gpt_best,
                 on_change=State.set_gpt_best,
             ),
