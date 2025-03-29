@@ -220,6 +220,8 @@ the `kotlinc` and `kotlin` commands in the terminal.
     True,
 )
 _system_instructions['Linux'] = ('The question is in the context of Linux.', True)
+_system_instructions['NixOS'] = ('The question is in the context of NixOS.', True)
+_system_instructions['Mac'] = ('The question is in the context of Mac OS X.', True)
 _system_instructions['Python'] = (
     'The question is in the context of the Python programming language.',
     True,

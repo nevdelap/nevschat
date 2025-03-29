@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# For NixOS run in `nix-shell -p pkgs.python312`,
+# with `programs.nix-ld.enable = true;`.
 set -eufo pipefail
 PROJECT_DIR="$(cd -- "$(dirname -- "$0")/.." && pwd)"
 cd "$PROJECT_DIR"
@@ -37,10 +39,7 @@ micromamba install -yqn nevschat \
 	types-requests==2.31.0
 
 echo -e '\e[32m\nInstalling dependencies with pip.\e[0m'
-micromamba run \
-	--yes \
-	--name nevschat \
-	pip install -U \
+micromamba run -n nevschat pip install -U \
 	deepl==1.20.0 \
 	jamdict==0.1a11.post2 \
 	jamdict-data==1.5 \
