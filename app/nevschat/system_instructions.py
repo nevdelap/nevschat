@@ -188,14 +188,6 @@ _system_instructions['Recipe'] = (
     'Give a recipe, authentic to the culture of origin, for the food described.',
     False,
 )
-_system_instructions['Android Development'] = (
-    """
-The question is in the context of Android development using Kotlin, Jetpack
-Compose, and Material3 in Android Studio. Never respond with Java, never respond
-with XML templates, never respond with Material.
-    """,
-    True,
-)
 _system_instructions['Bash'] = (
     'The question is in the context of Bash shell scripting.',
     True,
@@ -212,13 +204,6 @@ _system_instructions['Git'] = (
     'The question is in the context of the Git version control tool.',
     True,
 )
-_system_instructions['Kotlin'] = (
-    """
-The question is in the context of the Kotlin programming language and its use with
-the `kotlinc` and `kotlin` commands in the terminal.
-    """,
-    True,
-)
 _system_instructions['Linux'] = ('The question is in the context of Linux.', True)
 _system_instructions['NixOS'] = ('The question is in the context of NixOS.', True)
 _system_instructions['Mac'] = ('The question is in the context of Mac OS X.', True)
@@ -228,10 +213,6 @@ _system_instructions['Python'] = (
 )
 _system_instructions['Regular Expressions'] = (
     'The question is in the context of the Regular Expressions.',
-    True,
-)
-_system_instructions['Rust'] = (
-    'The question is in the context of the Rust programming language.',
     True,
 )
 _system_instructions['Snowflake SQL'] = (

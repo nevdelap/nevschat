@@ -63,7 +63,7 @@ class State(rx.State):  # type: ignore
     chat_processing: bool = False
     control_down: bool = False
     edited_prompt: str
-    gpt_best: bool = True
+    gpt_best: bool = False
     learning_aide: LearningAide = LearningAide()
     learning_aide_processing: bool = False
     new_prompt: str = '可愛いウサギが好きですか?' if USE_QUICK_PROMPT else ''
