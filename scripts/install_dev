@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -eufo pipefail
 PROJECT_DIR="$(cd -- "$(dirname -- "$0")/.." && pwd)"
 cd "$PROJECT_DIR"
@@ -6,10 +6,14 @@ cd "$PROJECT_DIR"
 if micromamba env list | grep '\bnevschat\b'; then
 	micromamba env remove -yn nevschat
 fi
-eval "$(micromamba shell hook --shell bash)"
 
 echo -e '\e[32m\nCreating environment.\e[0m'
-micromamba create -yn nevschat python=3.12.3
+micromamba create \
+	--channel conda-forge \
+	--channel defaults \
+	--quiet \
+	--yes \
+	--name nevschat python=3.12.3
 
 echo -e '\e[32m\nInstalling dependencies from conda-forge.\e[0m'
 micromamba install -yqn nevschat \
@@ -33,7 +37,10 @@ micromamba install -yqn nevschat \
 	types-requests==2.31.0
 
 echo -e '\e[32m\nInstalling dependencies with pip.\e[0m'
-micromamba run -n nevschat pip install -U \
+micromamba run \
+	--yes \
+	--name nevschat \
+	pip install -U \
 	deepl==1.20.0 \
 	jamdict==0.1a11.post2 \
 	jamdict-data==1.5 \
