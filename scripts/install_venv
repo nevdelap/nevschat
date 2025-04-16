@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+# For NixOS run in `nix-shell -p pkgs.python312`,
+# with `programs.nix-ld.enable = true;`.
+set -eufo pipefail
+PROJECT_DIR="$(cd -- "$(dirname -- "$0")/.." && pwd)"
+cd "$PROJECT_DIR"
+
+GREEN='\e[32m'
+RESET='\e[0m'
+
+# 0 unless I want to contribute a pull request.
+REFLEX_EDITABLE=0
+
+if [[ $# -ne 1 ]] || { [[ "$1" != "dev" ]] && [[ "$1" != "prod" ]] }; then
+	echo "USAGE: install_venv <dev|prod>"
+	exit
+fi
+
+if [[ "$1" == "dev" ]]; then
+	prod=0
+else
+	prod=1
+fi
+
+if ! which &> /dev/null uv; then
+	echo -e "${GREEN}\nInstalling uv.${RESET}"
+	curl -LsSf https://astral.sh/uv/install.sh | sh
+fi
+
+if [ -d .venv ]; then
+	echo -e "${GREEN}\nRemoving existing environment.${RESET}"
+	rm -rf .venv
+fi
+
+echo -e "${GREEN}\nCreating environment.${RESET}"
+uv venv .venv \
+	--allow-existing \
+	--python=3.12.3
+
+echo -e "${GREEN}\nInstalling dependencies.${RESET}"
+uv pip install \
+	beautifulsoup4~=4.12 \
+	deepl~=1.20 \
+	google-cloud-texttospeech~=2.21 \
+	jamdict-data==1.5 \
+	jamdict==0.1a11.post2 \
+	reflex~=0.7.0 \
+	openai~=1.57 \
+	requests~=2.32 \
+
+if [ "$prod" -ne 1 ]; then
+	echo -e "${GREEN}\nInstalling dev dependencies.${RESET}"
+	uv pip install \
+		bandit \
+		coverage \
+		isort \
+		mypy \
+		pylint \
+		pytest \
+		pyupgrade \
+		ruff \
+		types-beautifulsoup4~=4.12 \
+		types-requests~=2.31
+
+	if [ -d reflex ]; then
+		pushd reflex &>/pop/null
+		git checkout v0.7.0
+		popd &>/dev/null
+	fi
+fi
+
+if [[ "$prod" -ne 1 ]] && [[ "$REFLEX_EDITABLE" -eq 1 ]]; then
+	[ -d reflex ] ||
+		echo -e "${GREEN}\nCloning Reflex.${RESET}" &&
+		git clone git@github.com:reflex-dev/reflex.git &&
+		git submodule update
+
+	echo -e "${GREEN}\nInstalling Reflex as editable.${RESET}"
+	uv pip install \
+		--editable reflex
+fi
+
+echo -e "${GREEN}\nDone.${RESET}"
