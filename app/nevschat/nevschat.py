@@ -5,17 +5,20 @@ import logging
 import reflex as rx
 from nevschat.components import chat
 from nevschat.state import State
-from reflex.style import color_mode  # type: ignore
+from reflex.style import color_mode
 from reflex.style import toggle_color_mode
 
-VERSION = '0.0.192'
+VERSION = '0.0.193'
 TITLE = f'ネヴの凄いチャット v{VERSION}'
 
 
 def index() -> rx.Component:
     return rx.vstack(
         rx.flex(
-            rx.heading(TITLE),
+            rx.tooltip(
+                rx.heading(TITLE),
+                content='ネヴのすごいチャット',
+            ),
             rx.spacer(
                 width='100%',
             ),

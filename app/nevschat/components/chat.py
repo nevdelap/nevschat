@@ -334,15 +334,18 @@ def chat() -> rx.Component:
     """List all the messages in a single conversation."""
     return rx.vstack(
         rx.flex(
-            rx.checkbox(
-                'ベストモデル',
-                checked=State.gpt_best,
-                on_change=State.set_gpt_best,
-            ),
-            rx.checkbox(
-                '簡潔な返答',
-                checked=State.terse,
-                on_change=State.set_terse,
+            # rx.checkbox(
+            #     'ベストモデル',
+            #     checked=State.gpt_best,
+            #     on_change=State.set_gpt_best,
+            # ),
+            rx.tooltip(
+                rx.checkbox(
+                    '簡潔な返答',
+                    checked=State.terse,
+                    on_change=State.set_terse,
+                ),
+                content = "かんけつなへんとう",
             ),
             rx.select(
                 list(SYSTEM_INSTRUCTIONS.keys()),
@@ -351,10 +354,13 @@ def chat() -> rx.Component:
                 value=State.system_instruction,
                 variant='surface',
             ),
-            rx.checkbox(
-                '日本語のオートスピーク',
-                checked=State.auto_speak,
-                on_change=State.set_auto_speak,
+            rx.tooltip(
+                rx.checkbox(
+                    '日本語のオートスピーク',
+                    checked=State.auto_speak,
+                    on_change=State.set_auto_speak,
+                ),
+                content='にほんごのオートスピーク',
             ),
             align='center',
             width='100%',
@@ -555,75 +561,105 @@ def chat() -> rx.Component:
         ),
         rx.divider(),
         rx.flex(
-            rx.button(
-                '辞書',
-                color_scheme='jade',
-                height='2.25em',
-                id='lookup_definition',
-                on_click=State.lookup_definition,
+            rx.tooltip(
+                rx.button(
+                    '辞書',
+                    color_scheme='jade',
+                    height='2.25em',
+                    id='lookup_definition',
+                    on_click=State.lookup_definition,
+                ),
+                content='じしょ',
             ),
-            rx.button(
-                '漢字',
-                color_scheme='jade',
-                height='2.25em',
-                id='lookup_kanji',
-                on_click=State.lookup_kanji,
+            rx.tooltip(
+                rx.button(
+                    '漢字',
+                    color_scheme='jade',
+                    height='2.25em',
+                    id='lookup_kanji',
+                    on_click=State.lookup_kanji,
+                ),
+                content='かんじ',
             ),
-            rx.button(
-                '翻訳',
-                color_scheme='jade',
-                height='2.25em',
-                id='translate',
-                on_click=State.translate,
+            rx.tooltip(
+                rx.button(
+                    '翻訳',
+                    color_scheme='jade',
+                    height='2.25em',
+                    id='translate',
+                    on_click=State.translate,
+                ),
+                content='ほんやく',
             ),
-            rx.button(
-                'フランス語へ',
-                color_scheme='jade',
-                height='2.25em',
-                id='translate_to_french',
-                on_click=State.translate_to_french,
+            rx.tooltip(
+                rx.button(
+                    'フランス語へ',
+                    color_scheme='jade',
+                    height='2.25em',
+                    id='translate_to_french',
+                    on_click=State.translate_to_french,
+                ),
+                content='フランスごへ',
             ),
-            rx.button(
-                '文法説明',
-                color_scheme='jade',
-                height='2.25em',
-                id='explain_grammar',
-                on_click=State.explain_grammar,
+            rx.tooltip(
+                rx.button(
+                    '文法説明',
+                    color_scheme='jade',
+                    height='2.25em',
+                    id='explain_grammar',
+                    on_click=State.explain_grammar,
+                ),
+                content='ぶんぽうせつめい',
             ),
-            rx.button(
-                '文法チェック',
-                color_scheme='jade',
-                height='2.25em',
-                id='check_grammar',
-                on_click=State.check_grammar,
+            rx.tooltip(
+                rx.button(
+                    '文法チェック',
+                    color_scheme='jade',
+                    height='2.25em',
+                    id='check_grammar',
+                    on_click=State.check_grammar,
+                ),
+                content='ぶんぽうチェック',
             ),
-            rx.button(
-                '使い方',
-                color_scheme='jade',
-                height='2.25em',
-                id='explain_usage',
-                on_click=State.explain_usage,
+            rx.tooltip(
+                rx.button(
+                    '使い方',
+                    color_scheme='jade',
+                    height='2.25em',
+                    id='explain_usage',
+                    on_click=State.explain_usage,
+                ),
+                content='つかいかた',
             ),
-            rx.button(
-                '例文',
-                color_scheme='jade',
-                height='2.25em',
-                id='give_example_sentences',
-                on_click=State.give_example_sentences,
+            rx.tooltip(
+                rx.button(
+                    '例文',
+                    color_scheme='jade',
+                    height='2.25em',
+                    id='give_example_sentences',
+                    on_click=State.give_example_sentences,
+                ),
+                content='れいぶん',
             ),
-            rx.button(
-                '同じ意味',
-                color_scheme='jade',
-                height='2.25em',
-                id='give_examples_of_same_meaning',
-                on_click=State.give_examples_of_same_meaning,
+            rx.tooltip(
+                rx.button(
+                    '同じ意味',
+                    color_scheme='jade',
+                    height='2.25em',
+                    id='give_examples_of_same_meaning',
+                    on_click=State.give_examples_of_same_meaning,
+                ),
+                content='おなじいみ',
             ),
-            rx.button(
-                '反対の意味',
-                color_scheme='jade',
-                height='2.25em',
-                id='give_examples_of_opposite_meaning',
-                on_click=State.give_examples_of_opposite_meaning,
+            rx.tooltip(
+                rx.button(
+                    '反対の意味',
+                    color_scheme='jade',
+                    height='2.25em',
+                    id='give_examples_of_opposite_meaning',
+                    on_click=State.give_examples_of_opposite_meaning,
+                ),
+                content='はんたいのいみ',
             ),
             spacing='2',
             width='100%',

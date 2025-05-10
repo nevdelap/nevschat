@@ -5,15 +5,15 @@
 from typing import Any
 
 import reflex as rx
-from reflex.components.component import NoSSRComponent  # type: ignore
-from reflex.vars import Var  # type: ignore
+from reflex.components.component import NoSSRComponent
+from reflex.vars import Var
 
 assert not hasattr(rx.constants.EventTriggers, 'ON_ENDED'), (
     "It looks like this mightn't be needed now."
 )
 
 
-class MyAudio(NoSSRComponent):  # type: ignore
+class MyAudio(NoSSRComponent):
     """
     Duplicated from Reflex's audio.py until it supports the ended event. It is
     not exposed in the interface of the reflex.components.audio module, so it
@@ -37,7 +37,7 @@ class MyAudio(NoSSRComponent):  # type: ignore
     loop: Var[bool]
 
     # Set to true or false to display native player controls.
-    controls: Var[bool] = True
+    controls: Var[bool] = Var.create(True)
 
     # Set to true to show just the video thumbnail, which loads the full player on click
     light: Var[bool]

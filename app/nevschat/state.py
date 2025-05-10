@@ -37,8 +37,8 @@ from nevschat.system_instructions import get_system_instructions
 SYSTEM_INSTRUCTIONS = get_system_instructions()
 DEFAULT_SYSTEM_INSTRUCTION = 'English'
 
-GPT_BEST_MODEL = 'gpt-4.5-preview'
-GTP_CHEAP_MODEL = 'gpt-4o'
+GPT_BEST_MODEL = 'gpt-4.1'
+GTP_CHEAP_MODEL = 'gpt-4.1-nano'
 
 # Requires a restart when changing.
 USE_CANNED_PROFILE_AND_CHAT = False  # For testing.
@@ -52,7 +52,7 @@ def log(msg: str = '') -> None:
     logging.info(msg=msg)
 
 
-class State(rx.State):  # type: ignore
+class State(rx.State):
     ####################################################################################
     # State
 
@@ -63,7 +63,7 @@ class State(rx.State):  # type: ignore
     chat_processing: bool = False
     control_down: bool = False
     edited_prompt: str
-    gpt_best: bool = False
+    gpt_best: bool = True
     learning_aide: LearningAide = LearningAide()
     learning_aide_processing: bool = False
     new_prompt: str = '可愛いウサギが好きですか?' if USE_QUICK_PROMPT else ''
@@ -80,23 +80,23 @@ class State(rx.State):  # type: ignore
     # discover. When I discover otherwise hopefully these can be moved into
     # methods in those classes marked @rx.var.
 
-    @rx.var(cache=True)  # type: ignore
+    @rx.var(cache=True)
     def cannot_chatgpt_with_new_prompt(self) -> bool:
         return self.editing or len(self.new_prompt.strip()) == 0
 
-    @rx.var(cache=True)  # type: ignore
+    @rx.var(cache=True)
     def cannot_clear_chat(self) -> bool:
         return len(self.prompts_responses) == 0
 
-    @rx.var(cache=True)  # type: ignore
+    @rx.var(cache=True)
     def cannot_clear_or_chatgpt_with_edited_prompt(self) -> bool:
         return len(self.edited_prompt.strip()) == 0
 
-    @rx.var(cache=True)  # type: ignore
+    @rx.var(cache=True)
     def cannot_enter_new_prompt_or_edit(self) -> bool:
         return self.editing or self.chat_processing
 
-    @rx.var(cache=True)  # type: ignore
+    @rx.var(cache=True)
     def editing(self) -> bool:
         return any(
             prompt_response.editing for prompt_response in self.prompts_responses
@@ -108,11 +108,11 @@ class State(rx.State):  # type: ignore
                 return index
         return None
 
-    @rx.var(cache=True)  # type: ignore
+    @rx.var(cache=True)
     def has_prompts_responses(self) -> bool:
         return len(self.prompts_responses) > 0
 
-    @rx.var(cache=True)  # type: ignore
+    @rx.var(cache=True)
     def using_profile_in_prompts(self) -> bool:
         """
         'Using' the profile means the profile is shown to the user and is
@@ -121,7 +121,7 @@ class State(rx.State):  # type: ignore
         """
         return self.system_instruction == 'ランダムな人'
 
-    @rx.var(cache=True)  # type: ignore
+    @rx.var(cache=True)
     def you_are(self) -> str:
         return self.profile.text.replace('私', 'あなた')
 
@@ -150,7 +150,7 @@ class State(rx.State):  # type: ignore
     ####################################################################################
     # System Instruction
 
-    @rx.event(background=True)  # type: ignore
+    @rx.event(background=True)
     async def set_system_instruction(self, system_instruction: str) -> Any:
         async with self:
             self.system_instruction = system_instruction
@@ -220,7 +220,7 @@ class State(rx.State):  # type: ignore
     ####################################################################################
     # ChatGPT
 
-    @rx.event(background=True)  # type: ignore
+    @rx.event(background=True)
     async def chatgpt(self) -> Any:
         try:
             async with self:
@@ -374,7 +374,7 @@ class State(rx.State):  # type: ignore
     ####################################################################################
     # Text To Speech
 
-    @rx.event(background=True)  # type: ignore
+    @rx.event(background=True)
     async def speak_profile(self) -> Any:
         async with self:
             self.profile.tts_in_progress = True
@@ -386,7 +386,7 @@ class State(rx.State):  # type: ignore
             finally:
                 self.tts_processing = False
 
-    @rx.event(background=True)  # type: ignore
+    @rx.event(background=True)
     async def speak_prompt(self, index: int) -> Any:
         async with self:
             self.prompts_responses[index].prompt.tts_in_progress = True
@@ -398,7 +398,7 @@ class State(rx.State):  # type: ignore
             finally:
                 self.tts_processing = False
 
-    @rx.event(background=True)  # type: ignore
+    @rx.event(background=True)
     async def speak_response(self, index: int) -> Any:
         async with self:
             self.prompts_responses[index].response.tts_in_progress = True
@@ -410,7 +410,7 @@ class State(rx.State):  # type: ignore
             finally:
                 self.tts_processing = False
 
-    @rx.event(background=True)  # type: ignore
+    @rx.event(background=True)
     async def speak_last_prompt(self) -> Any:
         async with self:
             if len(self.prompts_responses) == 0:  # The user may have cleared the chat.
@@ -426,7 +426,7 @@ class State(rx.State):  # type: ignore
             finally:
                 self.tts_processing = False
 
-    @rx.event(background=True)  # type: ignore
+    @rx.event(background=True)
     async def speak_last_response(self) -> Any:
         async with self:
             if len(self.prompts_responses) == 0:  # The user may have cleared the chat.
@@ -446,7 +446,7 @@ class State(rx.State):  # type: ignore
             finally:
                 self.tts_processing = False
 
-    @rx.event(background=True)  # type: ignore
+    @rx.event(background=True)
     async def speak_learning_aide(self) -> Any:
         async with self:
             self.learning_aide.tts_in_progress = True
@@ -458,21 +458,21 @@ class State(rx.State):  # type: ignore
             finally:
                 self.tts_processing = False
 
-    @rx.event(background=True)  # type: ignore
+    @rx.event(background=True)
     async def play_from_profile(self) -> Any:
         print('Play from here - profile')
         return rx.call_script(
             'play_from_here("audio_profile")',
         )
 
-    @rx.event(background=True)  # type: ignore
+    @rx.event(background=True)
     async def play_from_here(self, audio_id: str) -> Any:
         print(f'Play from here - {audio_id}')
         return rx.call_script(
             f'play_from_here("{audio_id}")',
         )
 
-    @rx.event(background=True)  # type: ignore
+    @rx.event(background=True)
     async def disable_autoplay(self, audio_id: str) -> Any:
         print(f'Disable autoplay - {audio_id}')
         return rx.call_script(
@@ -582,13 +582,13 @@ class State(rx.State):  # type: ignore
             callback=State.set_dictionary_learning_aide_prompt,
         )
 
-    @rx.event(background=True)  # type: ignore
+    @rx.event(background=True)
     async def set_dictionary_learning_aide_prompt(self, text: str) -> Any:
         async with self:
             self.learning_aide.prompt = text
         return State.dictionary_learning_aide
 
-    @rx.event(background=True)  # type: ignore
+    @rx.event(background=True)
     async def dictionary_learning_aide(self) -> Any:
         try:
             async with self:
@@ -635,13 +635,13 @@ class State(rx.State):  # type: ignore
             callback=State.set_kanji_learning_aide_prompt,
         )
 
-    @rx.event(background=True)  # type: ignore
+    @rx.event(background=True)
     async def set_kanji_learning_aide_prompt(self, text: str) -> Any:
         async with self:
             self.learning_aide.prompt = text
         return State.kanji_learning_aide
 
-    @rx.event(background=True)  # type: ignore
+    @rx.event(background=True)
     async def kanji_learning_aide(self) -> Any:
         try:
             async with self:
@@ -692,13 +692,13 @@ class State(rx.State):  # type: ignore
             callback=State.set_deepl_learning_aide_prompt,
         )
 
-    @rx.event(background=True)  # type: ignore
+    @rx.event(background=True)
     async def set_deepl_learning_aide_prompt(self, text: str) -> Any:
         async with self:
             self.learning_aide.prompt = text
         return State.deepl_learning_aide
 
-    @rx.event(background=True)  # type: ignore
+    @rx.event(background=True)
     async def deepl_learning_aide(self) -> Any:
         try:
             async with self:
@@ -752,13 +752,13 @@ class State(rx.State):  # type: ignore
             callback=State.set_chatgpt_learning_aide_prompt,
         )
 
-    @rx.event(background=True)  # type: ignore
+    @rx.event(background=True)
     async def set_chatgpt_learning_aide_prompt(self, text: str) -> Any:
         async with self:
             self.learning_aide.prompt = text
         return State.chatgpt_learning_aide
 
-    @rx.event(background=True)  # type: ignore
+    @rx.event(background=True)
     async def chatgpt_learning_aide(self) -> Any:
         try:
             async with self:
