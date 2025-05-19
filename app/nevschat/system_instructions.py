@@ -166,21 +166,24 @@ _system_instructions['Traduction en français'] = (
 _system_instructions['English'] = (
     'Respond IN ENGLISH. Use metric for measurements, temperatures, quantities, etc. '
     'Surround mathematical notation with double dollar signs so that they display '
-    'correctly, and otherwise format your response to display correctly in markdown.',
+    'correctly, and otherwise format your response to display correctly in markdown. '
+    'Do not give a summary table or summaries of what has already been said.',
     False,
 )
 _system_instructions['Français'] = (
     'Répondez EN FRANÇAIS. Utilisez le système métrique pour les mesures, températures, '
     'quantités, etc. Encadrez les notations mathématiques par des doubles signes '
     "dollar afin qu'elles s'affichent correctement, et formatez par ailleurs votre "
-    'réponse pour un affichage correct en markdown.',
+    'réponse pour un affichage correct en markdown. '
+    'Ne donnez pas de tableau récapitulatif ou de résumés de ce qui a déjà été dit.',
     False,
 )
 _system_instructions['Español'] = (
     'Responda EN ESPAÑOL. Use el sistema métrico para medidas, temperaturas, '
     'cantidades, etc. Encierre la notación matemática entre signos dobles de dólar '
     'para que se muestre correctamente, y dé formato al resto de su respuesta para '
-    'que se visualice correctamente en markdown.',
+    'que se visualice correctamente en markdown. '
+    'No dé una tabla resumen ni resúmenes de lo que ya se ha dicho.',
     False,
 )
 _system_instructions['Recipe'] = (
