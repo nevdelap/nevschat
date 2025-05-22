@@ -43,7 +43,6 @@ def index() -> rx.Component:
             f'リフレックス v{rx.constants.Reflex.VERSION}',
             color=rx.color('gray', 8),
         ),
-        chat(),
         rx.cond(
             State.warning,
             rx.callout(
@@ -54,6 +53,7 @@ def index() -> rx.Component:
             ),
             None,
         ),
+        chat(),
         rx.script(
             r"""
                 ///// Play From Here Buttons ///////////////////////////////////////////
