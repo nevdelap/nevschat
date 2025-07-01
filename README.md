@@ -8,12 +8,12 @@ very nice.
 
 <img
   src="screenshot.png"
-  width="839px"
+  width="600px"
   alt="Screenshot of Nev's Awesome ChatGPT" />
 
 <img
   src="screenshot2.png"
-  width="839px"
+  width="600px"
   alt="Another screenshot of Nev's Awesome ChatGPT" />
 
 ## Prerequisites
