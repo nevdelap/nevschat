@@ -6,6 +6,9 @@ does exactly what I want and nothing else. The only thing it really lacks is
 voice input. One day I might do that. In the meantime [Issen](www.issen.com) is
 very nice.
 
+Anyone can use it, and adapt is as they like. You just need to provide your own
+OpenAI, Google TTL, and DeepL keys.
+
 <img
   src="screenshot.png"
   width="600px"
@@ -15,6 +18,29 @@ very nice.
   src="screenshot2.png"
   width="600px"
   alt="Another screenshot of Nev's Awesome ChatGPT" />
+
+## Features
+
+* GPTChat style chat, with the option of a terse reply, and optional Japanese
+  TTS (text to speech).
+* A load of preconfigured prompts that suit the things I need, for play, and for
+  work.
+* A random Japanese person who has a name, where they live, their age,
+  interests, favourite foods, drinks, how they are feeling, etc, to chat with.
+  They have a random speaking rate, and a voice pitch appropriate to their age.
+* A generic Japanese person..
+* Language learning tools for Japanese and French, activated by selecting text:
+  * Dictionary word lookup.
+  * Kanji lookup.
+  * Translation to English.
+  * Translation to French.
+  * Grammar explanation.
+  * Grammar check.
+  * Usage explanation.
+  * Example sentences using vocabulary.
+  * Phrases expressing the same meaning in different ways.
+  * Phrases expressing the opposite meaning.
+* Automatic checking of grammar on inputs that only contain Japanese.
 
 ## Prerequisites
 
@@ -58,6 +84,9 @@ uv pip install --editable reflex
 
 ## Release On DigitalOcean
 
+This is for my setup. Anyone else using this will need to figure something out
+for themselves. My droplet configuration is private.
+
 This shows `scripts/lint` being run manually though it can be run automatically
 with `scripts/install_hooks`.
 
@@ -72,6 +101,9 @@ ssh_droplet "cd ~/nevschat && scripts/deploy && sleep 30 && scripts/logs"
 ```
 
 ## Quick Release
+
+This is for my setup. Anyone else using this will need to figure something out
+for themselves. My droplet configuration is private.
 
 This is used as `lpd` - lint, push, deploy.
 
