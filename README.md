@@ -49,6 +49,9 @@ Reflex.
 
 ## From Scratch
 
+This is for my setup. Anyone else using this will need to figure something out
+for themselves. My droplet configuration is private.
+
 `scripts/install_venv` will install `uv` if it is not already installed.
 
 ```bash
