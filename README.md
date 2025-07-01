@@ -16,14 +16,14 @@ does exactly what I want and nothing else.
 
 ## Prerequisites
 
-```bash
-paru -Sy unzip
-```
+Install `unzip` using your distribution's package manager. It is required by
+Reflex.
 
 ## From Scratch
 
+`scripts/install_venv` will install `uv` if it is not already installed.
+
 ```bash
-# Install micromamba using the package manager.
 mkdir -p ~/reflex &&
 cd ~/reflex &&
 git clone git@github.com:nevdelap/droplet.git &&
@@ -31,8 +31,8 @@ git clone git@github.com:nevdelap/nevschat.git &&
 cd nevschat &&
 git submodule init &&
 git submodule update &&
-scripts/install_dev &&
-micromamba activate nevschat
+scripts/install_venv &&
+source .venv/bin/activate
 ```
 
 ## Run The App In Dev
@@ -51,7 +51,7 @@ git checkout v0.4.6 &&
 cd .. &&
 git add reflex &&
 git commit -m 'Update reflex.' &&
-pip install -e reflex
+uv pip install --editable reflex
 ```
 
 ## Release On DigitalOcean
