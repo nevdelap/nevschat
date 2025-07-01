@@ -2,7 +2,9 @@
 
 This is my private thing that I use everyday, deployed at
 [www.nevdelap.com/chat](http://www.nevdelap.com/chat) (behind auth), because it
-does exactly what I want and nothing else.
+does exactly what I want and nothing else. The only thing it really lacks is
+voice input. One day I might do that. In the meantime [Issen](www.issen.com) is
+very nice.
 
 <img
   src="screenshot.png"
